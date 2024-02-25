@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+  backend:
+    container_name: aacc_backend
+    depends_on:
+      db:
+        condition: service_started
+      # db_test:
+      #   condition: service_started
+    restart: on-failure
+    build:
+      context: ./backend
+    ports:
+      - ${PORT_BACK}:${PORT_BACK}
+    volumes:
+      - ./backend:/usr/src/app
+    env_file: ./backend/.env
+  frontend:
+    container_name: aacc_frontend
+    depends_on:
+      backend:
+        condition: service_started
+    restart: on-failure
+    build:
+      context: ./frontend
+    ports:
+      - ${PORT_FRONT}:${PORT_FRONT}
+    volumes:
+      - ./frontend:/usr/src/app
+    env_file: ./frontend/.env
+  # db_test:
+  #   image: mysql:8.0
+  #   container_name: aacc_db_test
+  #   ports:
+  #     - ${PORT_MYSQL_TEST}:3306
+  #   environment:
+  #     - MYSQL_DATABASE=${MYSQL_DATABASE_TEST}
+  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD_TEST}
+  #   volumes:
+  #     - mysql_test:/var/lib/mysql
+  #     - mysql_config_test:/etc/mysql
+  db:
+    image: mysql:8.0
+    container_name: aacc_db
+    ports:
+      - ${PORT_MYSQL}:3306
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_db:/var/lib/mysql
+      - mysql_db_config:/etc/mysql
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - ${PORT_PMA}:80
+    environment:
+      - PMA_ARBITRARY=1
+
+volumes:
+  mysql_db:
+  mysql_db_config:
+  mysql_test:
+  mysql_config_test:

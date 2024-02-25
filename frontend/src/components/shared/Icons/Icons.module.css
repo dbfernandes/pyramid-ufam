@@ -1,0 +1,10 @@
+div.icon {
+    display: inline;
+}
+.icon .svg {
+    all: inherit;
+}
+.icon .svgColor {
+    fill: currentColor;
+    stroke: currentColor;
+}

@@ -1,0 +1,20 @@
+Conta
+minha conta (editar, excluir) = /conta
+
+Solicitações
+minhas = /solicitacoes
+nova = /solicitacoes/nova
+específica = /solicitacoes/{id}
+
+Alunos
+lista = /usuarios/alunos?page=N
+específico = /usuarios/alunos/{id}
+solicitações = /usuarios/alunos/{id}/solicitacoes
+
+Coordenadores
+lista = /usuarios/coordenadores?page=N
+específico = /usuarios/coordenadores/{id}
+
+Secretários
+lista = /usuarios/secretarios?page=N
+específico = /usuarios/secretarios/{id}

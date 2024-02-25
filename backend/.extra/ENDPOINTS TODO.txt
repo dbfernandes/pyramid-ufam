@@ -1,0 +1,33 @@
+/user-types
+(Find all) [GET] / | out: userType[]
+
+/users
+(Find one) [GET] /{id} | out: user[]
+(Find all) [GET] /?page=1&search=test&type=coordinator | out: user[]
+(Update) [PUT] / | out: user
+(Update profile picture) [PUT] /update-profile-picture |in: picute, out: user
+(Add course/enroll) [POST] /enroll/{courseId} | out: enrollInfo
+(Submit paper) [POST] /submit | in: submitDto, out: submission
+(Find submissions by user) [GET] /{id}/submissions | out: submissions[]
+(Find submission actions by user) [GET] /{id}/history | submissionAction[]
+
+/auth
+(Sign up) [POST] /sign-up | in: signUpDto, out: user
+(Login) [POST] /login | in: loginDto, out: user
+
+/courses
+(Find one) [GET] /{id} | out: course
+(Find all) [GET] /?page=1&search=test | out: courses[]
+(Find activity groups by course) [GET] /{id}/activity-groups | out: activityGroups[]
+(Find activities by course) [GET] /{id}/activities | out: activities[]
+(Find activities by course activity group) [GET] /{id}/activity-groups/{activityGroupId}/activities | out: activities[]
+
+/submissions
+(Find one) [GET] /{id} | out: submission
+(Find all) [GET] / | out: submission[]
+(Update) [PUT] / | in: submission, out: submission
+(Delete) [DELETE] /{id} | out: message
+(Find submission actions by submission) [GET] /{id}/history | out: submissionAction[]
+
+/submission-action-types
+(Find all) [GET] / | out: SubmissionActionTypes

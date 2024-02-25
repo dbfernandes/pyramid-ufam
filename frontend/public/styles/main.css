@@ -1,0 +1,126 @@
+/*---------------------- VARIABLES ----------------------*/
+:root {
+	--primary-color: #22c99f;
+	--primary-color-2: #13cece;
+
+	--primary-color-background: #e8f9f5; /* color-mix(in srgb, var(--primary-color) 10%, transparent) */
+	--primary-color-2-background: #e7fafa; /* color-mix(in srgb, var(--primary-color-2) 10%, transparent) */
+
+	--white-1: #fff;
+	--white-2: #f4f4f8;
+	--white-3: #eee;
+	--white-4: #ddd;
+	--white-5: #ccc;
+
+	--background: var(--white-2);
+
+	--success: #2e9af2;
+	--success-hover: #216faf;
+	--danger: #fc0356;
+	--danger-hover: #e20f44;
+	--warning: #f5e342;
+	--warning-hover: #f5ce22;
+
+	--text-default: #5f7e88;
+
+	--muted: #bbb;
+}
+
+/*---------------------- GENERAL ----------------------*/
+html {
+	height: 100%;
+
+	font-size: 16px;
+
+	scroll-behavior: smooth;
+	overflow-y: overlay;
+	scroll-padding-bottom: 65px;
+}
+
+@media (max-width: 992px) {
+	html {
+		font-size: 14px;
+	}
+}
+
+body {
+	background-color: var(--background);
+	color: var(--text-default);
+	font-family: "Inter";
+	font-weight: 500;
+	padding: 0;
+	margin: 0;
+	position: relative;
+
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center center;
+	overflow-x: hidden;
+}
+body > div#__next {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+#app {
+	width: 100%;
+	max-width: 1920px;
+	position: relative;
+}
+
+#main {
+	width: calc(100% - 325px);
+	position: absolute;
+	top: 10px;
+	right: 15px;
+
+	transition: 0.2s;
+}
+#main.collapsed-sidenav {
+	width: calc(100% - 118px);
+}
+.no-sidenav {
+	width: 100% !important;
+	position: static !important;
+}
+
+.mobile {
+	padding: 15px;
+}
+
+.no-menu {
+	padding: 0;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+::-webkit-scrollbar-track {
+	border-radius: 10px;
+	opacity: 0.1;
+	background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background-color: var(--text-default);
+	border-radius: 10px;
+	transition: 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: #3c5b66;
+	cursor: pointer;
+}
+
+a {
+	text-decoration: none;
+	color: var(--primary-color);
+	transition: 0.3s;
+}
+a:hover {
+	color: var(--primary-color-2);
+}
+
+/*---------------------- UTILS ----------------------*/
+.invert-color {
+	-webkit-filter: invert(100%);
+	filter: invert(100%);
+}

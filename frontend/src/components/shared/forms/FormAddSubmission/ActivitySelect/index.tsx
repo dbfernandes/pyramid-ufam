@@ -1,0 +1,170 @@
+import { useEffect, useState } from "react";
+import axios, { AxiosRequestConfig } from "axios";
+import { useSelector } from "react-redux";
+import { IRootState } from "redux/store";
+import toast from "components/shared/Toast";
+import { slugify } from "utils";
+
+// Shared
+import { ActivityGroupsNames } from "constants/activityGroups.constants";
+import Spinner from "components/shared/Spinner";
+import { Disclaimer } from "components/shared/UserList/styles";
+import ActivityCard from "components/shared/cards/ActivityCard";
+
+// Custom
+import {
+  Wrapper,
+  CardGroup
+} from "./styles";
+
+// Interfaces
+import { IActivity } from "components/shared/cards/ActivityCard";
+import IUserLogged from "interfaces/IUserLogged";
+
+interface IActivitySelectProps {
+  activity: IActivity | null;
+  setActivity: React.Dispatch<React.SetStateAction<IActivity | null>>;
+}
+
+export default function ActivitySelect({
+  activity,
+  setActivity,
+}: IActivitySelectProps) {
+  const [activeGroup, setActiveGroup] = useState<any | null>(null);
+  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
+  useEffect(() => {
+    if (activeGroup != null) {
+      fetchActivities();
+    }
+  }, [activeGroup]);
+
+  // Groups
+  const [groups, setGroups] = useState<any[]>([]);
+  const [fetchingGroups, setFetchingGroups] = useState<boolean>(true);
+  async function fetchGroups() {
+    setFetchingGroups(true);
+
+    const options = {
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        setGroups(response.data.activityGroups);
+        setFetchingGroups(false);
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingGroups(false);
+  }
+
+  // Activities
+  const [activities, setActivities] = useState<any[]>([]);
+  const [fetchingActivities, setFetchingActivities] = useState<boolean>(false);
+  async function fetchActivities() {
+    setFetchingActivities(true);
+
+    const options = {
+      url: `${process.env.api}/courses/${user.selectedCourse ? user.selectedCourse.id : ""}/${ActivityGroupsNames[slugify(activeGroup.name)].slug}/activities`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        setActivities(response.data);
+        setFetchingActivities(false);
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingActivities(false);
+  }
+
+  useEffect(() => {
+    if (activities.length > 0)
+      document
+        .getElementById("activities")!
+        .scrollIntoView({ behavior: "smooth" });
+  }, [activities]);
+
+  return (
+    <Wrapper>
+      <p style={{ color: "var(--muted)", marginBottom: "10px" }}>Em qual grupo sua atividade se enquadra?</p>
+
+      {fetchingGroups
+        ? <Spinner size={"20px"} color={"var(--primary-color)"} />
+        : groups.length > 0
+          ? <CardGroup>
+            {groups.map((group) => (
+              <ActivityCard
+                key={group.name}
+                activity={group}
+                editable={false}
+                onClick={() => {
+                  setActiveGroup(group);
+                  setActivity(null);
+                }}
+                marked={activeGroup && (activeGroup.name == group.name)}
+                blurred={activeGroup && (activeGroup.name != group.name)}
+              />
+            ))}
+          </CardGroup>
+          : <Disclaimer>Não há grupos de atividades vinculados à este curso.</Disclaimer>
+      }
+
+      {
+        fetchingActivities
+          ? <div style={{ marginTop: 30 }}><Spinner size={"20px"} color={"var(--primary-color)"} /></div>
+          : activities.length > 0
+            ? (
+              <>
+                <p style={{ color: "var(--muted)", marginBottom: "10px" }} id="activities">Sua solicitação é para qual tipo de atividade?</p>
+
+                <CardGroup>
+                  {activities?.map((_activity, index) => (
+                    <ActivityCard
+                      key={index}
+                      activity={_activity}
+                      editable={false}
+                      onClick={() => setActivity(_activity)}
+                      marked={activity != null && _activity.id == activity!.id}
+                      blurred={activity != null && _activity.id != activity.id}
+                    />
+                  ))}
+                </CardGroup>
+              </>
+            )
+            : activeGroup && <Disclaimer>Não há atividades para este grupo de atividade neste curso.</Disclaimer>
+      }
+    </Wrapper >
+  );
+}
