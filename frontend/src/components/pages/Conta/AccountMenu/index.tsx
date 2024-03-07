@@ -1,9 +1,4 @@
 import { useState } from "react";
-import {
-  PencilFill,
-  MortarboardFill,
-  KeyFill
-} from "react-bootstrap-icons";
 
 // Shared
 import FormUpdateAccount from "components/shared/forms/FormUpdateAccount";
@@ -29,17 +24,17 @@ export default function AccountMenu({ user }: IAccountMenuProps) {
 
   const tabs = [
     {
-      icon: <PencilFill />,
+      icon: <i className="bi bi-pencil-fill" />,
       title: "Alterar informações pessoais",
       component: <FormUpdateAccount user={user} />
     },
     {
-      icon: <MortarboardFill />,
+      icon: <i className="bi bi-mortarboard-fill" />,
       title: "Cursos vinculados",
       component: <EnrollmentList user={user} />
     },
     {
-      icon: <KeyFill />,
+      icon: <i className="bi bi-key-fill" />,
       title: "Alterar senha",
       component: <FormSendPasswordResetLink user={user} />
     },

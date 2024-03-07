@@ -13,21 +13,19 @@ const Button = styled.button`
 	background-size: 200% auto;
 
 	font-size: 1rem;
+  font-weight: 500;
 	text-shadow: 0px 2px 6px rgba(84, 16, 95, 0.13);
 	line-height: 20px;
 	
 	border-radius: 5px;
-	border: none;
+	border: 1px solid transparent;
 	outline: none;
 	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
 
 	transition: 0.3s;
 
-  svg {
+  & > i {
     margin-right: 10px;
-
-    width: 1.125rem;
-		height: 1.125rem;
   }
 
 	&:hover {
@@ -36,13 +34,18 @@ const Button = styled.button`
 `;
 
 export const ButtonAlt = styled(Button)`
+  border: 1px solid transparent;
   background: var(--white-1);
   color: var(--primary-color);
 
   &:hover {
 		color: var(--primary-color-2);
-		background: color-mix(in srgb, var(--white-5) 10%, transparent);
+		border-color: var(--primary-color-2);
 	}
+`;
+
+export const DangerButton = styled(Button)`
+  background-image: linear-gradient(to right, var(--danger) 0%, #da2d58 51%, var(--danger-hover) 100%);
 `;
 
 export default Button;

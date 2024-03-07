@@ -1,4 +1,5 @@
 import * as nodemailer from "nodemailer";
+import * as jwt from "jsonwebtoken";
 
 export async function sendEmail(email: string, subject: string, text: string) {
 	return await nodemailer
@@ -17,4 +18,27 @@ export async function sendEmail(email: string, subject: string, text: string) {
 			subject: subject,
 			text: text,
 		});
+}
+
+export function getFirstName(name: string) {
+	return name.split(" ")[0];
+}
+
+export function getFirstAndLastName(name: string) {
+	const _name = name.split(" ");
+	return `${_name[0]} ${_name.pop()}`;
+}
+
+export function decodeToken(token: string) {
+	try {
+		console.log(token);
+		const decoded = jwt.verify(
+			token.replace("Bearer ", ""),
+			process.env.JWT_SECRET,
+		);
+		return decoded;
+	} catch (error) {
+		console.error("Failed to decode token:", error);
+		throw new Error("Failed to decode token");
+	}
 }

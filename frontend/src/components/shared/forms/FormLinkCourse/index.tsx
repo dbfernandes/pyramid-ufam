@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { Check2All } from "react-bootstrap-icons";
+
 import { setCourses } from "redux/slicer/user";
 import { store } from "redux/store";
 
@@ -245,7 +245,7 @@ export default function FormLinkCourse({
             <Spinner size={"20px"} color={"var(--black-1)"} />
           ) : (
             <>
-              <Check2All />
+              <i className="bi bi-check2-all" />
               {operation}
             </>
           )}

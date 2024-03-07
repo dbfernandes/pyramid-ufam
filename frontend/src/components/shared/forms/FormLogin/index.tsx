@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import { login, authorize, defaultCourse } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { BoxArrowInRight } from "react-bootstrap-icons";
 import { validateEmail } from "utils";
 
 // Shared
@@ -56,6 +55,7 @@ export default function FormLogin() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Request-Headers": "x-access-token, x-refresh-token"
       },
       data: {
         email: data.email,
@@ -71,8 +71,8 @@ export default function FormLogin() {
         if (response.data.user) {
           dispatch(
             authorize({
-              token: response.headers["X-Access-Token"],
-              refreshToken: response.headers["X-Refresh-Token"],
+              token: response.headers["x-access-token"],
+              refreshToken: response.headers["x-refresh-token"],
             })
           );
           dispatch(login(response.data.user));
@@ -150,7 +150,7 @@ export default function FormLogin() {
             <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
-              <BoxArrowInRight />
+              <i className="bi bi-box-arrow-in-right" />
               Entrar
             </>
           )}

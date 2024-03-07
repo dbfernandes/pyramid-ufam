@@ -9,7 +9,7 @@ import { Disclaimer, Filter } from "components/shared/UserList/styles";
 import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
   ButtonGroup,
-  DangerButton
+  DangerButtonAlt
 } from "components/shared/cards/SubmissionCard/styles";
 
 // Custom
@@ -31,8 +31,7 @@ interface ISubmissionListProps {
   search: string;
   setSearch: (search: string) => void;
 
-  onDelete?: () => void;
-  onUpdateStatus?: () => void;
+  onChange?: () => void;
 
   children?: React.ReactNode;
 }
@@ -45,8 +44,7 @@ export default function MySubmissionList({
   search,
   setSearch,
 
-  onDelete = () => { },
-  onUpdateStatus = () => { },
+  onChange = () => { },
 
   children
 }: ISubmissionListProps) {
@@ -62,9 +60,9 @@ export default function MySubmissionList({
 
         {checkedIds?.length > 0 &&
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButton onClick={() => { alert(`[ALUNO] ${checkedIds.toString()} DELETADOS`) }}>
+            <DangerButtonAlt onClick={() => { alert(`[ALUNO] ${checkedIds.toString()} DELETADOS`) }}>
               <i className="bi bi-x-lg" /> Cancelar selecionados
-            </DangerButton>
+            </DangerButtonAlt>
           </ButtonGroup>
         }
       </HeaderWrapper>
@@ -88,8 +86,7 @@ export default function MySubmissionList({
                 checkedIds={checkedIds}
                 setCheckedIds={setCheckedIds}
                 user={user}
-                onDelete={onDelete}
-                onUpdateStatus={onUpdateStatus}
+                onChange={onChange}
               />
             )}
             {children}

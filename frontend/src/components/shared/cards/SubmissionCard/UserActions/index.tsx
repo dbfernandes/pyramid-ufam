@@ -1,54 +1,69 @@
+import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
+import { StatusSubmissions } from "constants/statusSubmissions.constants";
+import Async from "react-promise";
+import { getFirstAndLastName, getImage, parseDateAndTime } from "utils";
 
 // Shared
+import Spinner from "components/shared/Spinner";
+import toggleModalForm from "components/shared/ModalForm";
 import toast from "components/shared/Toast";
+import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
 import {
   ButtonGroup,
   AcceptButton,
-  DangerButton
+  DangerButtonAlt,
+  InfoButton
 } from "../styles";
+
+// Custom
+import { History, HistoryItem } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
-import { StatusSubmissions } from "constants/statusSubmissions.constants";
-// import { ISubmission } from "interfaces/submission";
 
 interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
-  onDelete?: () => void;
-  onUpdateStatus?: () => void;
+  onChange?: () => void;
 }
 
 export default function UserActions({
   submission,
   user,
-  onDelete = () => { },
-  onUpdateStatus = () => { }
+  onChange = () => { }
 }: IUserActionsProps) {
-  async function fetchUpdateStatus({ userId, id, status }) {
-    // setFetching(true);
+  const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
+  function handleDeletion(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setConfirmDeletion(!confirmDeletion);
+
+    if (confirmDeletion) {
+      // setShowModalRemove(true);
+    }
+  }
+
+  // History
+  const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
+  const [history, setHistory] = useState<any[]>([]);
+  async function fetchHistory() {
+    setFetchingHistory(true);
 
     const options = {
-      url: `${process.env.api}/submissions/${id}/status`,
-      method: "PATCH",
+      url: `${process.env.api}/submissions/${submission.id}`,
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      data: {
-        userId,
-        status: StatusSubmissions[status],
       },
     };
 
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Status atualizado com sucesso.", "success");
-        onUpdateStatus();
+        setHistory(response.data.history);
       })
       .catch((error) => {
-
         const errorMessages = {
           0: "Oops, tivemos um erro. Tente novamente.",
           500: error?.response?.data?.message,
@@ -58,62 +73,105 @@ export default function UserActions({
         toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
       });
 
-    // setFetching(false);
+    setFetchingHistory(false);
   }
 
-  return <>
-    {user?.userTypeId == 1 && (
-      <ButtonGroup>
-        <DangerButton
-          onClick={() =>
-            fetchUpdateStatus({
-              userId: user.id,
-              id: submission.id,
-              status: StatusSubmissions["Rejeitado"],
-            })
-          }>
-          <i className="bi bi-x-lg" /> Rejeitar
-        </DangerButton>
+  useEffect(() => {
+    if (submission.id) {
+      fetchHistory();
+    }
+  }, [submission]);
 
+  const colors = {
+    "aprovou": "var(--success)",
+    "rejeitou": "var(--danger)",
+    "pré-aprovou": "var(--success-hover)",
+    "submeteu": "var(--primary-color)",
+  };
+
+  function SubmissionHistory() {
+    return (
+      <History>
+        {fetchingHistory ? (
+          <Spinner size={"30px"} color={"var(--primary-color)"} />
+        ) : (
+          <>
+            {history.map((item, index) => (
+              <HistoryItem key={index} color={colors[item.action]}>
+                <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+                <p>
+                  <b>{getFirstAndLastName(item.user.name)}</b>{' '}
+                  <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
+                </p>
+              </HistoryItem>
+            ))}
+          </>
+        )}
+      </History>
+    );
+  }
+
+  return (
+    <ButtonGroup>
+      <InfoButton onClick={() =>
+        toggleModalForm(
+          "Histórico",
+          <SubmissionHistory />,
+          "md"
+        )
+      }>
+        <i className="bi bi-clock-history" /> Histórico
+      </InfoButton>
+
+      {(user?.userTypeId == 1 && [1, 2].includes(submission.status)) && (
+        <>
+          <DangerButtonAlt
+            onClick={() =>
+              toggleModalForm(
+                "Rejeitar submissão",
+                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Rejeitado"} />,
+                "md"
+              )
+            }>
+            <i className="bi bi-x-lg" /> Rejeitar
+          </DangerButtonAlt>
+
+          <AcceptButton
+            onClick={() =>
+              toggleModalForm(
+                "Aprovar submissão",
+                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Aprovado"} />,
+                "md"
+              )
+            }>
+            <i className="bi bi-check2-all" /> Aprovar
+          </AcceptButton>
+        </>
+      )}
+      {(user?.userTypeId == 2 && [1].includes(submission.status)) && (
         <AcceptButton
           onClick={() =>
-            fetchUpdateStatus({
-              userId: user.id,
-              id: submission.id,
-              status: StatusSubmissions["Aprovado"],
-            })
-          }>
-          <i className="bi bi-check2-all" /> Aprovar
-        </AcceptButton>
-      </ButtonGroup>
-    )}
-    {user?.userTypeId == 2 && (
-      <ButtonGroup>
-        <AcceptButton
-          onClick={() =>
-            fetchUpdateStatus({
-              userId: user.id,
-              id: submission.id,
-              status: StatusSubmissions["Pré-aprovado"],
-            })
+            toggleModalForm(
+              "Pré-aprovar submissão",
+              <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Pré-aprovado"} />,
+              "md"
+            )
           }>
           <i className="bi bi-check2-all" /> Pré-aprovar
         </AcceptButton>
-      </ButtonGroup>
-    )}
-    {user?.userTypeId == 3 && (
-      <ButtonGroup>
-        <DangerButton
+      )}
+      {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
+        <DangerButtonAlt
           onClick={() => {
-            fetchUpdateStatus({
+            /*fetchUpdateStatus({
               userId: user.id,
               id: submission.id,
               status: StatusSubmissions["Cancelado"],
-            })
+            })*/
           }}>
           <i className="bi bi-x-lg" /> Cancelar
-        </DangerButton>
-      </ButtonGroup>
-    )}
-  </>
+        </DangerButtonAlt>
+      )}
+    </ButtonGroup>
+  );
 }

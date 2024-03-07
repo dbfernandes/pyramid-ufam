@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { InputWrapper, FloatingLabel, AlertLabel, Input } from "./styles";
+import { InputWrapper, FloatingLabel, AlertLabel, Input, CharCount } from "./styles";
 
 // Interface
 interface ITextAreaProps {
@@ -8,6 +8,7 @@ interface ITextAreaProps {
   label: string;
   value: string;
   handleValue: (e) => any;
+  maxLength?: number;
   mask?: any;
   maskChar?: string | null;
   required?: boolean;
@@ -24,6 +25,7 @@ export default function TextArea({
   label,
   value,
   handleValue,
+  maxLength = -1,
   mask = null,
   maskChar = null,
   required = false,
@@ -36,16 +38,18 @@ export default function TextArea({
   children,
   ...props
 }: ITextAreaProps) {
+  const [charCount, setCharCount] = useState<number>(0);
   const [focused, setFocused] = useState(value && value.length != 0);
-  const [verified, setVerified] = useState(false);
-  const [empty, setEmpty] = useState(true);
-  const [valid, setValid] = useState(false);
+  const [verified, setVerified] = useState<boolean>(false);
+  const [empty, setEmpty] = useState<boolean>(true);
+  const [valid, setValid] = useState<boolean>(false);
 
   function handleAndValidate(e) {
     setVerified(true);
 
     let valueTemp = e.target.value;
     handleValue(valueTemp);
+    setCharCount(valueTemp.length);
 
     let emptyTemp = valueTemp.length == 0;
     setEmpty(emptyTemp);
@@ -86,9 +90,15 @@ export default function TextArea({
           onChange={(e) => handleAndValidate(e)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          maxLength={maxLength}
           {...props} />
 
-        <FloatingLabel>{label}</FloatingLabel>
+        <FloatingLabel>
+          {label}
+        </FloatingLabel>
+
+        {maxLength !== -1 && (<CharCount>{charCount}/{maxLength}</CharCount>)}
+
         <AlertLabel>
           {displayAlert
             ? required && empty

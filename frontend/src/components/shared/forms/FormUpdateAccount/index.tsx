@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { getImage, validateCpf, validateEmail } from "utils";
-import { Check2All } from "react-bootstrap-icons";
+
 import Async from "react-promise";
 import { store } from "redux/store";
 import { login, setProfileImage } from "redux/slicer/user";
@@ -174,7 +174,6 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
     await axios.request(options as AxiosRequestConfig).then(
       (response) => {
         dispatch(setProfileImage(response.data.profileImage));
-        console.log(response.data);
 
         toast("Sucesso", "Imagem atualizada com sucesso.");
       }).catch((error) => {
@@ -250,7 +249,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
             <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
-              <Check2All />
+              <i className="bi bi-check2-all" />
               Atualizar
             </>
           )}

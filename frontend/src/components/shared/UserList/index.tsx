@@ -3,7 +3,7 @@ import Link from "next/link";
 
 // Shared
 import { H3 } from "components/shared/Titles";
-import { DangerButton } from "components/shared/cards/SubmissionCard/styles";
+import { DangerButtonAlt } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
@@ -58,9 +58,9 @@ export default function UserList({ title, users = [], loading, page, totalPages,
         <H3>{title}</H3>
 
         {checkedIds?.length > 0
-          ? <DangerButton onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} DESATIVADOS`) }}>
+          ? <DangerButtonAlt onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} DESATIVADOS`) }}>
             <i className="bi bi-x-lg" /> Desativar selecionados
-          </DangerButton>
+          </DangerButtonAlt>
           : <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
             <AddUserLink>
               <i className={`bi bi-${subRoutes[subRoute].icon}`}>

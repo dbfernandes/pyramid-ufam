@@ -90,7 +90,6 @@ export default function Alunos() {
       .then((response) => {
         setUsers(response.data.users);
         setTotalPages(response.data.totalPages);
-        setFetchingUsers(false);
       })
       .catch((error) => {
         const errorMessages = {

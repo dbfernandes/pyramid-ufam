@@ -181,7 +181,7 @@ export default function User({
               <CustomFormCheck
                 inline
                 name="users"
-                value={user?.id}
+                value={user?.id.toString()}
                 label={<CheckboxPreventClick onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />}
                 onClick={(e) => handleCheck(e)}
               />

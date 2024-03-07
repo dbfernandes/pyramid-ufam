@@ -78,11 +78,16 @@ export const Logo = styled.img`
 export const NestedIcon = styled.div`
   position: relative;
 
-  svg:nth-child(2) {
+  i {
+    font-size: 1rem;
+  }
+
+  i:nth-child(2) {
     position: absolute;
     bottom: 0;
     right: -5px;
 
+    font-size: calc(0.75rem - 0.05rem);
     width: 0.75rem;
     height: 0.75rem;
     padding: 0.05rem;
@@ -103,9 +108,8 @@ export const SidenavLink = styled.a`
 	padding: 10px;
 	border-radius: 5px;
 
-	& > svg {
-		min-width: 1rem;
-		min-height: 1rem;
+	& > i {
+    font-size: 1rem;
 	}
 
   & > span {
@@ -121,7 +125,7 @@ export const SidenavLink = styled.a`
 		background: var(--primary-color-2-background);
 
     & > ${NestedIcon} {
-      svg:nth-child(2) {
+      i:nth-child(2) {
         background: var(--primary-color-2-background);
       }
     }
@@ -151,9 +155,8 @@ export const LinkWrapper = styled.div<{ route: string, sidenavOpen: boolean }>`
       align-items: center;
       justify-content: center;
 
-      & > svg {
-        min-width: 1.125rem;
-		    min-height: 1.125rem;
+      & > i {
+        font-size: 1.125rem;
       }
     `}
   }
@@ -163,7 +166,7 @@ export const LinkWrapper = styled.div<{ route: string, sidenavOpen: boolean }>`
     background: var(--primary-color-background) !important;
 
     & > ${NestedIcon} {
-      svg:nth-child(2) {
+      i:nth-child(2) {
         background: var(--primary-color-background);
       }
     }

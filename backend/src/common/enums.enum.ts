@@ -15,7 +15,6 @@ export enum SubmissionActionTypes {
 	PREAPPROVED = "pré-aprovou",
 	APPROVED = "aprovou",
 	REJECTED = "rejeitou",
-	CANCELED = "cancelou",
 	COMMENTED = "comentou",
 	EDITED = "editou",
 }
@@ -25,5 +24,4 @@ export enum Statuses {
 	PREAPPROVED = "Pré-aprovado",
 	APPROVED = "Aprovado",
 	REJECTED = "Rejeitado",
-	CANCELED = "Cancelado",
 }

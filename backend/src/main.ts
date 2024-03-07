@@ -7,6 +7,15 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
 	app.enableCors();
+
+	app.use((req, res, next) => {
+		res.header(
+			"Access-Control-Expose-Headers",
+			"X-Access-Token, X-Refresh-Token",
+		);
+		next();
+	});
+
 	app.use("/files/submissions", express.static("public/files/submissions"));
 	createSwaggerDocument(app);
 

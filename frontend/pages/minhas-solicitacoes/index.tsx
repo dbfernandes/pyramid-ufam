@@ -91,7 +91,6 @@ export default function MinhasSolicitacoes() {
       .then((response) => {
         setSubmissions(response.data.submissions);
         setTotalPages(response.data.totalPages);
-        setFetchingSubmissions(false);
       })
       .catch((error) => {
         const errorMessages = {

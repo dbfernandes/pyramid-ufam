@@ -3,26 +3,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, defaultCourse } from "redux/slicer/user";
-import {
-  ArrowLeftRight,
-  BoxArrowRight,
-  FileEarmarkBarGraph,
-  FileEarmarkPlus,
-  GridFill,
-  ListCheck,
-  MortarboardFill,
-  People,
-  Person,
-  PersonBadge,
-  PersonPlus,
-  PersonWorkspace,
-  PlusSquare,
-  TagFill,
-
-  Lightbulb,
-  PersonVideo3,
-  Search,
-} from "react-bootstrap-icons";
 
 // Shared
 import confirm from "components/shared/ConfirmModal";
@@ -72,22 +52,22 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       title: null,
       links: [
         {
-          icon: <FileEarmarkBarGraph />,
+          icon: <i className="bi bi-file-earmark-bar-graph" />,
           title: "Painel",
           route: "/painel",
         },
         {
-          icon: <Person />,
+          icon: <i className="bi bi-person" />,
           title: "Minha conta",
           route: "/conta",
         },
         {
-          icon: <ArrowLeftRight />,
+          icon: <i className="bi bi-arrow-left-right" />,
           title: "Trocar de curso",
           onClick: () => dispatch(defaultCourse(null)),
         },
         {
-          icon: <BoxArrowRight />,
+          icon: <i className="bi bi-box-arrow-right" />,
           title: "Sair",
           onClick: () =>
             confirm(
@@ -103,21 +83,21 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       title: "Contagem de Horas",
       links: [
         {
-          icon: <FileEarmarkPlus />,
+          icon: <i className="bi bi-file-earmark-plus" />,
           title: "Nova solicitação",
           route: "/minhas-solicitacoes/nova",
           permissions: [3],
         },
         {
-          icon: <ListCheck />,
+          icon: <i className="bi bi-list-check" />,
           title: "Minhas solicitações",
           route: "/minhas-solicitacoes",
           permissions: [3],
         },
         {
           icon: <NestedIcon>
-            <ListCheck />
-            <MortarboardFill />
+            <i className="bi bi-list-check" />
+            <i className="bi bi-mortarboard-fill" />
           </NestedIcon>,
           title: "Solicitações",
           route: "/solicitacoes",
@@ -125,8 +105,8 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         },
         {
           icon: <NestedIcon>
-            <ListCheck />
-            <GridFill />
+            <i className="bi bi-list-check" />
+            <i className="bi bi-grid-fill" />
           </NestedIcon>,
           title: "Solicitações por grupo de atividade",
           route: "/solicitacoes/grupo-atividade",
@@ -134,8 +114,8 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         },
         {
           icon: <NestedIcon>
-            <ListCheck />
-            <TagFill />
+            <i className="bi bi-list-check" />
+            <i className="bi bi-bookmark-fill" />
           </NestedIcon>,
           title: "Solicitações por atividade",
           route: "/solicitacoes/atividade",
@@ -147,22 +127,22 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       title: "Usuários",
       links: [
         {
-          icon: <PersonPlus />,
+          icon: <i className="bi bi-person-plus" />,
           title: "Adicionar usuário",
           route: "/usuarios/novo",
         },
         {
-          icon: <People />,
+          icon: <i className="bi bi-people" />,
           title: "Alunos",
           route: "/usuarios/alunos",
         },
         {
-          icon: <PersonWorkspace />,
+          icon: <i className="bi bi-person-workspace" />,
           title: "Coordenadores",
           route: "/usuarios/coordenadores",
         },
         {
-          icon: <PersonBadge />,
+          icon: <i className="bi bi-person-badge" />,
           title: "Secretários",
           route: "/usuarios/secretarios",
         },
@@ -173,7 +153,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       title: "Cursos",
       links: [
         {
-          icon: <MortarboardFill />,
+          icon: <i className="bi bi-mortarboard-fill" />,
           title: "Listagem de cursos",
           route: "/cursos",
         },
@@ -184,17 +164,17 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       title: "Atividades do curso",
       links: [
         {
-          icon: <PersonVideo3 />,
+          icon: <i className="bi bi-person-video3" />,
           title: "Ensino",
           route: "/atividades/ensino",
         },
         {
-          icon: <Search />,
+          icon: <i className="bi bi-search" />,
           title: "Pesquisa",
           route: "/atividades/pesquisa",
         },
         {
-          icon: <Lightbulb />,
+          icon: <i className="bi bi-lightbulb" />,
           title: "Extensão",
           route: "/atividades/extensao",
         },

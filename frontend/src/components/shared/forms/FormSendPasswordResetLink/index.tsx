@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { Check2All } from "react-bootstrap-icons";
+
 
 // Shared
 import { H5 } from "components/shared/Titles";
@@ -80,7 +80,7 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
             <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
-              <Check2All />
+              <i className="bi bi-check2-all" />
               Enviar link
             </>
           )}

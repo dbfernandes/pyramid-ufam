@@ -1,9 +1,5 @@
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ArrowLeftRight,
-  BoxArrowRight
-} from "react-bootstrap-icons";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import confirm from "components/shared/ConfirmModal";
 import { logout, defaultCourse } from "redux/slicer/user";
@@ -64,7 +60,7 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
                 ""
               )
             }>
-            <BoxArrowRight />
+            <i className="bi bi-box-arrow-right" />
           </Logoff>
         </OverlayTrigger>
       </UserName>
@@ -78,7 +74,7 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
             overlay={<Tooltip>Trocar de curso</Tooltip>}
           >
             <ChangeCourse onClick={() => handleChangeCourse()}>
-              <ArrowLeftRight />
+              <i className="bi bi-arrow-left-right" />
             </ChangeCourse>
           </OverlayTrigger>
         </UserGroup>

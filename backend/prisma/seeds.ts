@@ -51,7 +51,6 @@ async function SubmissionActionTypesSeeds() {
 			{ name: SubmissionActionTypes.PREAPPROVED },
 			{ name: SubmissionActionTypes.APPROVED },
 			{ name: SubmissionActionTypes.REJECTED },
-			{ name: SubmissionActionTypes.CANCELED },
 			{ name: SubmissionActionTypes.COMMENTED },
 			{ name: SubmissionActionTypes.EDITED },
 		],

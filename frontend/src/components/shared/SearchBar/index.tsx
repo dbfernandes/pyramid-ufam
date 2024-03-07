@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 
 // Shared
 import Spinner from "components/shared/Spinner";
@@ -13,30 +14,29 @@ import {
 
 // Interfaces
 interface ISearchBarProps {
-  search: string;
-  setSearch: (search: string) => void;
   placeholder?: string;
 }
 
 export default function SearchBar({
-  search,
-  setSearch,
   placeholder = "Pesquisar...",
 }: ISearchBarProps) {
+  const router = useRouter();
   const inputSearchRef = useRef<HTMLInputElement>(null);
-  const [_search, _setSearch] = useState<string>(search);
+  const [search, setSearch] = useState<string>(router.query.search as string || "");
   const [searchBarFocused, setSearchBarFocused] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
 
   useEffect(() => {
     setFetching(true);
     const debounce = setTimeout(() => {
-      setSearch(_search);
+      router.push({
+        query: { ...router.query, search, page: 1 },
+      });
       setFetching(false);
     }, 1000);
 
     return () => clearTimeout(debounce);
-  }, [_search]);
+  }, [search]);
 
   function focusSearch() {
     if (inputSearchRef.current) {
@@ -51,14 +51,14 @@ export default function SearchBar({
         <ExpandingSearch
           ref={inputSearchRef}
           type="text"
-          value={_search}
+          value={search}
           placeholder={placeholder}
-          onChange={(e) => _setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           onBlur={() => setSearchBarFocused(false)} />
 
         {fetching
           ? <Spinner size={"16px"} color={"var(--text-default)"} />
-          : <SearchButton onClick={() => focusSearch()} unstyleBorder={searchBarFocused || _search.length != 0}>
+          : <SearchButton onClick={() => focusSearch()} unstyledBorder={searchBarFocused || search.length != 0}>
             <i className="bi bi-search" />
           </SearchButton>
         }

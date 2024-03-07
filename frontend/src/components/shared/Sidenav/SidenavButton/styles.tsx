@@ -12,9 +12,8 @@ export const SidenavButtonStyled = styled.button`
 	outline: none;
 	border: none;
 
-	& > svg {
-		min-width: 1rem;
-		min-height: 1rem;
+	& > i {
+    font-size: 1rem;
 	}
 
   & > span {

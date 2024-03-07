@@ -22,6 +22,7 @@ import {
   CollapseDetailsStyled,
   Info,
   FileInfo,
+  ItemWrapper,
 } from "./styles";
 
 // Interfaces
@@ -36,8 +37,7 @@ interface ISubmissionCardProps {
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   user?: IUserLogged;
 
-  onDelete?: Function;
-  onUpdateStatus?: Function;
+  onChange?: Function;
 }
 
 export default function SubmissionCard({
@@ -48,26 +48,13 @@ export default function SubmissionCard({
   setCheckedIds = () => { },
   user,
 
-  onDelete = () => { },
-  onUpdateStatus = () => { },
+  onChange = () => { },
 
   ...props
 }: ISubmissionCardProps) {
   function handleDropdown(e) {
     e.preventDefault();
     e.stopPropagation();
-  }
-
-  const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-  function handleDeletion(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    setConfirmDeletion(!confirmDeletion);
-
-    if (confirmDeletion) {
-      onDelete();
-      // setShowModalRemove(true);
-    }
   }
 
   function handleCheck(e) {
@@ -140,7 +127,7 @@ export default function SubmissionCard({
   }, [submission]);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  function CollapseDetails({ submission, user, onDelete, onUpdateStatus }) {
+  function CollapseDetails({ submission, user, onChange }) {
     return (
       <CollapseDetailsStyled admin={user?.userTypeId !== 3}>
         <div className="grid">
@@ -204,8 +191,7 @@ export default function SubmissionCard({
         <UserActions
           submission={submission}
           user={user}
-          onDelete={onDelete}
-          onUpdateStatus={onUpdateStatus}
+          onChange={onChange}
         />
       </CollapseDetailsStyled>
     );
@@ -295,7 +281,7 @@ export default function SubmissionCard({
       <div></div>
     </Item>
   ) : (
-    <>
+    <ItemWrapper>
       <Item
         onClick={() => setCollapsed(!collapsed)}
         aria-expanded={collapsed}
@@ -303,7 +289,7 @@ export default function SubmissionCard({
         <CustomFormCheck
           inline
           name="submissions"
-          value={submission?.id}
+          value={submission?.id.toString()}
           label={
             <CheckboxPreventClick
               onClick={(e) => {
@@ -327,7 +313,7 @@ export default function SubmissionCard({
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.user?.name}</Tooltip>}>
-              <Column>{submission?.user?.name}</Column>
+              <>{submission?.user?.name}</>
             </OverlayTrigger>
           </Column>
         }
@@ -352,14 +338,14 @@ export default function SubmissionCard({
         <Column>
           <SubmissionStatus status={submission?.status} />
         </Column>
-        <i className={`bi bi-${collapsed ? "chevron-up" : "chevron-down"}`} />
-      </Item>
 
+        <i className={`text-center bi bi-${collapsed ? "chevron-up" : "chevron-down"}`} />
+      </Item>
       <Collapse in={collapsed}>
         <div>
-          <CollapseDetails submission={submission} user={user} onDelete={onDelete} onUpdateStatus={onUpdateStatus} />
+          <CollapseDetails submission={submission} user={user} onChange={onChange} />
         </div>
       </Collapse>
-    </>
+    </ItemWrapper>
   );
 }

@@ -47,6 +47,8 @@ export class CourseController {
 			page: number;
 			limit: number;
 			search: string;
+			activityGroup: string;
+			activity: number;
 		},
 	) {
 		return this.submissionService.findAll({

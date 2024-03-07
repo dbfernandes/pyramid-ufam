@@ -1,6 +1,5 @@
 
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
-import { HouseDoorFill } from "react-bootstrap-icons";
 import Link from "next/link";
 
 // Custom
@@ -17,9 +16,7 @@ export default function Breadcrumb({ isMobile }: IBreadcrumbProps) {
   return (
     <Wrapper>
       <Link href={"/painel"} passHref>
-        <a>
-          <HouseDoorFill />
-        </a>
+        <a><i className="bi bi-house-door-fill" /></a>
       </Link>
 
       {links.length > 0 &&

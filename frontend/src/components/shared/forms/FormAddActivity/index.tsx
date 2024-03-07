@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { Check2All } from "react-bootstrap-icons";
 
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
@@ -150,6 +149,7 @@ export default function FormAddActivity({
           value={description}
           handleValue={handleDescription}
           displayAlert={sent}
+          maxLength={255}
         />
       </div>
 
@@ -165,7 +165,7 @@ export default function FormAddActivity({
             <Spinner size={"20px"} color={"var(--black-1)"} />
           ) : (
             <>
-              <Check2All />
+              <i className="bi bi-check2-all" />
               {operation}
             </>
           )}

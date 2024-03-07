@@ -9,9 +9,8 @@ export enum SubmissionActionIds {
 	"pré-aprovou" = 2,
 	"aprovou" = 3,
 	"rejeitou" = 4,
-	"cancelou" = 5,
-	"editou" = 6,
-	"comentou" = 7,
+	"editou" = 5,
+	"comentou" = 6,
 }
 
 export enum StatusSubmissions {
@@ -19,5 +18,10 @@ export enum StatusSubmissions {
 	"Pré-aprovado" = 2,
 	"Aprovado" = 3,
 	"Rejeitado" = 4,
-	"Cancelado" = 5,
+}
+
+export enum ActivityGroupIds {
+	"ensino" = 1,
+	"pesquisa" = 2,
+	"extensão" = 3,
 }

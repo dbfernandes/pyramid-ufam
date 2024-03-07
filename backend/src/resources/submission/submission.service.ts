@@ -5,6 +5,7 @@ import { CreateSubmissionDto, UpdateSubmissionDto } from "./dto";
 import { UpdateStatusDto } from "./dto/update-status.dto";
 import { SubmissionActionService } from "../submissionAction/submissionAction.service";
 import {
+	ActivityGroupIds,
 	StatusSubmissions,
 	SubmissionActionIds,
 } from "src/common/constants.constants";
@@ -43,12 +44,113 @@ export class SubmissionService {
 		return submission;
 	}
 
-	findById(id: number): Promise<Submission | null> {
-		return this.prisma.submission.findUnique({ where: { id } });
+	async findById(id: number): Promise<any> {
+		const _submission = await this.prisma.submission.findUnique({
+			where: { id },
+			include: {
+				Activity: {
+					include: {
+						CourseActivityGroup: {
+							include: {
+								Course: {
+									select: { id: true, code: true, name: true },
+								},
+								ActivityGroup: {
+									select: { name: true },
+								},
+							},
+						},
+					},
+				},
+				User: {
+					include: {
+						CourseUsers: {
+							include: {
+								Course: {},
+							},
+						},
+					},
+				},
+				SubmissionActions: {
+					include: {
+						SubmissionActionType: true,
+						User: true,
+					},
+
+					orderBy: {
+						createdAt: "desc",
+					},
+				},
+			},
+		});
+
+		if (_submission) {
+			const { User, Activity, SubmissionActions, file } = _submission;
+			const { CourseActivityGroup } = Activity;
+			const { Course, ActivityGroup } = CourseActivityGroup;
+
+			const _userCourse = User.CourseUsers[0];
+
+			const _submissionActions = SubmissionActions.map((action) => {
+				const { User, SubmissionActionType } = action;
+				return {
+					user: {
+						id: User.id,
+						name: User.name,
+						email: User.email,
+					},
+					action: SubmissionActionType.name,
+					details: action.details,
+					createdAt: action.createdAt,
+				};
+			});
+
+			return {
+				user: {
+					id: User.id,
+					name: User.name,
+					email: User.email,
+					cpf: User.cpf,
+					course: _userCourse.Course.name,
+					enrollment: _userCourse.enrollment,
+				},
+				activity: {
+					name: Activity.name,
+					maxWorkload: Activity.maxWorkload,
+					description: Activity.description,
+					course: {
+						id: Course.id,
+						code: Course.code,
+						name: Course.name,
+					},
+					activityGroup: {
+						name: ActivityGroup.name,
+						maxWorkload: CourseActivityGroup.maxWorkload,
+					},
+				},
+				history: _submissionActions,
+				fileUrl: `${process.env.NODE_HOST}${
+					process.env.PORT ? ":" + process.env.PORT : ""
+				}/files/submissions/${file}`,
+				..._submission,
+				Activity: undefined,
+				User: undefined,
+				SubmissionActions: undefined,
+			};
+		}
 	}
 
 	async findAll(query: any): Promise<any> {
-		const { page, limit, search, userId, courseId } = query;
+		const {
+			page,
+			limit,
+			search,
+			userId,
+			courseId,
+			activityGroup,
+			activity,
+			status,
+		} = query;
 		const skip = (page - 1) * limit;
 		let where: any =
 			search && search.trim() !== ""
@@ -62,14 +164,12 @@ export class SubmissionService {
 				: { isActive: true };
 
 		if (userId && !isNaN(parseInt(userId))) {
-			// where["userId"] = parseInt(userId);
 			where = {
 				...where,
 				userId: parseInt(userId),
 			};
 		}
 		if (courseId && !isNaN(parseInt(courseId))) {
-			// where["Activity"]["CourseActivityGroup"]["Course"]["id"] = parseInt(courseId);
 			where = {
 				...where,
 				Activity: {
@@ -78,6 +178,31 @@ export class SubmissionService {
 							id: parseInt(courseId),
 						},
 					},
+				},
+			};
+		}
+		if (activityGroup && activityGroup.length > 0) {
+			where = {
+				...where,
+				Activity: {
+					CourseActivityGroup: {
+						activityGroupId: ActivityGroupIds[activityGroup],
+					},
+				},
+			};
+		}
+		if (activity && !isNaN(parseInt(activity))) {
+			where = {
+				...where,
+				activityId: parseInt(activity),
+			};
+		}
+		if (status && status.length > 0) {
+			const statusArray = status.split("-").map(Number);
+			where = {
+				...where,
+				status: {
+					in: statusArray,
 				},
 			};
 		}
@@ -166,7 +291,7 @@ export class SubmissionService {
 	}
 
 	async updateStatus(id: number, updateStatusDto: UpdateStatusDto) {
-		const { status, userId } = updateStatusDto;
+		const { status, userId, details } = updateStatusDto;
 
 		const statusId = StatusSubmissions[status];
 
@@ -180,6 +305,7 @@ export class SubmissionService {
 			userId,
 			submissionId: submission.id,
 			submissionActionTypeId: statusId,
+			details,
 		});
 
 		return submission;

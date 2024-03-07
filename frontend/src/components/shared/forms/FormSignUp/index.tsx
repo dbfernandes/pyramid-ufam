@@ -5,7 +5,7 @@ import { login, authorize, defaultCourse } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { validateCpf, validateEmail } from "utils";
-import { Check2All } from "react-bootstrap-icons";
+
 
 // Shared
 import Form from "components/shared/Form";
@@ -351,7 +351,7 @@ export default function FormSignUp() {
           <Spinner size={"20px"} color={"var(--white-1)"} />
         ) : (
           <>
-            <Check2All />
+            <i className="bi bi-check2-all" />
             Cadastrar
           </>
         )}

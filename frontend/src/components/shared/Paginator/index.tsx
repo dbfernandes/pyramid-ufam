@@ -31,8 +31,9 @@ export default function Paginator({ page, totalPages }: IPaginatorProps) {
 
   const router = useRouter();
   function setPage(page) {
-    router.query.page = page;
-    router.push(router);
+    router.push({
+      query: { ...router.query, page },
+    });
   }
 
   return (

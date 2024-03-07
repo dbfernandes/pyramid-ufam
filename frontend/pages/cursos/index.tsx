@@ -90,7 +90,6 @@ export default function Cursos() {
       .then((response) => {
         setCourses(response.data.courses);
         setTotalPages(response.data.totalPages);
-        setFetchingCourses(false);
       })
       .catch((error) => {
         const errorMessages = {

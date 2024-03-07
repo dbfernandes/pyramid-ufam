@@ -61,7 +61,6 @@ export default function ActivitySelect({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setGroups(response.data.activityGroups);
-        setFetchingGroups(false);
       })
       .catch((error) => {
         const errorMessages = {
@@ -94,7 +93,6 @@ export default function ActivitySelect({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setActivities(response.data);
-        setFetchingActivities(false);
       })
       .catch((error) => {
         const errorMessages = {

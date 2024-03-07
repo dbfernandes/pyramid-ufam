@@ -90,7 +90,6 @@ export default function Coordenadores() {
       .then((response) => {
         setUsers(response.data.users);
         setTotalPages(response.data.totalPages);
-        setFetchingUsers(false);
       })
       .catch((error) => {
         const errorMessages = {

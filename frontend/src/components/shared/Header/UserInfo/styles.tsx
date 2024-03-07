@@ -19,9 +19,8 @@ export const Logoff = styled.button`
 	outline: none;
 	border: none;
 
-	& > svg {
-		width: 1.25rem;
-		height: 1.25rem;
+	& > i {
+    font-size: 1.25rem;
 	}
 
 	transition: 0.3s;
@@ -88,8 +87,7 @@ export const UserGroup = styled.div`
 `;
 
 export const ChangeCourse = styled(Logoff)`
-	& > svg {
-		width: 0.825rem;
-		height: 0.825rem;
-	}
+  & > i {
+    font-size: 0.825rem;
+  }
 `;

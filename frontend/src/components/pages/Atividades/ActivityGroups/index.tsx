@@ -48,7 +48,6 @@ export default function ActivityGroups({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setGroups(response.data.activityGroups);
-        setFetchingGroups(false);
       })
       .catch((error) => {
         const errorMessages = {

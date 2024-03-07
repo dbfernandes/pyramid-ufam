@@ -13,7 +13,12 @@ import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { UserTypeIds } from "src/common/constants.constants";
 import { EnrollDto } from "./dto/enroll.dto";
-import { sendEmail } from "../utils";
+import {
+	decodeToken,
+	getFirstAndLastName,
+	getFirstName,
+	sendEmail,
+} from "../utils";
 import { AuthService } from "../auth/auth.service";
 import * as fs from "fs";
 import * as sharp from "sharp";
@@ -30,7 +35,7 @@ export class UserService {
 		private authService: AuthService,
 	) {}
 
-	async addUser(addUserDto: AddUserDto): Promise<any> {
+	async addUser(addUserDto: AddUserDto, token: string): Promise<any> {
 		if (await this.findByEmail(addUserDto.email)) {
 			console.log("Email already in use");
 			throw new BadRequestException("Email already in use");
@@ -73,13 +78,12 @@ export class UserService {
 		} = addUserDto;
 
 		// Registering user
-		const user = await this.create({
+		const userCreated = await this.create({
 			..._addUserDto,
 			cpf: addUserDto.cpf ? addUserDto.cpf.replace(/\D/g, "") : null,
 			password: password ? password : null,
 			userTypeId: UserTypeIds[userType],
 		});
-		console.log("User created");
 
 		if (userType === UserTypes.STUDENT) {
 			// Registering course
@@ -87,14 +91,14 @@ export class UserService {
 				courseId,
 				enrollment,
 				startYear,
-				userId: user.id,
+				userId: userCreated.id,
 			});
 		} else {
 			// Registering courses
 			coursesIds.forEach(async (_courseId) => {
 				await this.courseUserService.create({
 					courseId: _courseId,
-					userId: user.id,
+					userId: userCreated.id,
 					enrollment: null,
 					startYear: null,
 				});
@@ -103,32 +107,37 @@ export class UserService {
 
 		// Setting password reset token and sending welcome email
 		const resetToken = await this.authService.createPasswordResetToken(
-			user.email,
+			userCreated.email,
 			48,
 		);
-		await this.sendWelcomeEmail(user /* HERE */, user, resetToken); // Fix to get user who called the endpoint
 
-		const courses = await this.courseService.findCoursesByUser(user.id);
+		const userResponsible = await this.findById((decodeToken(token) as any).id);
+		await this.sendWelcomeEmail(userResponsible, userCreated, resetToken); // Fix to get user who called the endpoint
 
-		return { user: { ...user, courses } };
+		const courses = await this.courseService.findCoursesByUser(userCreated.id);
+
+		return { user: { ...userCreated, courses } };
 	}
 
 	async sendWelcomeEmail(
-		user: any,
+		userResponsible: any,
 		userCreated: any,
 		resetToken: string,
 	): Promise<void> {
-		// Ajustar nome para pegar apenas o primeiro nome
-		// Ajustar texto do email
-
-		const userType = UserTypeIds[user.userTypeId].toLowerCase();
+		const userType = UserTypeIds[userResponsible.userTypeId].toLowerCase();
 		const userCreatedType = UserTypeIds[userCreated.userTypeId].toLowerCase();
 
 		await sendEmail(
 			userCreated.email,
 			"Bem vindo ao Pyramid!",
-			`Olá, ${userCreated.name}! Você foi adicionado como ${userCreatedType} na nossa plataforma pelo ${userType} ${user.name}. 
-      Para configurar sua senha, clique no link a seguir: ${process.env.FRONTEND_URL}/conta/senha?token=${resetToken}`,
+			`Olá, ${getFirstName(
+				userCreated.name,
+			)}! Você foi adicionado como ${userCreatedType} na nossa plataforma pelo ${userType} ${getFirstAndLastName(
+				userResponsible.name,
+			)}. 
+      Para configurar sua senha e começar a gerenciar suas atividades extracurriculares, clique no link a seguir: ${
+				process.env.FRONTEND_URL
+			}/conta/senha?token=${resetToken}`,
 		);
 	}
 

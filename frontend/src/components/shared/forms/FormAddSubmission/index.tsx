@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRouter } from "next/router";
-import { Check2All } from "react-bootstrap-icons";
+
 import { useSelector } from "react-redux";
 
 // Shared
@@ -163,7 +163,7 @@ export default function FormAddSubmission() {
                 <Spinner size={"20px"} color={"var(--white-1)"} />
               ) : (
                 <>
-                  <Check2All />
+                  <i className="bi bi-check2-all" />
                   Enviar
                 </>
               )}

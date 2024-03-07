@@ -19,18 +19,12 @@ export const Wrapper = styled.div`
       margin: 0;
     }
 
-    svg {
-      width: 1.25rem;
-      height: 1.25rem;
+    i {
+      font-size: 1.25rem;
     }
 
     @media (max-width: 992px) {
       font-size: 0.9rem;
-
-      svg {
-        width: 1rem;
-        height: 1rem;
-      }
     }
   }
 `;

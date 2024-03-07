@@ -100,6 +100,6 @@ export class IsStatus implements ValidatorConstraintInterface {
 	}
 
 	defaultMessage() {
-		return "Invalid status (must be either 'Pendente', 'Pré-aprovado', 'Aprovado', 'Rejeitado', 'Cancelado')";
+		return "Invalid status (must be either 'Pendente', 'Pré-aprovado', 'Aprovado', 'Rejeitado')";
 	}
 }

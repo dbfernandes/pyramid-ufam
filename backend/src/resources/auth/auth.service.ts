@@ -17,7 +17,7 @@ import { LoginDto } from "./dto";
 import { Response } from "express";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
-import { sendEmail } from "../utils";
+import { getFirstName, sendEmail } from "../utils";
 
 @Injectable()
 export class AuthService {
@@ -75,31 +75,24 @@ export class AuthService {
 	async login(loginDto: LoginDto, res: Response) {
 		const user = await this.validateUser(loginDto.email, loginDto.password);
 		const courses = await this.courseService.findCoursesByUser(user.id);
+
+		// Generating tokens
 		this.setAuthorizationHeader(user, res);
 
-		return {
-			user: {
-				...user,
-				courses,
-			},
-		};
+		return res.json({ user: { ...user, courses } });
 	}
 
 	async signUp(signUpDto: SignUpDto, res: Response) {
 		if (await this.userService.findByEmail(signUpDto.email)) {
-			console.log("Email repetido");
 			throw new BadRequestException("Email already in use");
 		}
 		if (signUpDto.cpf && (await this.userService.findByCpf(signUpDto.cpf))) {
-			console.log("CPF repetido");
 			throw new BadRequestException("CPF already in use");
 		}
 		if (!(await this.courseService.findById(signUpDto.courseId))) {
-			console.log("Curso não encontrado");
 			throw new BadRequestException("Course not found");
 		}
 		if (await this.courseUserService.findByEnrollment(signUpDto.enrollment)) {
-			console.log("Matrícula não utilizada");
 			throw new BadRequestException("Enrollment already in use");
 		}
 
@@ -107,7 +100,6 @@ export class AuthService {
 
 		// Registering user
 		const hashedPassword = bcrypt.hashSync(_signUpDto.password, 10);
-		console.log("Senha hasheada");
 
 		const user = await this.userService.create({
 			..._signUpDto,
@@ -115,7 +107,6 @@ export class AuthService {
 			password: hashedPassword,
 			userTypeId: UserTypeIds[UserTypes.STUDENT], // Sign up can only be done by students
 		});
-		console.log("Usuário criado");
 
 		// Registering course
 		await this.courseUserService.create({
@@ -124,7 +115,6 @@ export class AuthService {
 			startYear,
 			userId: user.id,
 		});
-		console.log("Curso registrado");
 
 		const courses = await this.courseService.findCoursesByUser(user.id);
 
@@ -137,7 +127,7 @@ export class AuthService {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password, ...result } = user;
 
-		return { user: { ...result, courses } };
+		return res.json({ user: { ...result, courses } });
 	}
 
 	async batchSignUp(/*signUpDtos: SignUpDto[]*/) {
@@ -172,14 +162,15 @@ export class AuthService {
 	}
 
 	async sendWelcomeEmail(user: any) {
-		// Ajustar nome para pegar apenas o primeiro nome
-		// Ajustar texto do email
-
 		await sendEmail(
 			user.email,
 			"Bem vindo ao Pyramid!",
-			`Olá, ${user.name}! Você se cadastrou recentemente na nossa plataforma. 
-      Para acessar a plataforma, clique no link a seguir: ${process.env.FRONTEND_URL}`,
+			`Olá, ${getFirstName(
+				user.name,
+			)}! Você foi cadastrado com sucesso no Pyramid, uma plataforma do ICOMP para gerenciar suas atividades extracurriculares.
+      Para acessar a plataforma, clique no link a seguir: ${
+				process.env.FRONTEND_URL
+			}`,
 		);
 	}
 

@@ -27,6 +27,11 @@ export default function SolicitacoesAtividade() {
 
   // Setting links used in breadcrumb
   useEffect(() => {
+    const url = router.asPath;
+    if (!url.includes("page") || !url.includes("search") || !url.includes("status")) {
+      router.push(`${url.split("?")[0]}?page=1&search=&status=1`);
+    }
+
     setLinks([
       {
         title: "Solicitações",
@@ -55,40 +60,33 @@ export default function SolicitacoesAtividade() {
   // Submissions
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [fetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>(router.query.search ? router.query.search.toString() : "");
-  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
-  const [totalPages, setTotalPages] = useState<number>(0);
 
   // Fetching submissions
-  useEffect(() => {
-    if (router.query) {
-      const _page = parseInt(router.query.page as string);
-      const _search = router.query.search as string;
+  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
+  const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
+  const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
 
-      if (_page && page !== _page) setPage(_page);
-      if (_search && search !== _search) setSearch(_search);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+  useEffect(() => {
+    const _page = parseInt(router.query.page as string);
+    const _search = router.query.search as string;
+    const _status = router.query.status as string;
+
+    if (_page !== undefined && _status !== undefined && _search !== undefined) {
+      setPage(_page);
+      setSearch(_search);
+      setStatus(_status);
+
+      fetchSubmissions(_page, _search, _status);
     }
   }, [router]);
 
-  useEffect(() => {
-    if (search.length > 0 || search !== router.query.search) setPage(0);
-  }, [search]);
-
-  useEffect(() => {
-    if (page == 0) {
-      router.replace(`/solicitacoes/atividade/${activityId}?page=1&search=${search}`);
-      return;
-    }
-    if (page > 0) {
-      fetchSubmissions();
-    }
-  }, [page]);
-
-  async function fetchSubmissions() {
+  async function fetchSubmissions(_page, _search, _status) {
     setFetchingSubmissions(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${page}&limit=15&search=${search}&activity=${activityId}`,
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activity=${activityId}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -100,7 +98,6 @@ export default function SolicitacoesAtividade() {
       .then((response) => {
         setSubmissions(response.data.submissions);
         setTotalPages(response.data.totalPages);
-        setFetchingSubmissions(false);
       })
       .catch((error) => {
         const errorMessages = {
@@ -127,14 +124,9 @@ export default function SolicitacoesAtividade() {
             subTitle="Atividade"
             submissions={submissions}
             loading={fetchingSubmissions}
-
-            page={page}
             totalPages={totalPages}
-            search={search}
-            setSearch={setSearch}
 
-            onDelete={fetchSubmissions}
-            onUpdateStatus={fetchSubmissions}
+            onChange={() => fetchSubmissions(page, search, status)}
           />
         </Wrapper>
       ) : (

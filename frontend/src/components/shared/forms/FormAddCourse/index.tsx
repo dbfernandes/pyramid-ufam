@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { Check2All } from "react-bootstrap-icons";
+
 
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
@@ -251,7 +251,7 @@ export default function FormAddCourse({
             <Spinner size={"20px"} color={"var(--black-1)"} />
           ) : (
             <>
-              <Check2All />
+              <i className="bi bi-check2-all" />
               {operation}
             </>
           )}

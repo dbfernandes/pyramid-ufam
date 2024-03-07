@@ -78,7 +78,6 @@ export default function Atividades() {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setActivities(response.data);
-        setFetchingActivities(false);
       })
       .catch((error) => {
         const errorMessages = {

@@ -84,7 +84,9 @@ export function getFirstName(name: string) {
 
 export function getFirstAndLastName(name: string) {
   const _name = name.split(" ");
-  return `${_name[0]} ${_name.pop()}`;
+  if (_name.length > 1) return `${_name[0]} ${_name.pop()}`;
+
+  return name;
 }
 
 export function validateCpf(cpf) {
@@ -166,6 +168,12 @@ export function getImage(file: string) {
 export function parseDate(date: string) {
   const dateArr = date.split("T")[0].split("-");
   return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]}`;
+}
+
+export function parseDateAndTime(date: string) {
+  const dateArr = date.split("T")[0].split("-");
+  const timeArr = date.split("T")[1].split(":");
+  return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]} às ${timeArr[0]}:${timeArr[1]}`;
 }
 
 export function range(start: number, end: number) {

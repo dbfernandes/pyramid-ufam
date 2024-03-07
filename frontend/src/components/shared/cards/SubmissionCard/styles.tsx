@@ -2,19 +2,41 @@ import styled from "styled-components";
 import { FormCheck } from "react-bootstrap";
 import Button, { ButtonAlt } from "components/shared/Button";
 
+export const ItemWrapper = styled.div`
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid transparent;
+  border-radius: 5px;
+
+  transition: 0.3s;
+
+  &:hover {
+		border-color: rgba(0, 0, 0, 0.2);
+	}
+`;
+
+export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
+	background-color: var(--white-1);
+	padding: 10px 20px 15px;
+	border-radius: 0 0 5px 5px;
+
+	& > .grid {
+		display: grid;
+		grid-template-columns: 3fr 3fr 3fr;
+		grid-gap: 30px;
+	}
+`;
+
 export const Item = styled.div`
 	width: 100%;
 	display: grid;
-	grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 30px;
+	grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 45px;
 	column-gap: 15px;
 	align-items: center;
 
 	margin-top: 5px;
 	padding: 0;
-	padding-right: 15px;
-	border: 1px solid transparent;
 
-	${props => !props.header ? "background-color: var(--white-2);" : "margin: 0; margin-bottom: -5px;"}
+	${props => !props.header && "margin: 0; margin-bottom: -5px;"}
 	border-radius: 5px;
 	transition: 0.3s;
 
@@ -23,23 +45,6 @@ export const Item = styled.div`
 	.id, .name {
 		transition: 0.3s;
 	}
-
-	${props => !props.header && `
-		&:hover {
-			border-color: rgba(0, 0, 0, 0.2);
-			background-color: var(--white-2);
-		}
-	`}
-
-	${props => props.collapsed && `
-		border-radius: 5px 5px 0 0;
-		border-color: rgba(0, 0, 0, 0.2);
-		border-bottom-width: 0;
-
-		&:hover {
-			background-color: var(--white-3);
-		}
-	`}
 `;
 
 export const Column = styled.div`
@@ -119,25 +124,10 @@ export const ColoredBar = styled.div<{ color: string }>`
 	background-color: ${({ color }) => coloredBarColors[color]};
 `;
 
-export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
-	background-color: var(--white-2);
-	padding: 10px 20px 15px;
-	border-radius: 0 0 5px 5px;
-
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	border-top-width: 0;
-
-	& > .grid {
-		display: grid;
-		grid-template-columns: ${({ admin }) => admin ? "2fr 2fr 1fr" : "2fr 1fr 2fr"};
-		grid-gap: 30px;
-	}
-`;
-
 export const Info = styled.div`
 	padding: 20px;
-	background-color: var(--white-3);
-	border: 1px solid var(--white-5);
+	
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
 	border-radius: 5px;
 
 	& > h6 {
@@ -217,42 +207,30 @@ export const ButtonGroup = styled.div`
 
 export const AcceptButton = styled(Button)`
 	width: fit-content;
-	display: flex;
-	align-items: center;
-
+  padding: 8px 26px;
 	margin-left: 10px;
-
-	& > i {
-		margin-right: 10px;
-	}
 `;
 
-export const DangerButton = styled(Button)`
-	width: fit-content;
-	display: flex;
-	align-items: center;
+export const InfoButton = styled(ButtonAlt)`
+  width: fit-content;
+  padding: 8px 26px;
 
-  background-image: linear-gradient(to right, var(--danger) 0%, #da2d58 51%, var(--danger-hover) 100%);
+  color: var(--success);
 
-	& > i {
-		margin-right: 10px;
+	&:hover {
+    color: var(--success-hover);
+		border-color: var(--success-hover);
 	}
 `;
 
 export const DangerButtonAlt = styled(ButtonAlt)`
 	width: fit-content;
-	display: flex;
-	align-items: center;
+  padding: 8px 26px;
 
-	color: var(--danger);
-	border-color: var(--danger);
-
-	& > i {
-		margin-right: 10px;
-	}
+  color: var(--danger);
 
 	&:hover {
-		color: var(--danger-hover);
-		background: color-mix(in srgb, var(--danger-hover) 10%, transparent);
+    color: var(--danger-hover);
+		border-color: var(--danger-hover);
 	}
 `;

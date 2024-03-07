@@ -13,6 +13,7 @@ import {
 	UsePipes,
 	ValidationPipe,
 	Put,
+	Headers,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { SubmissionService } from "../submission/submission.service";
@@ -71,8 +72,11 @@ export class UserController {
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
-	addUser(@Body() addUserDto: AddUserDto) {
-		return this.userService.addUser(addUserDto);
+	addUser(
+		@Body() addUserDto: AddUserDto,
+		@Headers("Authorization") token: string,
+	) {
+		return this.userService.addUser(addUserDto, token);
 	}
 
 	@Post(":id/enroll/:courseId")

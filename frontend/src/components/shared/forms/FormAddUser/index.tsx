@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRouter } from "next/router";
 import { validateCpf, validateEmail } from "utils";
-import { Check2All } from "react-bootstrap-icons";
+
 import { slugify } from "utils";
 
 // Shared
@@ -18,12 +18,18 @@ import { H3 } from "components/shared/Titles";
 import SelectCustom from "components/shared/SelectCustom";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import toast from "components/shared/Toast";
+import { useSelector } from "react-redux";
 
 // Custom
 import { CustomForm, FormSection } from "./styles";
 import UserTypeSelect from "./UserTypeSelect";
 
+// Interfaces
+import { IRootState } from "redux/store";
+import IUserLogged from "interfaces/IUserLogged";
+
 export default function FormAddUser() {
+  const user = useSelector<IRootState, IUserLogged>(state => state.user);
   const userTypeSlugs = ["", "coordenador", "secretario", "aluno"];
   const router = useRouter();
 
@@ -204,6 +210,7 @@ export default function FormAddUser() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `${user.token}`,
       },
       data: data,
     };
@@ -374,7 +381,7 @@ export default function FormAddUser() {
                 <Spinner size={"20px"} color={"var(--white-1)"} />
               ) : (
                 <>
-                  <Check2All />
+                  <i className="bi bi-check2-all" />
                   Adicionar
                 </>
               )}

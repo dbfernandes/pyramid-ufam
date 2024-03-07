@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div`
   width: 100%;
-  margin-top: 15px;
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -23,7 +22,7 @@ export const ExpandingSearchWrapper = styled.div`
   }
 `;
 
-export const SearchButton = styled.button<{ unstyleBorder: boolean }>`
+export const SearchButton = styled.button<{ unstyledBorder: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -43,7 +42,7 @@ export const SearchButton = styled.button<{ unstyleBorder: boolean }>`
   transition: 0.3s;
 
   &:hover {
-    border-color: ${({ unstyleBorder }) => unstyleBorder ? "transparent" : "rgba(0,0,0,0.2)"};
+    border-color: ${({ unstyledBorder }) => unstyledBorder ? "transparent" : "rgba(0,0,0,0.2)"};
   }
 `;
 
