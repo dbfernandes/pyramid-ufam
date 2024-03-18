@@ -22,7 +22,7 @@ export default function SearchBar({
 }: ISearchBarProps) {
   const router = useRouter();
   const inputSearchRef = useRef<HTMLInputElement>(null);
-  const [search, setSearch] = useState<string>(router.query.search as string || "");
+  const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
   const [searchBarFocused, setSearchBarFocused] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
 

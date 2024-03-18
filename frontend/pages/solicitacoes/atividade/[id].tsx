@@ -29,7 +29,7 @@ export default function SolicitacoesAtividade() {
   useEffect(() => {
     const url = router.asPath;
     if (!url.includes("page") || !url.includes("search") || !url.includes("status")) {
-      router.push(`${url.split("?")[0]}?page=1&search=&status=1`);
+      router.replace(`${url.split("?")[0]}?page=1&search=&status=1`);
     }
 
     setLinks([

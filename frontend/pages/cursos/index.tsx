@@ -27,7 +27,7 @@ export default function Cursos() {
   useEffect(() => {
     const url = router.asPath;
     if (!url.includes("page") || !url.includes("search")) {
-      router.push(`${url.split("?")[0]}?page=1&search=`);
+      router.replace(`${url.split("?")[0]}?page=1&search=`);
     }
 
     setLinks([
@@ -71,7 +71,6 @@ export default function Cursos() {
   }, [router]);
 
   async function fetchCourses(_page, _search) {
-    alert("bbb");
     setFetchingCourses(true);
 
     const options = {
@@ -109,25 +108,13 @@ export default function Cursos() {
 
       {loaded ? (
         <Wrapper>
-          {fetchingCourses
-            ? (
-              <div
-                style={{
-                  height: "100vh",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Spinner size={"30px"} color={"var(--primary-color)"} />
-              </div>
-            )
-            : <Courses
-              courses={courses}
-              totalPages={totalPages}
-              onChange={() => fetchCourses(page, search)}
-            />
-          }
+          <Courses
+            courses={courses}
+            loading={fetchingCourses}
+            totalPages={totalPages}
+
+            onChange={() => fetchCourses(page, search)}
+          />
         </Wrapper>
       ) : (
         <div

@@ -13,6 +13,7 @@ import Paginator from "components/shared/Paginator";
 import { useMediaQuery } from "react-responsive";
 import FloatingMenu from "components/shared/FloatingMenu";
 import toast from "components/shared/Toast";
+import Spinner from "components/shared/Spinner";
 
 // Custom
 import { CardGroup } from "../styles";
@@ -26,6 +27,7 @@ import IUserLogged from "interfaces/IUserLogged";
 
 interface ICoursesProps {
   courses: ICourse[];
+  loading: boolean;
   totalPages: number;
 
   onChange?: () => void;
@@ -33,6 +35,7 @@ interface ICoursesProps {
 
 export default function Courses({
   courses,
+  loading,
   totalPages,
 
   onChange = () => { }
@@ -93,29 +96,40 @@ export default function Courses({
           placeholder="Pesquisar cursos" />
       </Filter>
 
-      {courses?.length > 0 ?
-        (<>
-          <CardGroup>
-            {courses.map((course) => (
-              <CourseCard
-                key={course.id}
-                /*link={`cursos/${course.id}`}*/
-                course={course}
-                editable={true}
-                onDelete={() => fetchDelete(course.id)}
-                onChange={onChange}
-              />
-            ))}
-          </CardGroup>
-        </>)
-        : (<Disclaimer>Não há cursos cadastrados.</Disclaimer>)
+      {loading
+        ? <div
+          style={{
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spinner size={"30px"} color={"var(--primary-color)"} />
+        </div>
+        : courses?.length > 0 ?
+          (<>
+            <CardGroup>
+              {courses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  // link={`cursos/${course.id}`} 
+                  course={course}
+                  editable={true}
+                  onDelete={() => fetchDelete(course.id)}
+                  onChange={onChange}
+                />
+              ))}
+            </CardGroup>
+          </>)
+          : (<Disclaimer>Não há cursos cadastrados.</Disclaimer>)
       }
 
       {courses?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
 
-      {isMobile && (
+      {/*isMobile && (
         <FloatingMenu onClickAdd={() => { }} />
-      )}
+      )*/}
     </DefaultWrapper>
   );
 }

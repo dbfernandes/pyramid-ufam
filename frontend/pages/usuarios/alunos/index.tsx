@@ -23,12 +23,15 @@ export default function Alunos() {
 
   // Setting links used in breadcrumb
   useEffect(() => {
+    const url = router.asPath;
+    if (!url.includes("page") || !url.includes("search")) {
+      router.replace(`${url.split("?")[0]}?page=1&search=`);
+    }
+
     setLinks([
       { title: "Usuários" },
       { title: "Alunos" },
     ]);
-
-    fetchUsers();
   }, []);
 
   // Verifying user
@@ -45,40 +48,33 @@ export default function Alunos() {
   // Users
   const [users, setUsers] = useState<any[]>([]);
   const [fetchingUsers, setFetchingUsers] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>(router.query.search ? router.query.search.toString() : "");
-  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
-  const [totalPages, setTotalPages] = useState<number>(0);
 
   // Fetching users
-  useEffect(() => {
-    if (router.query) {
-      const _page = parseInt(router.query.page as string);
-      const _search = router.query.search as string;
+  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
+  const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
+  const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
 
-      if (_page && page !== _page) setPage(_page);
-      if (_search && search !== _search) setSearch(_search);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+  useEffect(() => {
+    const _page = parseInt(router.query.page as string);
+    const _search = router.query.search as string;
+    const _status = router.query.status as string;
+
+    if (_page !== undefined && _status !== undefined && _search !== undefined) {
+      setPage(_page);
+      setSearch(_search);
+      setStatus(_status);
+
+      fetchUsers(_page, _search, _status);
     }
   }, [router]);
 
-  useEffect(() => {
-    if (search.length > 0 || search !== router.query.search) setPage(0);
-  }, [search]);
-
-  useEffect(() => {
-    if (page == 0) {
-      router.replace(`/usuarios/alunos?page=1&search=${search}`);
-      return;
-    }
-    if (page > 0) {
-      fetchUsers();
-    }
-  }, [page]);
-
-  async function fetchUsers() {
+  async function fetchUsers(_page, _search, _status) {
     setFetchingUsers(true);
 
     const options = {
-      url: `${process.env.api}/users?type=aluno&page=${page}&limit=15&search=${search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}`,
+      url: `${process.env.api}/users?type=aluno&page=${_page}&limit=15&search=${_search}&status=${_status}courseId=${user.selectedCourse ? user.selectedCourse.id : ""}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
