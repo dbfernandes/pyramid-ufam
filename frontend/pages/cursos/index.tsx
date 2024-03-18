@@ -25,6 +25,11 @@ export default function Cursos() {
 
   // Setting links used in breadcrumb
   useEffect(() => {
+    const url = router.asPath;
+    if (!url.includes("page") || !url.includes("search")) {
+      router.push(`${url.split("?")[0]}?page=1&search=`);
+    }
+
     setLinks([
       {
         title: "Cursos",
@@ -46,39 +51,31 @@ export default function Cursos() {
   // Courses
   const [courses, setCourses] = useState<any[]>([]);
   const [fetchingCourses, setFetchingCourses] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>(router.query.search ? router.query.search.toString() : "");
-  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
-  const [totalPages, setTotalPages] = useState<number>(0);
 
   // Fetching courses
-  useEffect(() => {
-    if (router.query) {
-      const _page = parseInt(router.query.page as string);
-      const _search = router.query.search as string;
+  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
+  const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
 
-      if (_page && page !== _page) setPage(_page);
-      if (_search && search !== _search) setSearch(_search);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+  useEffect(() => {
+    const _page = parseInt(router.query.page as string);
+    const _search = router.query.search as string;
+
+    if (_page !== undefined && _search !== undefined) {
+      setPage(_page);
+      setSearch(_search);
+
+      fetchCourses(_page, _search);
     }
   }, [router]);
 
-  useEffect(() => {
-    if (search.length > 0 || search !== router.query.search) setPage(0);
-  }, [search]);
-
-  useEffect(() => {
-    if (page == 0) {
-      router.replace(`/cursos?page=1&search=${search}`);
-    }
-    if (page > 0) {
-      fetchCourses();
-    }
-  }, [page]);
-
-  async function fetchCourses() {
+  async function fetchCourses(_page, _search) {
+    alert("bbb");
     setFetchingCourses(true);
 
     const options = {
-      url: `${process.env.api}/courses?page=${page}&limit=16&search=${search}`,
+      url: `${process.env.api}/courses?page=${_page}&limit=16&search=${_search}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -127,11 +124,8 @@ export default function Cursos() {
             )
             : <Courses
               courses={courses}
-              page={page}
               totalPages={totalPages}
-              search={search}
-              setSearch={setSearch}
-              onChange={fetchCourses}
+              onChange={() => fetchCourses(page, search)}
             />
           }
         </Wrapper>

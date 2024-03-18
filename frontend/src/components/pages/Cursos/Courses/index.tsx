@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import axios, { AxiosRequestConfig } from "axios";
 
@@ -25,14 +26,18 @@ import IUserLogged from "interfaces/IUserLogged";
 
 interface ICoursesProps {
   courses: ICourse[];
-  page: number;
   totalPages: number;
-  search: string;
-  setSearch: (search: string) => void;
-  onChange?: Function;
+
+  onChange?: () => void;
 }
 
-export default function Courses({ courses, page, totalPages, search, setSearch, onChange = () => { } }: ICoursesProps) {
+export default function Courses({
+  courses,
+  totalPages,
+
+  onChange = () => { }
+}: ICoursesProps) {
+  const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const isMobile = useMediaQuery({ maxWidth: 992 });
 
@@ -83,19 +88,18 @@ export default function Courses({ courses, page, totalPages, search, setSearch, 
         )}
       </HeaderWrapper>
 
+      <Filter>
+        <SearchBar
+          placeholder="Pesquisar cursos" />
+      </Filter>
+
       {courses?.length > 0 ?
         (<>
-          <Filter>
-            <SearchBar
-              search={search}
-              setSearch={setSearch}
-              placeholder="Pesquisar cursos" />
-          </Filter>
           <CardGroup>
             {courses.map((course) => (
               <CourseCard
                 key={course.id}
-                link={`cursos/${course.id}`}
+                /*link={`cursos/${course.id}`}*/
                 course={course}
                 editable={true}
                 onDelete={() => fetchDelete(course.id)}
@@ -107,7 +111,7 @@ export default function Courses({ courses, page, totalPages, search, setSearch, 
         : (<Disclaimer>Não há cursos cadastrados.</Disclaimer>)
       }
 
-      {courses?.length > 0 && <Paginator page={page} totalPages={totalPages} />}
+      {courses?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
 
       {isMobile && (
         <FloatingMenu onClickAdd={() => { }} />

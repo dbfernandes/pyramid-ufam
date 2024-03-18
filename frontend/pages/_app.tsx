@@ -7,7 +7,8 @@ import { store, persistor } from "redux/store";
 import { useRouter } from "next/router";
 import BreadcrumbContextProvider, { useBreadcrumb } from "contexts/BreadcrumbContext";
 import { checkAuthentication } from "utils";
-import { useMediaQuery } from 'react-responsive';
+import { useMediaQuery } from "react-responsive";
+import NextNProgress from "nextjs-progressbar";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -79,6 +80,7 @@ function App(props: any) {
       </noscript>
 
       <SessionWatcher />
+      <NextNProgress color={"linear-gradient(to right, var(--primary-color) 0%, #2ddabd 51%, var(--primary-color-2) 100%)"} />
 
       {loaded && <>
         {(!disabledMenusRoutes.includes(router.pathname.replace("/", ""))

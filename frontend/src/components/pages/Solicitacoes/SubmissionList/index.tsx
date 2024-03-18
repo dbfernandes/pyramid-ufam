@@ -112,23 +112,21 @@ export default function SubmissionList({
       </Filter>
 
       {submissions?.length > 0
-        ? <>
-          <ListStyled>
-            <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-            {submissions?.length > 0 && submissions.map((submission, index) =>
-              <SubmissionCard
-                key={index}
-                submission={submission}
-                loading={loading}
-                checkedIds={checkedIds}
-                setCheckedIds={setCheckedIds}
-                user={user}
-                onChange={onChange}
-              />
-            )}
-            {children}
-          </ListStyled>
-        </>
+        ? <ListStyled>
+          <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
+          {submissions?.length > 0 && submissions.map((submission, index) =>
+            <SubmissionCard
+              key={index}
+              submission={submission}
+              loading={loading}
+              checkedIds={checkedIds}
+              setCheckedIds={setCheckedIds}
+              user={user}
+              onChange={onChange}
+            />
+          )}
+          {children}
+        </ListStyled>
         : <Disclaimer>Não há solicitações disponíveis. Tente alterar o filtro.</Disclaimer>
       }
 

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 // Shared
 import { H4 } from "components/shared/Titles";
 import toggleModalForm from "components/shared/ModalForm";
-import FormAddCourse from "components/shared/forms/FormAddCourse";
+import FormEditCourse from "components/shared/forms/FormAddCourse";
 
 // Custom
 import {
@@ -95,7 +95,7 @@ export default function CourseCard({
                   onClick={() =>
                     toggleModalForm(
                       `Editar curso (${course.name})`,
-                      <FormAddCourse user={user} course={course} onChange={onChange} />,
+                      <FormEditCourse user={user} course={course} onChange={onChange} />,
                       "md"
                     )
                   }
