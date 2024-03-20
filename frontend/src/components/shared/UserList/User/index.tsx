@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import Link from "next/link";
 import { formatCpf } from "utils";
 
@@ -128,6 +128,13 @@ export default function User({
     return user?.cpf ? formatCpf(user?.cpf) : "-"
   }
 
+  // Activity group progress bar
+  function CustomProgressBar({ current, max }) {
+    const progress = (current / max) * 100;
+    // https://react-bootstrap.netlify.app/docs/components/progress/#stacked
+    return <ProgressBar now={progress} animated label={`${current}/${max}`} variant="success" />
+  }
+
   return (
     header
       ? <Item header={true} student={subRoute === "alunos"}>
@@ -175,29 +182,29 @@ export default function User({
           </Column>
           <div></div>
         </Item>
-        : <Link href={`/usuarios/${subRoute}/${user?.id}`} passHref>
-          <a>
-            <Item student={subRoute === "alunos"}>
-              <CustomFormCheck
-                inline
-                name="users"
-                value={user?.id.toString()}
-                label={<CheckboxPreventClick onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />}
-                onClick={(e) => handleCheck(e)}
-              />
+        : (//<Link href={`/usuarios/${subRoute}/${user?.id}`} passHref><a>
+          <Item Item student={subRoute === "alunos"}>
+            <CustomFormCheck
+              inline
+              name="users"
+              value={user?.id.toString()}
+              label={<CheckboxPreventClick onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />}
+              onClick={(e) => handleCheck(e)}
+            />
 
-              <Column>
-                <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
-                  <span>{user?.name}</span>
-                </OverlayTrigger>
-              </Column>
+            <Column>
+              <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
+                <span>{user?.name}</span>
+              </OverlayTrigger>
+            </Column>
 
-              {subRoute == "alunos"
+            {
+              subRoute == "alunos"
                 ? <>
                   <Column>{getEnrollment(user)}</Column>
-                  <Column>240/240</Column>
-                  <Column>240/240</Column>
-                  <Column>240/240</Column>
+                  <Column><CustomProgressBar current={80} max={240} /></Column>
+                  <Column><CustomProgressBar current={160} max={240} /></Column>
+                  <Column><CustomProgressBar current={240} max={240} /></Column>
                 </>
                 : <>
                   <Column>
@@ -228,31 +235,30 @@ export default function User({
                     </OverlayTrigger>
                   </Column>
                 </>
-              }
+            }
 
-              <Column>
-                <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
-              </Column>
+            <Column>
+              <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
+            </Column>
 
-              <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDeletion(false)}>
-                <Options variant="secondary">
-                  <i className="bi bi-three-dots-vertical" />
-                </Options>
+            <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDeletion(false)}>
+              <Options variant="secondary">
+                <i className="bi bi-three-dots-vertical" />
+              </Options>
 
-                <DropdownMenu renderOnMount={true}>
-                  <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
-                    <i className="bi bi-pencil-fill"></i> Editar
-                  </DropdownItem>
-                  <DropdownItem onClick={(e) => handleDeletion(e)} accent={"var(--danger)"}>
-                    {confirmDeletion
-                      ? <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
-                      : <><i className="bi bi-trash-fill"></i> Desativar</>
-                    }
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </Item>
-          </a>
-        </Link>
+              <DropdownMenu renderOnMount={true}>
+                <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
+                  <i className="bi bi-pencil-fill"></i> Editar
+                </DropdownItem>
+                <DropdownItem onClick={(e) => handleDeletion(e)} accent={"var(--danger)"}>
+                  {confirmDeletion
+                    ? <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                    : <><i className="bi bi-trash-fill"></i> Desativar</>
+                  }
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </Item >
+        )
   );
 }

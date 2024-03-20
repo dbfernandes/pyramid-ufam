@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 // Shared
 import { H3 } from "components/shared/Titles";

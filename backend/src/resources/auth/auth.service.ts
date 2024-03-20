@@ -79,7 +79,7 @@ export class AuthService {
 		// Generating tokens
 		this.setAuthorizationHeader(user, res);
 
-		return res.json({ user: { ...user, courses } });
+		return { user: { ...user, courses } };
 	}
 
 	async signUp(signUpDto: SignUpDto, res: Response) {
@@ -127,7 +127,7 @@ export class AuthService {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password, ...result } = user;
 
-		return res.json({ user: { ...result, courses } });
+		return { user: { ...result, courses } };
 	}
 
 	async batchSignUp(/*signUpDtos: SignUpDto[]*/) {

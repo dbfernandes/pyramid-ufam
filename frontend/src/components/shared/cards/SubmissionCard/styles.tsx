@@ -214,6 +214,7 @@ export const AcceptButton = styled(Button)`
 export const InfoButton = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
+  margin-left: 10px;
 
   color: var(--success);
 
@@ -226,6 +227,7 @@ export const InfoButton = styled(ButtonAlt)`
 export const DangerButtonAlt = styled(ButtonAlt)`
 	width: fit-content;
   padding: 8px 26px;
+  margin-left: 10px;
 
   color: var(--danger);
 

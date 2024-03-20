@@ -13,7 +13,7 @@ export const Item = styled.div<{ student: boolean }>`
 	padding-right: 15px;
 	border: 1px solid transparent;
 
-	${props => !props.header ? "background-color: var(--white-2);" : "margin: 0; margin-bottom: -5px;"}
+	${props => !props.header ? "background-color: var(--white-1); box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);" : "margin: 0; margin-bottom: -5px;"}
 	border-radius: 5px;
 	transition: 0.3s;
 
@@ -24,7 +24,7 @@ export const Item = styled.div<{ student: boolean }>`
 	${props => !props.header && `
 		&:hover {
 			border-color: rgba(0, 0, 0, 0.2);
-			background-color: var(--white-2);
+			
 		}
 	`}
 `;

@@ -24,8 +24,8 @@ export default function Alunos() {
   // Setting links used in breadcrumb
   useEffect(() => {
     const url = router.asPath;
-    if (!url.includes("page") || !url.includes("search")) {
-      router.replace(`${url.split("?")[0]}?page=1&search=`);
+    if (!url.includes("page") || !url.includes("search") || !url.includes("status")) {
+      router.replace(`${url.split("?")[0]}?page=1&search=&status=1`);
     }
 
     setLinks([
@@ -110,14 +110,14 @@ export default function Alunos() {
         <Wrapper>
           <UserList
             title={"Alunos"}
+            subRoute={"alunos"}
+            users={users}
             courseId={user.selectedCourse ? user.selectedCourse.id : null}
             loading={fetchingUsers}
-            page={page}
             totalPages={totalPages}
-            users={users}
-            subRoute={"alunos"}
-            search={search}
-            setSearch={setSearch} />
+
+            onChange={() => fetchUsers(page, search, status)}
+          />
         </Wrapper>
       ) : (
         <div

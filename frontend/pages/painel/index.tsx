@@ -8,6 +8,9 @@ import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
 
+// Custom
+import Dashboard from "components/pages/Painel/Dashboard";
+
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
@@ -46,6 +49,7 @@ export default function Home() {
 
       {loaded
         ? <Wrapper>
+          <Dashboard />
         </Wrapper>
         : <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Spinner size={"30px"} color={"var(--primary-color)"} />
