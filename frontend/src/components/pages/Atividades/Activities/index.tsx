@@ -37,7 +37,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -81,8 +81,9 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
           {activities.map((activity) => (
             <ActivityCard
               key={activity.id}
-              link={`/atividades/${slugify(title)}/${activity.id}`}
+              // link={`/atividades/${slugify(title)}/${activity.id}`}
               activity={activity}
+              user={user}
               groupSlug={groupSlug}
               editable={true}
               onDelete={() => fetchDelete(activity.id)}

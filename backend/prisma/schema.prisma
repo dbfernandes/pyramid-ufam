@@ -37,6 +37,8 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime? @updatedAt
 
+  searchHash        String?   @db.Text
+
   UserType          UserType           @relation(fields: [userTypeId], references: [id])
   CourseUsers       CourseUser[]
   Submissions       Submission[]
@@ -46,13 +48,15 @@ model User {
 }
 
 model Course {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique @db.VarChar(100)
-  code      String    @unique @db.VarChar(10)
-  periods   Int
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(100)
+  code        String    @unique @db.VarChar(10)
+  periods     Int
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  searchHash  String?   @db.Text
 
   CourseUsers          CourseUser[]
   CourseActivityGroups CourseActivityGroup[]
@@ -114,6 +118,8 @@ model Activity {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime? @updatedAt
 
+  searchHash            String?   @db.Text
+
   CourseActivityGroup CourseActivityGroup @relation(fields: [courseActivityGroupId], references: [id])
   Submissions         Submission[]
 
@@ -133,6 +139,8 @@ model Submission {
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime? @updatedAt
+
+  searchHash       String?   @db.Text
 
   User              User               @relation(fields: [userId], references: [id])
   Activity          Activity           @relation(fields: [activityId], references: [id])

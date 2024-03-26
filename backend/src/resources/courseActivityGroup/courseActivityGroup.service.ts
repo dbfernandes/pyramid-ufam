@@ -10,29 +10,34 @@ import {
 export class CourseActivityGroupService {
 	constructor(private prisma: PrismaService) {}
 
-	create(
+	async create(
 		createCourseActivityGroupDto: CreateCourseActivityGroupDto,
 	): Promise<CourseActivityGroup> {
-		return this.prisma.courseActivityGroup.create({
+		return await this.prisma.courseActivityGroup.create({
 			data: createCourseActivityGroupDto,
 		});
 	}
 
-	findAll(): Promise<CourseActivityGroup[]> {
-		return this.prisma.courseActivityGroup.findMany({
+	async findAll(): Promise<CourseActivityGroup[]> {
+		return await this.prisma.courseActivityGroup.findMany({
 			where: { isActive: true },
 		});
 	}
 
-	findById(id: number): Promise<CourseActivityGroup | null> {
-		return this.prisma.courseActivityGroup.findUnique({
+	async findById(id: number): Promise<CourseActivityGroup | null> {
+		return await this.prisma.courseActivityGroup.findUnique({
 			where: { id, isActive: true },
 		});
 	}
 
-	findByCourseId(courseId: number): Promise<CourseActivityGroup[]> {
-		return this.prisma.courseActivityGroup.findMany({
+	async findByCourseId(
+		courseId: number,
+	): Promise<CourseActivityGroup[] | any[]> {
+		return await this.prisma.courseActivityGroup.findMany({
 			where: { courseId, isActive: true },
+			include: {
+				ActivityGroup: true,
+			},
 		});
 	}
 

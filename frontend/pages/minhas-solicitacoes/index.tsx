@@ -81,6 +81,7 @@ export default function MinhasSolicitacoes() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

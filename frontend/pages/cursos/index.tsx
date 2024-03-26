@@ -78,6 +78,7 @@ export default function Cursos() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

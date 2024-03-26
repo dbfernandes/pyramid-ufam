@@ -1,30 +1,60 @@
+import Link from "next/link";
+
 // Shared
 import Spinner from "components/shared/Spinner";
 
 // Custom
 import {
   Wrapper,
-  TextAlertStyled
+  TextAlertStyled,
+  CallToAction
 } from "./styles";
 
 // Interface
 interface ITextAlertProps {
-  children: React.ReactNode;
   displayIcon?: boolean;
   type?: "success" | "error" | "loading";
+  link?: string;
+  children: React.ReactNode;
 }
 
 export default function TextAlert({
-  children,
   displayIcon = false,
-  type = "success"
+  type = "success",
+  link,
+  children,
 }: ITextAlertProps) {
+  const icons = {
+    success: {
+      icon: "check-circle-fill",
+      color: "var(--primary-color)"
+    },
+    error: {
+      icon: "x-circle-fill",
+      color: "var(--danger)"
+    },
+    warning: {
+      icon: "exclamation-circle-fill",
+      color: "var(--warning)"
+    },
+  }
   return (
     displayIcon
-      ? <Wrapper>
-        {type == "loading" && <Spinner size="4rem" color="white" />}
-        {(type == "success" || type == "error") && <i className={`bi bi-${type == "success" ? "check-circle-fill" : "x-circle-fill"}`} />}
+      ? <Wrapper accent={icons[type].color}>
+        {type === "loading"
+          ? <Spinner size="4rem" color="white" />
+          : <i className={`bi bi-${icons[type].icon}`} />
+        }
         <TextAlertStyled>{children}</TextAlertStyled>
+        {type !== "loading" && link &&
+          <Link href={link}>
+            <a>
+              <CallToAction>
+                Voltar para a página inicial
+              </CallToAction>
+            </a>
+          </Link>
+        }
       </Wrapper>
       : <TextAlertStyled>{children}</TextAlertStyled>
   )

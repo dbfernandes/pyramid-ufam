@@ -2,8 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRouter } from "next/router";
 
-import { useSelector } from "react-redux";
-
 // Shared
 import { FormAlert } from "components/shared/Form/styles";
 import FormPage from "components/shared/FormPage";
@@ -20,14 +18,24 @@ import { ParagraphTitle, RangeWrapper } from "./styles";
 
 // Interfaces
 import { IActivity } from "components/shared/cards/ActivityCard";
-import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+interface IFormComponentProps {
+  user: IUserLogged;
+  submission?: any;
+  onChange?: Function;
+  handleCloseModalForm?: Function;
+}
 
-export default function FormAddSubmission() {
+export default function FormAddSubmission({
+  user,
+  submission: submissionProp = null,
+  onChange = () => { },
+  handleCloseModalForm,
+}: IFormComponentProps) {
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
 
   // Inputs and validators
+  const [activeGroup, setActiveGroup] = useState<any | null>(null);
   const [activity, setActivity] = useState<IActivity | null>(null);
   useEffect(() => {
     if (activity != null) {
@@ -57,6 +65,16 @@ export default function FormAddSubmission() {
   const handleWorkload = (value) => {
     setWorkload(value);
   };
+
+  // Loading submission prop
+  useEffect(() => {
+    if (submissionProp != null) {
+      setActiveGroup(submissionProp.activity?.activityGroup);
+      setActivity(submissionProp.activity);
+      setDescription(submissionProp.description);
+      setWorkload(submissionProp.workload);
+    }
+  }, [submissionProp]);
 
   // Form state
   const [sent, setSent] = useState<boolean>(false);
@@ -91,7 +109,7 @@ export default function FormAddSubmission() {
       url: `${process.env.api}/users/${user.id}/submit`,
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: data,
     };
@@ -117,7 +135,13 @@ export default function FormAddSubmission() {
 
   return (
     <FormPage title="Nova solicitação" fullscreen={true}>
-      {<ActivitySelect activity={activity} setActivity={setActivity} />}
+      <ActivitySelect
+        activeGroup={activeGroup}
+        setActiveGroup={setActiveGroup}
+        activity={activity}
+        setActivity={setActivity}
+        user={user}
+      />
 
       {activity != null && (
         <>

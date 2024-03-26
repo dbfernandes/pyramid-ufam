@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Link from "next/link";
-import { useSelector } from "react-redux";
 
 // Shared
 import { H4 } from "components/shared/Titles";
@@ -21,10 +20,8 @@ import {
 } from "./styles";
 import { GroupIcons } from "constants/groupIcons.constants.";
 
-import { IRootState } from "redux/store";
-import IUserLogged from "interfaces/IUserLogged";
-
 // Interfaces
+import IUserLogged from "interfaces/IUserLogged";
 export interface IActivity {
   id?: number;
   name: string;
@@ -34,6 +31,7 @@ export interface IActivity {
 
 interface IActivityCard {
   activity: IActivity;
+  user: IUserLogged;
   groupSlug?: string;
   link?: string;
   onClick?: Function;
@@ -49,6 +47,7 @@ interface IActivityCard {
 
 export default function ActivityCard({
   activity,
+  user,
   groupSlug = "",
   link,
   onClick,
@@ -66,9 +65,8 @@ export default function ActivityCard({
     e.stopPropagation();
   }
 
-  function CardBody({ activity, marked, blurred, groupSlug }: IActivityCard) {
+  function CardBody({ activity, user, marked, blurred, groupSlug }: IActivityCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-    const user = useSelector<IRootState, IUserLogged>((state) => state.user);
 
     function handleDeletion(e) {
       e.preventDefault();
@@ -144,14 +142,14 @@ export default function ActivityCard({
   return link ? (
     <Link href={link} passHref>
       <UnstyledLink>
-        <CardBody activity={activity} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+        <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
       </UnstyledLink>
     </Link>
   ) : onClick ? (
     <UnstyledButton onClick={onClick} type="button">
-      <CardBody activity={activity} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+      <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
     </UnstyledButton>
   ) : (
-    <CardBody activity={activity} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+    <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
   );
 }

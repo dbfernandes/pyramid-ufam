@@ -92,7 +92,7 @@ export default function FormAddActivity({
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: data,
     };

@@ -22,7 +22,7 @@ export default function SolicitacoesAtividade() {
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [loaded, setLoaded] = useState(false);
-  const [activityId, setActivityId] = useState<string>(router.query.id as string);
+  const activityId = router.query.id as string;
   const { setLinks } = useBreadcrumb();
 
   // Setting links used in breadcrumb
@@ -41,9 +41,11 @@ export default function SolicitacoesAtividade() {
         route: "/solicitacoes/atividade",
       },
       {
-        title: "Atividade", // atualizar ao fazer fetch do curso
+        title: "",
       },
     ]);
+
+    fetchActivity();
   }, []);
 
   // Verifying user
@@ -90,6 +92,7 @@ export default function SolicitacoesAtividade() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -112,16 +115,64 @@ export default function SolicitacoesAtividade() {
     setFetchingSubmissions(false);
   }
 
+  // Fetching activity details
+  const [activity, setActivity] = useState<any>({});
+  const [fetchingActivity, setFetchingActivity] = useState<boolean>(true);
+
+  async function fetchActivity() {
+    setFetchingActivity(true);
+
+    const options = {
+      url: `${process.env.api}/activities/${activityId}`,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        const _activity = response.data;
+        setActivity(_activity);
+
+        setLinks([
+          {
+            title: "Solicitações",
+          },
+          {
+            title: "Atividades",
+            route: "/solicitacoes/atividade",
+          },
+          {
+            title: _activity.name,
+          },
+        ]);
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingActivity(false);
+  }
+
   return (
     <>
       <Head>
-        <title>Solicitações - {process.env.title}</title>
+        <title>Solicitações {!fetchingActivity && `(${activity.name})`} - {process.env.title}</title>
       </Head>
 
       {loaded ? (
         <Wrapper>
           <SubmissionList
-            subTitle="Atividade"
+            subTitle={!fetchingActivity ? activity.name : ""}
             submissions={submissions}
             loading={fetchingSubmissions}
             totalPages={totalPages}

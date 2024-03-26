@@ -166,7 +166,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       method: "PUT",
       headers: {
         "Content-Type": "multipart/form-data",
-        // "Authorization": `Bearer ${user.token}`
+        "Authorization": `Bearer ${user.token}`
       },
       data: data
     };
@@ -194,7 +194,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
 
-        <ProfilePicture>
+        {/*<ProfilePicture>
           <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
 
           <div className="editImage">
@@ -208,7 +208,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
               />
             </label>
           </div>
-        </ProfilePicture>
+        </ProfilePicture>*/}
 
         <TextInput
           label={"Nome completo*"}

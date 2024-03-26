@@ -1,17 +1,16 @@
+import { TileWrapper } from "./styles";
+
 // Interfaces
 interface ITileProps {
-  title: string;
-  value: string;
+  children?: React.ReactNode;
 }
 
 export default function Tile({
-  title,
-  value
+  children
 }: ITileProps) {
   return (
-    <div className="tile">
-      <div className="tile__title">{title}</div>
-      <div className="tile__value">{value}</div>
-    </div>
+    <TileWrapper>
+      {children}
+    </TileWrapper>
   );
 }

@@ -72,6 +72,7 @@ export default function Atividades() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

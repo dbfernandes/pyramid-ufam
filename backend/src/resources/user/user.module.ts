@@ -8,6 +8,7 @@ import { SubmissionModule } from "../submission/submission.module";
 import { CourseModule } from "../course/course.module";
 import { CourseUserModule } from "../courseUser/courseUser.module";
 import { AuthModule } from "../auth/auth.module";
+import { CourseActivityGroupModule } from "../courseActivityGroup/courseActivityGroup.module";
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from "../auth/auth.module";
 		SubmissionModule,
 		CourseModule,
 		CourseUserModule,
+		CourseActivityGroupModule,
 	],
 	exports: [UserService],
 	controllers: [UserController],

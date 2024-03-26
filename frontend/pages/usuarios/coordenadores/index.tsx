@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
+import { parseUserActiveParam } from "utils";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -74,10 +75,11 @@ export default function Coordenadores() {
     setFetchingUsers(true);
 
     const options = {
-      url: `${process.env.api}/users?type=coordenador&page=${_page}&limit=15&search=${_search}&status=${_status}courseId=${user.selectedCourse ? user.selectedCourse.id : ""}`,
+      url: `${process.env.api}/users?type=coordenador&page=${_page}&limit=15&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}${parseUserActiveParam(_status)}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

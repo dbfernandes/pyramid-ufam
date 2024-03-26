@@ -53,7 +53,7 @@ export default function NovaSolicitacao() {
 
       {loaded
         ? <Wrapper>
-          <FormAddSubmission />
+          <FormAddSubmission user={user} />
         </Wrapper>
         : <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Spinner size={"30px"} color={"var(--primary-color)"} />

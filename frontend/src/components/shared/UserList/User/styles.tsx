@@ -4,16 +4,19 @@ import { Dropdown, FormCheck } from "react-bootstrap";
 export const Item = styled.div<{ student: boolean }>`
 	width: 100%;
 	display: grid;
-	grid-template-columns: 60px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr" : "2fr 2fr 2fr 1fr"} 85px 30px;
+	grid-template-columns: 60px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr" : "3fr 3fr 3fr"} 85px 30px;
 	column-gap: 15px;
 	align-items: center;
 
-	margin-top: 5px;
+	margin-bottom: 15px;
 	padding: 0;
 	padding-right: 15px;
 	border: 1px solid transparent;
 
-	${props => !props.header ? "background-color: var(--white-1); box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);" : "margin: 0; margin-bottom: -5px;"}
+	${props => !props.header
+    ? `background-color: var(--white-1);
+      box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);`
+    : "margin: 0; margin-bottom: -5px;"}
 	border-radius: 5px;
 	transition: 0.3s;
 
@@ -24,7 +27,6 @@ export const Item = styled.div<{ student: boolean }>`
 	${props => !props.header && `
 		&:hover {
 			border-color: rgba(0, 0, 0, 0.2);
-			
 		}
 	`}
 `;
@@ -50,6 +52,21 @@ export const Column = styled.div`
 
   & > .placeholder {
     color: var(--white-5);
+  }
+`;
+
+export const CopyToClipboardSpan = styled.span`
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    color: var(--primary-color-2);
+  }
+
+  & > i {
+    margin-left: 5px;
+    font-size: 0.75rem;
+    vertical-align: text-top;
   }
 `;
 

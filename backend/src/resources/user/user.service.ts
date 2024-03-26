@@ -11,7 +11,8 @@ import { UserTypeService } from "../userType/userType.service";
 import { UserTypes } from "src/common/enums.enum";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
-import { UserTypeIds } from "src/common/constants.constants";
+import { CourseActivityGroupService } from "../courseActivityGroup/courseActivityGroup.service";
+import { StatusSubmissions, UserTypeIds } from "src/common/constants.constants";
 import { EnrollDto } from "./dto/enroll.dto";
 import {
 	decodeToken,
@@ -29,6 +30,7 @@ export class UserService {
 		private prisma: PrismaService,
 		private userTypeService: UserTypeService,
 		private courseService: CourseService,
+		private courseActivityGroupService: CourseActivityGroupService,
 		private courseUserService: CourseUserService,
 
 		@Inject(forwardRef(() => AuthService))
@@ -37,24 +39,20 @@ export class UserService {
 
 	async addUser(addUserDto: AddUserDto, token: string): Promise<any> {
 		if (await this.findByEmail(addUserDto.email)) {
-			console.log("Email already in use");
 			throw new BadRequestException("Email already in use");
 		}
 		if (addUserDto.cpf && (await this.findByCpf(addUserDto.cpf))) {
-			console.log("CPF already in use");
 			throw new BadRequestException("CPF already in use");
 		}
 		if (
 			addUserDto.courseId &&
 			!(await this.courseService.findById(addUserDto.courseId))
 		) {
-			console.log("Course not found");
 			throw new BadRequestException("Course not found");
 		}
 		if (addUserDto.coursesIds) {
 			for (const _courseId of addUserDto.coursesIds) {
 				if (!(await this.courseService.findById(_courseId))) {
-					console.log(`Course (id: ${_courseId}) not found`);
 					throw new BadRequestException(`Course (id: ${_courseId}) not found`);
 				}
 			}
@@ -63,7 +61,6 @@ export class UserService {
 			addUserDto.enrollment &&
 			(await this.courseUserService.findByEnrollment(addUserDto.enrollment))
 		) {
-			console.log("Enrollment already in use");
 			throw new BadRequestException("Enrollment already in use");
 		}
 
@@ -227,18 +224,17 @@ export class UserService {
 	}
 
 	async findAll(query: any): Promise<any> {
-		const { page, limit, search, type, courseId } = query;
+		const { page, limit, search, type, courseId, active } = query;
 		const skip = (page - 1) * limit;
 		const where =
 			search && search.trim() !== ""
 				? {
-						isActive: true,
 						OR: [
 							{ name: { contains: search } },
 							{ email: { contains: search } },
 						],
 					}
-				: { isActive: true };
+				: {};
 
 		if (type) {
 			const userTypesArray = Object.values(UserTypes).map((value) =>
@@ -256,6 +252,10 @@ export class UserService {
 			};
 		}
 
+		if (active !== undefined && active !== null) {
+			where["isActive"] = active == "true";
+		}
+
 		const [users, totalUsers] = await this.prisma.$transaction([
 			this.prisma.user.findMany({
 				where,
@@ -268,12 +268,65 @@ export class UserService {
 							Course: { select: { id: true, name: true } },
 						},
 					},
+					Submissions: {
+						include: {
+							Activity: {
+								include: {
+									CourseActivityGroup: {
+										include: {
+											Course: {
+												select: { id: true, code: true, name: true },
+											},
+											ActivityGroup: {
+												select: { name: true },
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			}),
 			this.prisma.user.count({
 				where,
 			}),
 		]);
+
+		const activityGroups =
+			await this.courseActivityGroupService.findByCourseId(+courseId);
+
+		function groupAndCountWorkload(submissions: any[]) {
+			const workloadCount = {};
+			activityGroups.forEach((_activityGroup) => {
+				workloadCount[_activityGroup?.ActivityGroup?.name] = {
+					maxWorkload: _activityGroup.maxWorkload,
+					totalWorkload: 0,
+				};
+			});
+
+			submissions.forEach((submission) => {
+				const { CourseActivityGroup } = submission.Activity;
+				const { ActivityGroup, Course } = CourseActivityGroup;
+
+				if (
+					courseId == Course.id &&
+					submission.status == StatusSubmissions["Aprovado"]
+				) {
+					if (!workloadCount[ActivityGroup.name]) {
+						workloadCount[ActivityGroup.name] = {
+							maxWorkload: CourseActivityGroup.maxWorkload,
+							totalWorkload: 0,
+						};
+					}
+
+					workloadCount[ActivityGroup.name].totalWorkload +=
+						submission.workload;
+				}
+			});
+
+			return workloadCount;
+		}
 
 		const _users = users.map((user) => {
 			const courses = user.CourseUsers.map((courseUser) => ({
@@ -290,6 +343,8 @@ export class UserService {
 				password: undefined,
 				userType: user.UserType,
 				UserType: undefined,
+				workloadCount: groupAndCountWorkload(user.Submissions),
+				Submissions: undefined,
 			};
 		});
 
@@ -302,7 +357,7 @@ export class UserService {
 	}
 
 	async findById(id: number): Promise<any | null> {
-		return this.prisma.user.findUnique({ where: { id, isActive: true } });
+		return await this.prisma.user.findUnique({ where: { id, isActive: true } });
 	}
 
 	// Used to verify availability
@@ -310,8 +365,8 @@ export class UserService {
 		email: string,
 		excludeId: number = 0,
 	): Promise<User | null> {
-		const user = this.prisma.user.findFirst({
-			where: { email, id: { not: excludeId }, isActive: true },
+		const user = await this.prisma.user.findFirst({
+			where: { email, id: { not: excludeId } },
 			include: {
 				UserType: { select: { id: true, name: true } },
 			},
@@ -321,13 +376,13 @@ export class UserService {
 
 	// Used to verify availability
 	async findByCpf(cpf: string, excludeId: number = 0): Promise<User | null> {
-		return this.prisma.user.findFirst({
-			where: { cpf, id: { not: excludeId }, isActive: true },
+		return await this.prisma.user.findFirst({
+			where: { cpf, id: { not: excludeId } },
 		});
 	}
 
 	async findByResetToken(token: string): Promise<User | null> {
-		return this.prisma.user.findFirst({
+		return await this.prisma.user.findFirst({
 			where: { resetToken: token, isActive: true },
 		});
 	}
@@ -387,10 +442,22 @@ export class UserService {
 		});
 	}
 
-	remove(id: number): Promise<User> {
-		return this.prisma.user.update({
+	async remove(id: number): Promise<User> {
+		return await this.prisma.user.update({
 			where: { id },
 			data: { isActive: false },
 		});
+	}
+
+	async massRemove(ids: string): Promise<User[]> {
+		const _ids = ids.split(",").map(Number);
+		return await Promise.all(
+			_ids.map((id) =>
+				this.prisma.user.update({
+					where: { id },
+					data: { isActive: false },
+				}),
+			),
+		);
 	}
 }

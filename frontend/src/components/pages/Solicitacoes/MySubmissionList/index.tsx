@@ -29,7 +29,7 @@ interface ISubmissionListProps {
   loading?: boolean;
   totalPages: number;
 
-  onChange?: () => void;
+  onChange?: Function;
 
   children?: React.ReactNode;
 }

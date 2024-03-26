@@ -100,6 +100,7 @@ export default function FormLogin() {
           0: "Oops, tivemos um erro. Tente novamente.",
           401: unauthorizedMessages[error?.response?.data?.message],
           404: "Usuário não encontrado.",
+          412: "Usuário desativado. Contate um administrador."
         };
 
         const code = error?.response?.status ? error.response.status : 0;

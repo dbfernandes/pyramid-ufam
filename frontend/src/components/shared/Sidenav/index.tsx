@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,10 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+
+  useEffect(() => {
+    setSidenavOpen(true);
+  }, []);
 
   const [displayLinkTitles, setDisplayLinkTitles] = useState<boolean>(true);
   function toggleSidenavOpen() {
@@ -97,7 +101,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         {
           icon: <NestedIcon>
             <i className="bi bi-list-check" />
-            <i className="bi bi-mortarboard-fill" />
+            <i className="bi bi-file-earmark-medical-fill" />
           </NestedIcon>,
           title: "Solicitações",
           route: "/solicitacoes",
@@ -132,11 +136,6 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
           route: "/usuarios/novo",
         },
         {
-          icon: <i className="bi bi-people" />,
-          title: "Alunos",
-          route: "/usuarios/alunos",
-        },
-        {
           icon: <i className="bi bi-person-workspace" />,
           title: "Coordenadores",
           route: "/usuarios/coordenadores",
@@ -145,6 +144,11 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
           icon: <i className="bi bi-person-badge" />,
           title: "Secretários",
           route: "/usuarios/secretarios",
+        },
+        {
+          icon: <i className="bi bi-people" />,
+          title: "Alunos",
+          route: "/usuarios/alunos",
         },
       ],
       permissions: [1],
@@ -232,25 +236,25 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                   {/* Fix: OverlayTrigger not working */}
                   <div>
                     {group.links.map((link, index) =>
-                      checkPermission(link, user.userTypeId) ? (
-                        link?.route ? (
-                          <OverlayTrigger key={index} placement="bottom" overlay={<Tooltip>{link.title}</Tooltip>}>
-                            <Link href={link.route} passHref>
-                              <SidenavLink>
+                      checkPermission(link, user.userTypeId)
+                        ? (<OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
+                          <div>
+                            {link?.route ? (
+                              <Link href={link.route} passHref>
+                                <SidenavLink>
+                                  {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
+                                  {displayLinkTitles && <span>{link.title}</span>}
+                                </SidenavLink>
+                              </Link>
+                            ) : (
+                              <SidenavButton onClick={link.onClick}>
                                 {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
                                 {displayLinkTitles && <span>{link.title}</span>}
-                              </SidenavLink>
-                            </Link>
-                          </OverlayTrigger>
-                        ) : (
-                          <OverlayTrigger key={index} placement="bottom" overlay={<Tooltip>{link.title}</Tooltip>}>
-                            <SidenavButton onClick={link.onClick}>
-                              {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
-                              {displayLinkTitles && <span>{link.title}</span>}
-                            </SidenavButton>
-                          </OverlayTrigger>
-                        )
-                      ) : null
+                              </SidenavButton>
+                            )}
+                          </div>
+                        </OverlayTrigger>)
+                        : null
                     )}
                   </div>
                 </LinkWrapper>

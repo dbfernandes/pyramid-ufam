@@ -11,7 +11,7 @@ import {
 
 // Interfaces
 interface IFloatingMenuProps {
-  onClickAdd: () => void;
+  onClickAdd: Function;
   displayMore?: boolean;
   children?: React.ReactNode;
 }

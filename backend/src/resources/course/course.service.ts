@@ -165,7 +165,7 @@ export class CourseService {
 		name: string,
 		excludeId: number = 0,
 	): Promise<Course | null> {
-		return this.prisma.course.findFirst({
+		return await this.prisma.course.findFirst({
 			where: { name, id: { not: excludeId }, isActive: true },
 		});
 	}
@@ -174,7 +174,7 @@ export class CourseService {
 		code: string,
 		excludeId: number = 0,
 	): Promise<Course | null> {
-		return this.prisma.course.findFirst({
+		return await this.prisma.course.findFirst({
 			where: { code, id: { not: excludeId }, isActive: true },
 		});
 	}
@@ -308,33 +308,16 @@ export class CourseService {
 		return { ...course, activityGroups: activityGroups };
 	}
 
-	async remove(id: number): Promise<Course> {
-		// Check for constraints
-		/*const course = await this.findById(id);
-		if (!course) throw new BadRequestException("Course not found");
-
-		const courseUsers = await this.prisma.courseUser.findMany({
-			where: { courseId: id },
-		});
-		if (courseUsers.length > 0)
-			throw new BadRequestException("Course has users");
-
-		const courseActivityGroups = await this.prisma.courseActivityGroup.findMany(
-			{
-				where: { courseId: id },
-			},
-		);
-		if (courseActivityGroups.length > 0)
-			throw new BadRequestException("Course has activity groups");
-
-		const courseActivityGroupActivities = await this.prisma.activity.findMany({
-			where: { courseActivityGroupId: id },
-		});
-		if (courseActivityGroupActivities.length > 0)
-			throw new BadRequestException("Course has activities");*/
-
-		// Logical delete
+	/*async updateSearchHash(id: number): Promise<Course> {
+		const searchHash = "";
 		return this.prisma.course.update({
+			where: { id },
+			data: { searchHash },
+		});
+	}*/
+
+	async remove(id: number): Promise<Course> {
+		return await this.prisma.course.update({
 			where: { id },
 			data: { isActive: false },
 		});

@@ -3,7 +3,8 @@ import { FormCheck } from "react-bootstrap";
 import Button, { ButtonAlt } from "components/shared/Button";
 
 export const ItemWrapper = styled.div`
-  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   border: 1px solid transparent;
   border-radius: 5px;
 
@@ -206,6 +207,12 @@ export const ButtonGroup = styled.div`
 `;
 
 export const AcceptButton = styled(Button)`
+	width: fit-content;
+  padding: 8px 26px;
+	margin-left: 10px;
+`;
+
+export const EditButton = styled(ButtonAlt)`
 	width: fit-content;
   padding: 8px 26px;
 	margin-left: 10px;

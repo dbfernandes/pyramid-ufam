@@ -55,6 +55,7 @@ export default function FormLinkCourse({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -145,7 +146,7 @@ export default function FormLinkCourse({
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: {
         enrollment: data.enrollment,

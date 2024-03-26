@@ -41,6 +41,7 @@ export default function ActivityGroups({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -67,6 +68,7 @@ export default function ActivityGroups({
       {groups.map((group) => (
         <ActivityCard
           key={group.id}
+          user={user}
           link={`${link}${slugify(group.name)}`}
           activity={group}
           editable={false}

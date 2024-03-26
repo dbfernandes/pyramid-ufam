@@ -165,6 +165,7 @@ export default function FormSignUp() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Request-Headers": "x-access-token, x-refresh-token"
       },
       data: data,
     };

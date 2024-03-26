@@ -3,6 +3,7 @@ import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios, { AxiosRequestConfig } from "axios";
 import { StatusSubmissions } from "constants/statusSubmissions.constants";
+import { formatCpf } from "utils";
 
 // Shared
 import { H6 } from "components/shared/Titles";
@@ -37,6 +38,7 @@ interface ISubmissionCardProps {
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   user?: IUserLogged;
 
+  onDelete?: Function;
   onChange?: Function;
 }
 
@@ -48,14 +50,15 @@ export default function SubmissionCard({
   setCheckedIds = () => { },
   user,
 
+  onDelete = () => { },
   onChange = () => { },
 
   ...props
 }: ISubmissionCardProps) {
-  function handleDropdown(e) {
+  /*function handleDropdown(e) {
     e.preventDefault();
     e.stopPropagation();
-  }
+  }*/
 
   function handleCheck(e) {
     e.stopPropagation();
@@ -119,7 +122,6 @@ export default function SubmissionCard({
       });
   }
 
-
   useEffect(() => {
     if (submission) {
       getFileSize(submission.fileUrl);
@@ -128,6 +130,10 @@ export default function SubmissionCard({
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
   function CollapseDetails({ submission, user, onChange }) {
+    function getCpf(user) {
+      return user?.cpf ? formatCpf(user?.cpf) : "-"
+    }
+
     return (
       <CollapseDetailsStyled admin={user?.userTypeId !== 3}>
         <div className="grid">
@@ -142,7 +148,7 @@ export default function SubmissionCard({
                 <b>Email:</b> {submission.user.email}
               </p>
               <p>
-                <b>CPF:</b> {submission.user.cpf}
+                <b>CPF:</b> {getCpf(submission.user.cpf)}
               </p>
               <p>
                 <b>Curso:</b> {submission.user.course}

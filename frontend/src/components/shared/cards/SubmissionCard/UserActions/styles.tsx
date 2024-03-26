@@ -10,8 +10,6 @@ export const History = styled.div`
 
 export const HistoryItem = styled.div`
   width: 100%;
-  display: flex;
-  align-items: center;
   padding: 15px 15px;
   
   background-color: var(--white-1);
@@ -19,16 +17,32 @@ export const HistoryItem = styled.div`
   border-left: 5px solid ${({ color }) => color || "var(--primary-color)"};
   border-radius: 5px;
 
-  img {
-    width: 30px;
-    height: 30px;
-    object-fit: cover;
+  & > div {
+    display: flex;
+    align-items: center;
 
-    margin-right: 10px;
+    & > img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+
+      margin-right: 10px;
+    }
+
+    & > p {
+      margin: 0;
+    }
   }
 
-  p {
-    margin: 0;
+  & > p {
+    & > span {
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    width: 100%;
+    margin: 10px 0 0;
+    font-style: italic;
   }
 
   margin-bottom: 15px;

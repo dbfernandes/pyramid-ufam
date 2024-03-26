@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
-import Link from "next/link";
 import { formatCpf } from "utils";
 
 // Custom
@@ -13,8 +12,10 @@ import {
   Options,
   CustomFormCheck,
   CheckboxPreventClick,
-  UserStatus
+  UserStatus,
+  CopyToClipboardSpan
 } from "./styles";
+import Spinner from "components/shared/Spinner";
 
 // Interfaces
 interface IUser {
@@ -25,6 +26,7 @@ interface IUser {
   cpf: string;
   enrollment?: string;
   courses: any[];
+  workloadCount?: any[];
 }
 
 interface IUserProps {
@@ -33,7 +35,11 @@ interface IUserProps {
   subRoute?: string;
   loading?: boolean;
   header?: boolean;
+
+  fetchingDelete?: boolean;
   onDelete?: Function;
+  onChange?: Function;
+
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
 }
@@ -44,7 +50,11 @@ export default function User({
   subRoute = "",
   loading = false,
   header = false,
+
+  fetchingDelete = false,
   onDelete = () => { },
+  onChange = () => { },
+
   checkedIds = [],
   setCheckedIds = () => { },
   ...props
@@ -58,12 +68,9 @@ export default function User({
   function handleDeletion(e) {
     e.preventDefault();
     e.stopPropagation();
-    setConfirmDeletion(!confirmDeletion);
 
-    if (confirmDeletion) {
-      onDelete();
-      // setShowModalRemove(true);
-    }
+    if (!confirmDeletion) setConfirmDeletion(!confirmDeletion);
+    else onDelete();
   }
 
   function handleCheck(e) {
@@ -118,22 +125,69 @@ export default function User({
     );
   }
 
-  function getEnrollment(user) {
-    const course = user?.courses.find((course) => course.id === courseId);
-    if (!course?.enrollment) return "-";
-    return course?.enrollment;
-  }
+  // Copy to clipboard
+  function CopyToClipboard({ text }) {
+    const [copied, setCopied] = useState(false);
+    const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function getCpf(user) {
-    return user?.cpf ? formatCpf(user?.cpf) : "-"
+    function copyToClipboard() {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true);
+        timeout.current = setTimeout(() => setCopied(false), 2000);
+      });
+    }
+
+    useEffect(() => {
+      return () => {
+        if (timeout.current !== null) {
+          clearTimeout(timeout.current);
+        }
+      };
+    }, []);
+
+    return (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${text} (${copied ? "Copiado!" : "Clique para copiar"})`}</Tooltip>}>
+        <CopyToClipboardSpan onClick={copyToClipboard}>
+          {text}
+          <i className="bi bi-copy" />
+        </CopyToClipboardSpan>
+      </OverlayTrigger>
+    );
   }
 
   // Activity group progress bar
   function CustomProgressBar({ current, max }) {
     const progress = (current / max) * 100;
     // https://react-bootstrap.netlify.app/docs/components/progress/#stacked
-    return <ProgressBar now={progress} animated label={`${current}/${max}`} variant="success" />
+    return (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
+        <ProgressBar now={progress} animated label={`${current}/${max}`} variant="success" />
+      </OverlayTrigger>
+    );
   }
+
+  function WorkloadProgressBars({ workloadCount }) {
+    return (
+      <>
+        <Column><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
+        <Column><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
+        <Column><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
+      </>
+    )
+  }
+
+  // Column value helpers
+  function getEnrollment(user) {
+    const course = user?.courses.find((course) => course.id === courseId);
+    if (!course?.enrollment) return "-";
+    return course?.enrollment;
+  }
+  const enrollment = getEnrollment(user);
+
+  function getCpf(user) {
+    return user?.cpf ? formatCpf(user?.cpf) : "-"
+  }
+  const cpf = getCpf(user);
 
   return (
     header
@@ -157,7 +211,7 @@ export default function User({
           : <>
             <Column color={"var(--muted)"}>Email</Column>
             <Column color={"var(--muted)"}>Curso(s)</Column>
-            <Column color={"var(--muted)"}>CPF</Column>
+            {/*<Column color={"var(--muted)"}>CPF</Column>*/}
           </>
         }
         <Column color={"var(--muted)"}>Status</Column>
@@ -165,23 +219,9 @@ export default function User({
       : loading
         ? <Item student={subRoute === "alunos"}>
           <div></div>
-          <Column className={"placeholder-wave"}>
-            <span className={"placeholder col-md-8 col-12"}></span>
-          </Column>
-          <Column className={"placeholder-wave"}>
-            <span className={"placeholder col-md-8 col-12"}></span>
-          </Column>
-          <Column className={"placeholder-wave"}>
-            <span className={"placeholder col-md-8 col-12"}></span>
-          </Column>
-          <Column className={"placeholder-wave"}>
-            <span className={"placeholder col-md-8 col-12"}></span>
-          </Column>
-          <Column className={"placeholder-wave"}>
-            <span className={"placeholder col-md-8 col-12"}></span>
-          </Column>
+          {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) => <Column key={i} className={"placeholder-wave"}><span className={"placeholder col-md-8 col-12"}></span></Column>)}
           <div></div>
-        </Item>
+        </Item >
         : (//<Link href={`/usuarios/${subRoute}/${user?.id}`} passHref><a>
           <Item Item student={subRoute === "alunos"}>
             <CustomFormCheck
@@ -198,66 +238,70 @@ export default function User({
               </OverlayTrigger>
             </Column>
 
-            {
-              subRoute == "alunos"
-                ? <>
-                  <Column>{getEnrollment(user)}</Column>
-                  <Column><CustomProgressBar current={80} max={240} /></Column>
-                  <Column><CustomProgressBar current={160} max={240} /></Column>
-                  <Column><CustomProgressBar current={240} max={240} /></Column>
-                </>
-                : <>
-                  <Column>
-                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
-                      <span>{user?.email}</span>
-                    </OverlayTrigger>
-                  </Column>
+            {subRoute == "alunos"
+              ? <>
+                <Column>
+                  <CopyToClipboard text={enrollment} />
+                </Column>
+                <WorkloadProgressBars workloadCount={user?.workloadCount} />
+              </>
+              : <>
+                <Column>
+                  <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
+                    <span>{user?.email}</span>
+                  </OverlayTrigger>
+                </Column>
 
-                  <Column>
-                    <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
-                      <span>
-                        {user?.courses[0]?.name
-                          ? (<div className="text-with-ribbon">
-                            <span>{user?.courses[0]?.name}</span>
-                            {(user?.courses && user?.courses?.length > 1) &&
-                              <Ribbon>+{user?.courses?.length - 1}</Ribbon>
-                            }
-                          </div>)
-                          : "-"
-                        }
-                      </span>
-                    </OverlayTrigger>
-                  </Column>
+                <Column>
+                  <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
+                    <span>
+                      {user?.courses[0]?.name
+                        ? (<div className="text-with-ribbon">
+                          <span>{user?.courses[0]?.name}</span>
+                          {(user?.courses && user?.courses?.length > 1) &&
+                            <Ribbon>+{user?.courses?.length - 1}</Ribbon>
+                          }
+                        </div>)
+                        : "-"
+                      }
+                    </span>
+                  </OverlayTrigger>
+                </Column>
 
-                  <Column>
-                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{getCpf(user)}</Tooltip>}>
-                      <span>{getCpf(user)}</span>
+                {/*<Column>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{cpf}</Tooltip>}>
+                      <span>{cpf}</span>
                     </OverlayTrigger>
-                  </Column>
-                </>
+                  </Column>*/}
+              </>
             }
 
             <Column>
               <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
             </Column>
 
-            <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDeletion(false)}>
-              <Options variant="secondary">
-                <i className="bi bi-three-dots-vertical" />
-              </Options>
+            {user?.isActive === true &&
+              <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDeletion(false)}>
+                <Options variant="secondary">
+                  <i className="bi bi-three-dots-vertical" />
+                </Options>
 
-              <DropdownMenu renderOnMount={true}>
-                <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
-                  <i className="bi bi-pencil-fill"></i> Editar
-                </DropdownItem>
-                <DropdownItem onClick={(e) => handleDeletion(e)} accent={"var(--danger)"}>
-                  {confirmDeletion
-                    ? <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
-                    : <><i className="bi bi-trash-fill"></i> Desativar</>
-                  }
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                <DropdownMenu renderOnMount={true}>
+                  <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
+                    <i className="bi bi-pencil-fill"></i> Editar
+                  </DropdownItem>
+                  <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
+                    <i className="bi bi-key-fill"></i> Resetar senha
+                  </DropdownItem>
+                  <DropdownItem onClick={(e) => handleDeletion(e)} accent={"var(--danger)"}>
+                    {confirmDeletion
+                      ? fetchingDelete ? <Spinner size={"21px"} color={"var(--danger)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                      : <><i className="bi bi-trash-fill"></i> Desativar</>
+                    }
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            }
           </Item >
         )
   );

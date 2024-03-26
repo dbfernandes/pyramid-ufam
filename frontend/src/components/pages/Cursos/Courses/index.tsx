@@ -16,7 +16,7 @@ import toast from "components/shared/Toast";
 import Spinner from "components/shared/Spinner";
 
 // Custom
-import { CardGroup } from "../styles";
+import { CardGroup } from "./styles";
 import CourseCard from "components/shared/cards/CourseCard";
 import FormAddCourse from "components/shared/forms/FormAddCourse";
 
@@ -30,7 +30,7 @@ interface ICoursesProps {
   loading: boolean;
   totalPages: number;
 
-  onChange?: () => void;
+  onChange?: Function;
 }
 
 export default function Courses({
@@ -50,7 +50,7 @@ export default function Courses({
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

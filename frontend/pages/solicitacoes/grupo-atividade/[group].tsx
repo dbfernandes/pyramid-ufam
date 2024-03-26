@@ -90,6 +90,7 @@ export default function SolicitacoesGrupoAtividade() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -115,7 +116,7 @@ export default function SolicitacoesGrupoAtividade() {
   return (
     <>
       <Head>
-        <title>Solicitações - {process.env.title}</title>
+        <title>Solicitações ({ActivityGroupsNames[activityGroup].title}) - {process.env.title}</title>
       </Head>
 
       {loaded ? (

@@ -9,6 +9,7 @@ import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
 import TextAlert from "components/shared/TextAlert";
 import { LinkWrapper } from "components/shared/Form/styles";
+import Form from "components/shared/Form";
 
 // Custom
 import FormUpdatePass from "components/shared/forms/FormUpdatePass";
@@ -21,16 +22,15 @@ export default function Senha() {
   // Form state
   const [sent, setSent] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [notFound, setNotFound] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const [tokenObj, setTokenObj] = useState<any>(null);
   async function fetchToken(token) {
     const options = {
-      url: `${process.env.api}/tokens/${token}`,
+      url: `${process.env.api}/auth/password-reset/${token}`,
       method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     };
 
@@ -40,15 +40,11 @@ export default function Senha() {
       }).catch((error) => {
         const errorMessages = {
           0: "Oops, tivemos um erro. Tente novamente.",
-          404: "Token inválido.",
+          404: "Token inválido ou expirado. Solicite um novo link de redefinição de senha.",
           500: error?.response?.data?.message,
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        if (code == 404) {
-          setNotFound(true);
-        }
-
         setError(code in errorMessages ? errorMessages[code] : errorMessages[0]);
         setSuccess(false);
       });
@@ -74,21 +70,13 @@ export default function Senha() {
         ? <Wrapper centerAlign={true}>
           {router?.query?.token
             ? tokenObj
-              ? <FormUpdatePass token={tokenObj} />
-              : <>
-                <TextAlert
-                  displayIcon={true}
-                  type={"error"}>
-                  {error}
-                </TextAlert>
-                {notFound &&
-                  <LinkWrapper>
-                    <Link href="/entrar">
-                      <a>Voltar para a página de Login</a>
-                    </Link>
-                  </LinkWrapper>
-                }
-              </>
+              ? <FormUpdatePass tokenObj={tokenObj} />
+              : <TextAlert
+                displayIcon={true}
+                type={"error"}
+                link={"/entrar"}>
+                {error}
+              </TextAlert>
             : <FormForgotPassword />
           }
         </Wrapper>

@@ -30,7 +30,7 @@ export default function EnrollmentList({ user }: IEnrollmentListProps) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

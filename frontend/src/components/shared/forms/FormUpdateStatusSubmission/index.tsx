@@ -18,7 +18,7 @@ interface IFormUpdateStatusSubmissionProps {
   submission: any; //ISubmission;
   user: IUserLogged;
   status: string;
-  onChange?: () => void;
+  onChange?: Function;
   handleCloseModalForm?: Function;
 }
 
@@ -57,7 +57,7 @@ export default function FormUpdateStatusSubmission({
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: {
         userId: user.id,
@@ -71,12 +71,8 @@ export default function FormUpdateStatusSubmission({
       .then((response) => {
         toast("Sucesso", "Status atualizado com sucesso.", "success");
         onChange();
-        if (handleCloseModalForm) {
-          handleCloseModalForm();
-        }
       })
       .catch((error) => {
-
         const errorMessages = {
           0: "Oops, tivemos um erro. Tente novamente.",
           500: error?.response?.data?.message,
@@ -85,6 +81,10 @@ export default function FormUpdateStatusSubmission({
         const code = error?.response?.status ? error.response.status : 500;
         toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
       });
+
+    if (handleCloseModalForm) {
+      handleCloseModalForm();
+    }
 
     setFetching(false);
   }
@@ -154,6 +154,7 @@ async function fetchDelete({ user, id, status }, onChange) {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${user.token}`,
     },
     data: {
       userId: user.id,

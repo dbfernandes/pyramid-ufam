@@ -24,13 +24,12 @@ export function checkAuthentication(): boolean {
   let authorized = false;
   async function authenticate(refreshToken: string) {
     const options = {
-      url: `${process.env.api}/auth/refreshToken`,
+      url: `${process.env.api}/auth/refresh-token`,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-      },
-      data: {
-        refreshToken,
+        "Access-Control-Request-Headers": "x-access-token, x-refresh-token",
+        "Refresh": refreshToken
       },
     };
 
@@ -40,8 +39,8 @@ export function checkAuthentication(): boolean {
         authorized = true;
         store.dispatch(
           authorize({
-            token: response.headers["authorization"],
-            refreshToken: response.headers["refresh_token"],
+            token: response.headers["x-access-token"],
+            refreshToken: response.headers["x-refresh-token"],
           })
         );
       })
@@ -182,4 +181,11 @@ export function range(start: number, end: number) {
     ans.push(i as never);
   }
   return ans;
+}
+
+export function parseUserActiveParam(status: string) {
+  const statusArray = status.split("-");
+
+  if (statusArray.length > 1) return "";
+  else return `&active=${status == '1'}`;
 }

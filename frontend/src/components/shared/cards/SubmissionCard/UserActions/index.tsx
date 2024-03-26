@@ -9,11 +9,13 @@ import Spinner from "components/shared/Spinner";
 import toggleModalForm from "components/shared/ModalForm";
 import toast from "components/shared/Toast";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
+import FormAddSubmission from "components/shared/forms/FormAddSubmission";
 import {
   ButtonGroup,
   AcceptButton,
   DangerButtonAlt,
-  InfoButton
+  InfoButton,
+  EditButton
 } from "../styles";
 
 // Custom
@@ -21,16 +23,21 @@ import { History, HistoryItem } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
-
+import { UserRole } from "components/shared/Header/UserInfo/styles";
+import { UserTypes } from "constants/userTypes.constants";
 interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
-  onChange?: () => void;
+
+  onDelete?: Function;
+  onChange?: Function;
 }
 
 export default function UserActions({
   submission,
   user,
+
+  onDelete = () => { },
   onChange = () => { }
 }: IUserActionsProps) {
   const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
@@ -40,7 +47,7 @@ export default function UserActions({
     setConfirmDeletion(!confirmDeletion);
 
     if (confirmDeletion) {
-      // setShowModalRemove(true);
+      onDelete();
     }
   }
 
@@ -55,6 +62,7 @@ export default function UserActions({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -98,11 +106,15 @@ export default function UserActions({
           <>
             {history.map((item, index) => (
               <HistoryItem key={index} color={colors[item.action]}>
-                <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
-                <p>
-                  <b>{getFirstAndLastName(item.user.name)}</b>{' '}
-                  <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
-                </p>
+                <div>
+                  <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+                  <p>
+                    <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
+                    <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
+                  </p>
+                </div>
+
+                {item.details && <p><span>Obs.:</span> {item.details}</p>}
               </HistoryItem>
             ))}
           </>
@@ -115,13 +127,25 @@ export default function UserActions({
     <ButtonGroup>
       <InfoButton onClick={() =>
         toggleModalForm(
-          "Histórico",
+          "Histórico da solicitação",
           <SubmissionHistory />,
-          "md"
+          "lg"
         )
       }>
         <i className="bi bi-clock-history" /> Histórico
       </InfoButton>
+
+      {[1, 2].includes(submission.status) && (
+        <EditButton onClick={() =>
+          toggleModalForm(
+            "Editar submissão",
+            <FormAddSubmission submission={submission} user={user} onChange={onChange} />,
+            "xl"
+          )
+        }>
+          <i className="bi bi-pencil" /> Editar
+        </EditButton>
+      )}
 
       {(user?.userTypeId == 1 && [1, 2].includes(submission.status)) && (
         <>

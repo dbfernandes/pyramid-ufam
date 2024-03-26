@@ -3,6 +3,7 @@ import {
 	Inject,
 	Injectable,
 	NotFoundException,
+	PreconditionFailedException,
 	UnauthorizedException,
 	forwardRef,
 } from "@nestjs/common";
@@ -50,14 +51,35 @@ export class AuthService {
 			},
 		);
 
-		res.setHeader("X-Access-Token", `Bearer ${token}`);
+		res.setHeader("X-Access-Token", token);
 		res.setHeader("X-Refresh-Token", refreshToken);
+	}
+
+	async refreshToken(refreshToken: string, res: Response) {
+		const decoded = this.jwtService.verify(refreshToken);
+		if (!decoded.isRefreshToken) {
+			throw new UnauthorizedException("Invalid refresh token");
+		}
+
+		const user = await this.userService.findByEmail(decoded.email);
+		if (!user) {
+			throw new UnauthorizedException("User not found");
+		}
+
+		this.setAuthorizationHeader(user, res);
+		return {
+			message: "User reauthenticated successfully",
+		};
 	}
 
 	async validateUser(email: string, password: string): Promise<any> {
 		const user = await this.userService.findByEmail(email);
 		if (!user) {
 			throw new UnauthorizedException("Invalid email");
+		}
+
+		if (!user.isActive) {
+			throw new PreconditionFailedException("User deactivated");
 		}
 
 		if (
@@ -130,17 +152,6 @@ export class AuthService {
 		return { user: { ...result, courses } };
 	}
 
-	async batchSignUp(/*signUpDtos: SignUpDto[]*/) {
-		const users = [];
-		const errors = [];
-
-		/*for (const signUpDto of signUpDtos) {
-			Adicionar usuário
-		} */
-
-		return { errors: errors, users: users };
-	}
-
 	async createPasswordResetToken(
 		email: string,
 		expireHours: number = 1,
@@ -174,20 +185,38 @@ export class AuthService {
 		);
 	}
 
+	async findToken(token: string): Promise<any> {
+		const user = await this.userService.findByResetToken(token);
+		if (!user || new Date() > user.resetTokenExpires)
+			throw new NotFoundException("Invalid or expired token");
+
+		return {
+			id: user.id,
+			email: user.email,
+			name: user.name,
+			resetToken: user.resetToken,
+			resetTokenExpires: user.resetTokenExpires,
+		};
+	}
+
 	async sendPasswordResetEmail(email: string, token: string) {
 		await sendEmail(
 			email,
-			"Password Reset",
-			`Use this token to reset your password: ${token}`,
+			"Alteração de senha",
+			`Você ou algum coordenador solicitou alteração de senha para a sua conta. Para alterar sua senha no Pyramid, clique no link a seguir: ${`${process.env.FRONTEND_URL}/conta/senha?token=${token}`}.
+      O token expira em 1 hora.
+      
+      Caso não tenha sido você, desconsidere este email.
+      `,
 		);
 	}
 
-	async resetPassword(token: string, newPassword: string): Promise<void> {
+	async resetPassword(token: string, password: string): Promise<void> {
 		const user = await this.userService.findByResetToken(token);
 		if (!user || new Date() > user.resetTokenExpires)
 			throw new BadRequestException("Invalid or expired token");
 
-		const hashedPassword = bcrypt.hashSync(newPassword, 10);
+		const hashedPassword = bcrypt.hashSync(password, 10);
 		await this.userService.update(user.id, {
 			password: hashedPassword,
 			resetToken: null,

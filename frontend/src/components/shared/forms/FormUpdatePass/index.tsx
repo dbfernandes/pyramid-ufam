@@ -16,10 +16,10 @@ import TextAlert from "components/shared/TextAlert";
 
 // Interface
 interface IFormUpdatePassProps {
-  token: any;
+  tokenObj: any;
 };
 
-export default function FormUpdatePass({ token }: IFormUpdatePassProps) {
+export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
   const router = useRouter();
 
   // Inputs and validators
@@ -58,7 +58,7 @@ export default function FormUpdatePass({ token }: IFormUpdatePassProps) {
     setFetching(true);
 
     const options = {
-      url: `${process.env.api}/auth/${token.token}/updatePassword`,
+      url: `${process.env.api}/auth/password-reset/${tokenObj.resetToken}`,
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -96,9 +96,9 @@ export default function FormUpdatePass({ token }: IFormUpdatePassProps) {
         Senha atualizada com sucesso! Você será redirecionado para a tela de Login.
       </TextAlert>
       : <Form title={"Redefinir senha"}>
-        {token && <>
+        {tokenObj && <>
           <p style={{ marginTop: "-20px" }}>
-            Olá, {getFirstName(token?.user?.name)}. Para redefinir sua senha, basta digitar uma nova senha, confirmá-la e clicar em <b>Atualizar</b>.
+            Olá, <b>{getFirstName(tokenObj?.name)}</b>. Para redefinir sua senha, basta digitar uma nova senha, confirmá-la e clicar em <b>Atualizar</b>.
           </p>
           <p style={{ marginBottom: "20px" }}>
             Após isso, você será redirecionado para a página inicial.

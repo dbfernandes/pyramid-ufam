@@ -31,7 +31,6 @@ export function getFirstAndLastName(name: string) {
 
 export function decodeToken(token: string) {
 	try {
-		console.log(token);
 		const decoded = jwt.verify(
 			token.replace("Bearer ", ""),
 			process.env.JWT_SECRET,

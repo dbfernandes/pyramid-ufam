@@ -1,11 +1,14 @@
 import {
 	Controller,
 	Post,
+	Get,
 	Body,
+	Put,
 	UsePipes,
 	ValidationPipe,
 	Res,
 	Param,
+	Headers,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ResetPasswordDto } from "./dto";
@@ -32,6 +35,14 @@ export class AuthController {
 		return res.send(await this.authService.signUp(signUpDto, res));
 	}
 
+	@Post("refresh-token")
+	async refreshToken(
+		@Headers("Refresh") refreshToken: string,
+		@Res() res: Response,
+	) {
+		return res.send(await this.authService.refreshToken(refreshToken, res));
+	}
+
 	@Post("password-reset-request")
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
@@ -42,7 +53,15 @@ export class AuthController {
 		return { message: "Password reset email sent" };
 	}
 
-	@Post("password-reset/:token")
+	@Get("password-reset/:token")
+	@UsePipes(
+		new ValidationPipe({ transform: true, skipMissingProperties: false }),
+	)
+	async findToken(@Param("token") token: string) {
+		return await this.authService.findToken(token);
+	}
+
+	@Put("password-reset/:token")
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -50,7 +69,7 @@ export class AuthController {
 		@Param("token") token: string,
 		@Body() resetPasswordDto: ResetPasswordDto,
 	) {
-		await this.authService.resetPassword(token, resetPasswordDto.newPassword);
+		await this.authService.resetPassword(token, resetPasswordDto.password);
 		return { message: "Password reset successful" };
 	}
 }

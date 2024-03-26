@@ -25,13 +25,15 @@ import {
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+import toast from "components/shared/Toast";
+import axios, { AxiosRequestConfig } from "axios";
 interface ISubmissionListProps {
   subTitle?: string;
   submissions?: any[];
   loading?: boolean;
   totalPages: number;
 
-  onChange?: () => void;
+  onChange?: Function;
 
   children?: React.ReactNode;
 }
@@ -74,7 +76,37 @@ export default function SubmissionList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  // Adicionar ações múltiplas aqui
+  async function fetchMassUpdateStatus(status) {
+    const options = {
+      url: `${process.env.api}/submissions/${checkedIds.join(",")}/status/mass-update`,
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${user.token}`,
+      },
+      data: {
+        userId: user.id,
+        status: status
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", "Status atualizados com sucesso.", "success");
+        onChange();
+        setCheckedIds([])
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+  }
 
   return (
     <Wrapper>
@@ -127,7 +159,7 @@ export default function SubmissionList({
           )}
           {children}
         </ListStyled>
-        : <Disclaimer>Não há solicitações disponíveis. Tente alterar o filtro.</Disclaimer>
+        : <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
       }
 
       {submissions?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}

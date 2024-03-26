@@ -6,11 +6,11 @@ import { ActivityGroup } from "@prisma/client";
 export class ActivityGroupService {
 	constructor(private prisma: PrismaService) {}
 
-	findAll(): Promise<ActivityGroup[]> {
-		return this.prisma.activityGroup.findMany();
+	async findAll(): Promise<ActivityGroup[]> {
+		return await this.prisma.activityGroup.findMany();
 	}
 
-	findById(id: number): Promise<ActivityGroup | null> {
-		return this.prisma.activityGroup.findUnique({ where: { id } });
+	async findById(id: number): Promise<ActivityGroup | null> {
+		return await this.prisma.activityGroup.findUnique({ where: { id } });
 	}
 }

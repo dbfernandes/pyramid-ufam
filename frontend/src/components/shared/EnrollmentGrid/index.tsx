@@ -29,7 +29,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 

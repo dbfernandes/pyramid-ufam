@@ -32,22 +32,21 @@ export default function FormForgotPassword() {
     setSent(true);
 
     if (validateEmail(email)) {
-      fetchSendLink();
+      fetchSendLink(email);
     }
   }
 
-  async function fetchSendLink() {
+  async function fetchSendLink(_email) {
     setFetching(true);
 
     const options = {
-      // ALTERAR BEM AQUI
-      url: `${process.env.api}/auth/sendPasswordLink`,
+      url: `${process.env.api}/auth/password-reset-request/`,
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       data: {
-        email: email
+        email: _email
       }
     };
 
@@ -83,7 +82,7 @@ export default function FormForgotPassword() {
           Caso você tenha esquecido sua senha, basta digitar o <b>email</b> cadastrado na sua conta no campo abaixo e clicar em <b>Enviar</b>.
         </p>
         <p style={{ marginBottom: "20px" }}>
-          O link para o formulário de alteração de senha será enviado para o email cadastrado e será válido por 12 horas.
+          O link para o formulário de alteração de senha será enviado para o email cadastrado e será válido por 1 hora.
         </p>
 
         <TextInput
@@ -102,10 +101,10 @@ export default function FormForgotPassword() {
           style={{ marginTop: 15 }}
           onClick={(e) => handleSendLink(e)}>
           {fetching
-            ? <Spinner size={"20px"} color={"var(--black-1)"} />
+            ? <Spinner size={"20px"} color={"var(--white-1)"} />
             : <>
               <i className="fas fa-paper-plane"></i>
-              Enviar
+              Enviar link
             </>
           }
         </Button>

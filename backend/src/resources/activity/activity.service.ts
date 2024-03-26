@@ -7,16 +7,18 @@ import { CreateActivityDto, UpdateActivityDto } from "./dto";
 export class ActivityService {
 	constructor(private prisma: PrismaService) {}
 
-	create(createActivityDto: CreateActivityDto): Promise<Activity> {
-		return this.prisma.activity.create({ data: createActivityDto });
+	async create(createActivityDto: CreateActivityDto): Promise<Activity> {
+		return await this.prisma.activity.create({ data: createActivityDto });
 	}
 
-	findAll(): Promise<Activity[]> {
-		return this.prisma.activity.findMany({ where: { isActive: true } });
+	async findAll(): Promise<Activity[]> {
+		return await this.prisma.activity.findMany({ where: { isActive: true } });
 	}
 
-	findById(id: number): Promise<Activity | null> {
-		return this.prisma.activity.findUnique({ where: { id, isActive: true } });
+	async findById(id: number): Promise<Activity | null> {
+		return await this.prisma.activity.findUnique({
+			where: { id, isActive: true },
+		});
 	}
 
 	async findByCourseActivityGroupId(
@@ -27,15 +29,18 @@ export class ActivityService {
 		});
 	}
 
-	update(id: number, updateActivityDto: UpdateActivityDto): Promise<Activity> {
-		return this.prisma.activity.update({
+	async update(
+		id: number,
+		updateActivityDto: UpdateActivityDto,
+	): Promise<Activity> {
+		return await this.prisma.activity.update({
 			where: { id },
 			data: updateActivityDto,
 		});
 	}
 
-	remove(id: number): Promise<Activity> {
-		return this.prisma.activity.update({
+	async remove(id: number): Promise<Activity> {
+		return await this.prisma.activity.update({
 			where: { id },
 			data: { isActive: false },
 		});

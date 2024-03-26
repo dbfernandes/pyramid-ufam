@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { useSelector } from "react-redux";
-import { IRootState } from "redux/store";
 import toast from "components/shared/Toast";
 import { slugify } from "utils";
 
@@ -22,17 +20,20 @@ import { IActivity } from "components/shared/cards/ActivityCard";
 import IUserLogged from "interfaces/IUserLogged";
 
 interface IActivitySelectProps {
+  activeGroup: any;
+  setActiveGroup: React.Dispatch<React.SetStateAction<any | null>>;
   activity: IActivity | null;
   setActivity: React.Dispatch<React.SetStateAction<IActivity | null>>;
+  user: IUserLogged;
 }
 
 export default function ActivitySelect({
+  activeGroup,
+  setActiveGroup,
   activity,
   setActivity,
+  user,
 }: IActivitySelectProps) {
-  const [activeGroup, setActiveGroup] = useState<any | null>(null);
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
-
   useEffect(() => {
     fetchGroups();
   }, []);
@@ -54,6 +55,7 @@ export default function ActivitySelect({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -86,6 +88,7 @@ export default function ActivitySelect({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
       },
     };
 
@@ -126,6 +129,7 @@ export default function ActivitySelect({
               <ActivityCard
                 key={group.name}
                 activity={group}
+                user={user}
                 editable={false}
                 onClick={() => {
                   setActiveGroup(group);
@@ -152,10 +156,11 @@ export default function ActivitySelect({
                     <ActivityCard
                       key={index}
                       activity={_activity}
+                      user={user}
                       editable={false}
                       onClick={() => setActivity(_activity)}
-                      marked={activity != null && _activity.id == activity!.id}
-                      blurred={activity != null && _activity.id != activity.id}
+                      marked={activity != null && _activity.name == activity.name}
+                      blurred={activity != null && _activity.name != activity.name}
                     />
                   ))}
                 </CardGroup>

@@ -7,37 +7,46 @@ import {
 	Delete,
 	UsePipes,
 	ValidationPipe,
+	UseGuards,
 } from "@nestjs/common";
 import { ActivityService } from "./activity.service";
 import { UpdateActivityDto } from "./dto";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserTypes } from "src/common/enums.enum";
+import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
 
 @Controller("activities")
 export class ActivityController {
 	constructor(private readonly activityService: ActivityService) {}
 
 	@Get()
-	findAll() {
-		return this.activityService.findAll();
+	async findAll() {
+		return await this.activityService.findAll();
 	}
 
 	@Get(":id")
-	findById(@Param("id") id: string) {
-		return this.activityService.findById(+id);
+	async findById(@Param("id") id: string) {
+		return await this.activityService.findById(+id);
 	}
 
 	@Patch(":id")
+	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
-	update(
+	async update(
 		@Param("id") id: string,
 		@Body() updateActivityDto: UpdateActivityDto,
 	) {
-		return this.activityService.update(+id, updateActivityDto);
+		return await this.activityService.update(+id, updateActivityDto);
 	}
 
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.activityService.remove(+id);
+	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@Roles(UserTypes.COORDINATOR)
+	async remove(@Param("id") id: string) {
+		return await this.activityService.remove(+id);
 	}
 }

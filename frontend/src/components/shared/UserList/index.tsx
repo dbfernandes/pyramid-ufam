@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import axios, { AxiosRequestConfig } from "axios";
+import { useSelector } from "react-redux";
 
 // Shared
 import { H3 } from "components/shared/Titles";
@@ -8,6 +10,8 @@ import { DangerButtonAlt } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
+import FilterCollapsible, { IFilterOption } from "../FilterCollapsible";
+import toast from "../Toast";
 
 // Custom
 import {
@@ -18,9 +22,11 @@ import {
   Filter
 } from "./styles";
 import User from "./User";
-import FilterCollapsible, { IFilterOption } from "../FilterCollapsible";
+import Spinner from "../Spinner";
 
-// Interface
+// Interfaces
+import { IRootState } from "redux/store";
+import IUserLogged from "interfaces/IUserLogged";
 interface IUserListProps {
   title: string;
   courseId?: number | null | undefined;
@@ -29,7 +35,7 @@ interface IUserListProps {
   totalPages: number;
   subRoute?: string;
 
-  onChange?: () => void;
+  onChange?: Function;
 
   children?: React.ReactNode;
 }
@@ -46,8 +52,24 @@ export default function UserList({
 
   children
 }: IUserListProps) {
+  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
+
+  const subRoutes = {
+    "alunos": {
+      icon: "people",
+      singleTitle: "aluno"
+    },
+    "coordenadores": {
+      icon: "person-workspace",
+      singleTitle: "coordenador"
+    },
+    "secretarios": {
+      icon: "person-badge",
+      singleTitle: "secretário"
+    },
+  }
 
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
@@ -71,21 +93,70 @@ export default function UserList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  // Adicionar ações múltiplas aqui
+  // Delete functions
+  const [fetchingDelete, setFetchingDelete] = useState<boolean>(false);
+  async function fetchDelete(id: string) {
+    setFetchingDelete(true);
 
-  const subRoutes = {
-    "alunos": {
-      icon: "people",
-      singleTitle: "aluno"
-    },
-    "coordenadores": {
-      icon: "person-workspace",
-      singleTitle: "coordenador"
-    },
-    "secretarios": {
-      icon: "person-badge",
-      singleTitle: "secretário"
-    },
+    const options = {
+      url: `${process.env.api}/users/${id}`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
+      }
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", "Aluno desativado com sucesso");
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingDelete(false);
+  }
+
+  const [fetchingMassDelete, setFetchingMassDelete] = useState<boolean>(false);
+  async function fetchMassDelete(ids: string) {
+    setFetchingMassDelete(true);
+
+    const options = {
+      url: `${process.env.api}/users/${ids}/mass-remove`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
+      }
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", "Alunos desativados com sucesso");
+        setCheckedIds([]);
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingMassDelete(false);
   }
 
   return (
@@ -94,8 +165,11 @@ export default function UserList({
         <H3>{title}</H3>
 
         {checkedIds?.length > 0
-          ? <DangerButtonAlt onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} DESATIVADOS`) }}>
-            <i className="bi bi-x-lg" /> Desativar selecionados
+          ? <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
+            {fetchingMassDelete
+              ? <Spinner size={"20px"} color={"var(--danger)"} />
+              : <><i className="bi bi-x-lg" /> Desativar selecionados</>
+            }
           </DangerButtonAlt>
           : <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
             <AddUserLink>
@@ -128,6 +202,11 @@ export default function UserList({
               courseId={courseId}
               subRoute={subRoute}
               loading={loading}
+
+              fetchingDelete={fetchingDelete}
+              onDelete={() => fetchDelete(user?.id)}
+              onChange={onChange}
+
               checkedIds={checkedIds}
               setCheckedIds={setCheckedIds}
             />

@@ -1,9 +1,30 @@
 import styled from "styled-components";
+import { ButtonAlt } from "../Button";
 
-export const Wrapper = styled.div`
+export const TextAlertStyled = styled.h2`
+  margin: 0;
+  
+  // color: var(--muted);
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+`;
+
+export const CallToAction = styled(ButtonAlt)`
+  padding: 8px 26px;
+	margin-top: 25px;
+`;
+
+export const Wrapper = styled.div<{ accent: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  padding: 25px;
+
+	background-color: var(--white-1);
+	border-radius: 5px;
+	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
 
   .spinner {
     margin-bottom: 35px;
@@ -12,12 +33,14 @@ export const Wrapper = styled.div`
   i {
     margin-bottom: 35px;
     font-size: 5rem;
+    color: ${(props) => props.accent};
+  }
 
-    &.bi-check-circle-fill {
-			color: var(--primary-color);
-    }
-    &.bi-x-circle-fill {
-			color: var(--danger);
+  ${CallToAction} {
+    color: ${({ accent }) => accent};
+
+    &:hover {
+      border-color: ${({ accent }) => accent};
     }
   }
 
@@ -32,10 +55,4 @@ export const Wrapper = styled.div`
 			margin-top: 0;
 		}
 	}
-`;
-
-export const TextAlertStyled = styled.p`
-  margin: 0;
-  
-  text-align: center;
 `;

@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { tick } from "redux/slicer/timer";
@@ -5,7 +6,9 @@ import { tick } from "redux/slicer/timer";
 // Shared
 import { checkAuthentication } from "utils";
 
-
+// Interfaces
+import IUserLogged from "interfaces/IUserLogged";
+import { IRootState } from "redux/store";
 
 export default function SessionWatcher() {
   const dispatch = useDispatch();
@@ -14,7 +17,7 @@ export default function SessionWatcher() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       dispatch(tick());
-      // checkAuthentication();
+      checkAuthentication();
     }, 10000);
 
     return () => clearInterval(intervalId);
