@@ -28,7 +28,7 @@ export default function UserInfoMobile() {
     <Wrapper>
       <UserPic>
         <img src={user.profileImage && user.profileImage.length > 0
-          ? `${process.env.REACT_APP_API_URL}/files/${user.profileImage}`
+          ? `${process.env.API_URL}/files/${user.profileImage}`
           : `${process.env.basePath}/img/user.png`
         } alt={user.name} />
       </UserPic>

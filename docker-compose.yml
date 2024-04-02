@@ -1,65 +1,50 @@
 version: "3.8"
 services:
+  frontend:
+    container_name: pyramid_front
+    env_file:
+      - ./frontend/.env
+    restart: on-failure
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
   backend:
-    container_name: aacc_backend
+    container_name: pyramid_back
+    env_file:
+      - ./backend/.env
+    restart: on-failure
+    build: ./backend
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       db:
         condition: service_started
-      # db_test:
-      #   condition: service_started
-    restart: on-failure
-    build:
-      context: ./backend
-    ports:
-      - ${PORT_BACK}:${PORT_BACK}
-    volumes:
-      - ./backend:/usr/src/app
-    env_file: ./backend/.env
-  frontend:
-    container_name: aacc_frontend
-    depends_on:
-      backend:
-        condition: service_started
-    restart: on-failure
-    build:
-      context: ./frontend
-    ports:
-      - ${PORT_FRONT}:${PORT_FRONT}
-    volumes:
-      - ./frontend:/usr/src/app
-    env_file: ./frontend/.env
-  # db_test:
-  #   image: mysql:8.0
-  #   container_name: aacc_db_test
-  #   ports:
-  #     - ${PORT_MYSQL_TEST}:3306
-  #   environment:
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE_TEST}
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD_TEST}
-  #   volumes:
-  #     - mysql_test:/var/lib/mysql
-  #     - mysql_config_test:/etc/mysql
+
   db:
-    image: mysql:8.0
-    container_name: aacc_db
-    ports:
-      - ${PORT_MYSQL}:3306
+    container_name: pyramid_db
+    env_file:
+      - ./backend/.env
+    restart: on-failure
+    image: mysql:latest
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:${MYSQL_PORT}"
     volumes:
-      - mysql_db:/var/lib/mysql
-      - mysql_db_config:/etc/mysql
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: phpmyadmin
-    ports:
-      - ${PORT_PMA}:80
-    environment:
-      - PMA_ARBITRARY=1
+      - db-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-  mysql_db:
-  mysql_db_config:
-  mysql_test:
-  mysql_config_test:
+  db-data:

@@ -24,6 +24,7 @@ CREATE TABLE `Users` (
     `resetTokenExpires` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+    `searchHash` TEXT NULL,
 
     UNIQUE INDEX `Users_email_key`(`email`),
     UNIQUE INDEX `Users_cpf_key`(`cpf`),
@@ -40,6 +41,7 @@ CREATE TABLE `Courses` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+    `searchHash` TEXT NULL,
 
     UNIQUE INDEX `Courses_name_key`(`name`),
     UNIQUE INDEX `Courses_code_key`(`code`),
@@ -95,6 +97,7 @@ CREATE TABLE `Activities` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+    `searchHash` TEXT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -113,6 +116,7 @@ CREATE TABLE `Submissions` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+    `searchHash` TEXT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

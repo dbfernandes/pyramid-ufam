@@ -8,11 +8,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the frontend code
+# Copy the rest of the backend code
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3366
+EXPOSE 3333
 
 # Command to run the application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start:dev"]

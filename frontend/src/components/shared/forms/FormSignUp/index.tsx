@@ -179,8 +179,8 @@ export default function FormSignUp() {
           dispatch(defaultCourse(response.data.user.courses[0]));
           dispatch(
             authorize({
-              token: response.headers["X-Access-Token"],
-              refreshToken: response.headers["X-Refresh-Token"],
+              token: response.headers["x-access-token"],
+              refreshToken: response.headers["x-refresh-token"],
             })
           );
           dispatch(login(response.data.user));

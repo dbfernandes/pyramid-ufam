@@ -16,10 +16,14 @@ async function bootstrap() {
 		next();
 	});
 
+	app.use(
+		"/files/profile-images",
+		express.static("public/files/profile-images"),
+	);
 	app.use("/files/submissions", express.static("public/files/submissions"));
 	createSwaggerDocument(app);
 
-	console.log(`Server started at localhost:${process.env.PORT}`);
-	await app.listen(process.env.PORT);
+	console.log(`Server started at localhost:${process.env.BACKEND_PORT}`);
+	await app.listen(process.env.BACKEND_PORT);
 }
 bootstrap();

@@ -18,7 +18,7 @@ module.exports = {
 	env: {
 		basePath: basePath,
 		img: `${basePath}/img`,
-		api: `${process.env.REACT_APP_API_URL}`,
+		api: `${process.env.API_URL}`,
 		title: "Pyramid",
 	},
 	typescript: {

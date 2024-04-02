@@ -103,7 +103,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
             <i className="bi bi-list-check" />
             <i className="bi bi-file-earmark-medical-fill" />
           </NestedIcon>,
-          title: "Solicitações",
+          title: "Solicitações do curso",
           route: "/solicitacoes",
           permissions: [1, 2],
         },

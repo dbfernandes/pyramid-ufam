@@ -8,7 +8,7 @@ import styles from "./styles.module.scss";
 // Interface
 interface IModalCustomProps {
   show: boolean;
-  close: Function;
+  close: () => void;
   size?: string;
   children?: React.ReactNode;
   [x: string]: any;

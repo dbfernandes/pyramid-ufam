@@ -131,7 +131,7 @@ export class SubmissionService {
 				},
 				history: _submissionActions,
 				fileUrl: `${process.env.NODE_HOST}${
-					process.env.PORT ? ":" + process.env.PORT : ""
+					process.env.BACKEND_PORT ? ":" + process.env.BACKEND_PORT : ""
 				}/files/submissions/${file}`,
 				..._submission,
 				Activity: undefined,
@@ -275,7 +275,7 @@ export class SubmissionService {
 					},
 				},
 				fileUrl: `${process.env.NODE_HOST}${
-					process.env.PORT ? ":" + process.env.PORT : ""
+					process.env.BACKEND_PORT ? ":" + process.env.BACKEND_PORT : ""
 				}/files/submissions/${file}`,
 				...submission,
 				Activity: undefined,
