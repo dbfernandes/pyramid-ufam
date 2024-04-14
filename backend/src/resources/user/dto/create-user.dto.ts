@@ -8,7 +8,7 @@ import {
 	IsOptional,
 	Allow,
 } from "class-validator";
-import { IsCPF } from "src/common/validators.validator";
+import { IsCPF } from "../../../../src/common/validators.validator";
 
 export class CreateUserDto {
 	@IsString()

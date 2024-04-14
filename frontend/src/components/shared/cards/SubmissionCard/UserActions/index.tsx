@@ -17,6 +17,7 @@ import {
   InfoButton,
   EditButton
 } from "../styles";
+import { fetchDelete } from "components/shared/forms/FormUpdateStatusSubmission";
 
 // Custom
 import { History, HistoryItem } from "./styles";
@@ -41,6 +42,7 @@ export default function UserActions({
   onChange = () => { }
 }: IUserActionsProps) {
   const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
+
   function handleDeletion(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -96,6 +98,14 @@ export default function UserActions({
     "pré-aprovou": "var(--success-hover)",
     "submeteu": "var(--primary-color)",
   };
+
+  const handleCancelSubmission = async () => {
+    try {
+      await fetchDelete({ user, id: submission.id, status: submission.status }, onChange);
+    } catch (error) {
+      console.error('Erro ao cancelar submissão:', error);
+    }
+  }; 
 
   function SubmissionHistory() {
     return (
@@ -186,13 +196,7 @@ export default function UserActions({
       )}
       {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
         <DangerButtonAlt
-          onClick={() => {
-            /*fetchUpdateStatus({
-              userId: user.id,
-              id: submission.id,
-              status: StatusSubmissions["Cancelado"],
-            })*/
-          }}>
+        onClick={() => handleCancelSubmission()}>
           <i className="bi bi-x-lg" /> Cancelar
         </DangerButtonAlt>
       )}

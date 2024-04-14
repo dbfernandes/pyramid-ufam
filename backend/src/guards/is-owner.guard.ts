@@ -6,7 +6,7 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { SubmissionService } from "src/resources/submission/submission.service";
+import { SubmissionService } from "../../src/resources/submission/submission.service";
 
 @Injectable()
 export class IsOwnerGuard implements CanActivate {

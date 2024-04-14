@@ -18,15 +18,15 @@ import {
 import { UserService } from "./user.service";
 import { SubmissionService } from "../submission/submission.service";
 import { AddUserDto, UpdateUserDto, EnrollDto } from "./dto";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
 import { CreateSubmissionDto } from "../submission/dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import { IsOwnerGuard } from "src/guards/is-owner.guard";
-import { RolesGuard } from "src/guards/roles.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserTypes } from "src/common/enums.enum";
-import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
+import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
+import { RolesGuard } from "../../../src/guards/roles.guard";
+import { Roles } from "../../../src/decorators/roles.decorator";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
 
 @Controller("users")
 export class UserController {

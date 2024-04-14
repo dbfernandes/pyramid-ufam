@@ -60,20 +60,9 @@ async function SubmissionActionTypesSeeds() {
 
 async function CoursesSeeds() {
 	await courseService.create({
-		name: "Ciência da Computação",
-		code: "IE08",
+		name: "Engenharia9",
+		code: "FT09",
 		periods: 10,
-		activityGroupsWorkloads: {
-			education: 240,
-			research: 240,
-			extension: 240,
-		},
-	});
-
-	await courseService.create({
-		name: "Engenharia de Software",
-		code: "IE17",
-		periods: 8,
 		activityGroupsWorkloads: {
 			education: 240,
 			research: 240,

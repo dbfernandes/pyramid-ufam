@@ -105,21 +105,20 @@ export default function SubmissionCard({
 
   const [fileSize, setFileSize] = useState<string>("");
   async function getFileSize(fileUrl) {
-    return await axios.request({
-      url: fileUrl,
-      method: "HEAD",
-    } as AxiosRequestConfig)
-      .then((response) => {
-        const length = response.headers["content-length"];
-        const size = Math.round(parseInt(length) / 1024);
-
-        if (size > 1024) {
-          setFileSize(`${(size / 1024).toFixed(2)} MB`);
-          return;
-        }
-
-        setFileSize(`${size.toString()} KB`);
-      });
+    try {
+      const response = await axios.head(fileUrl);
+      const contentLength = response.headers['content-length'];
+      if (contentLength) {
+        const sizeInBytes = parseInt(contentLength, 10);
+        const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+        return `${sizeInMB} MB`;
+      } else {
+        return 'Unknown';
+      }
+    } catch (error) {
+      console.error('Error fetching file size:', error);
+      return 'Error';
+    }
   }
 
   useEffect(() => {

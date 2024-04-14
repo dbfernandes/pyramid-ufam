@@ -9,7 +9,7 @@ import {
 	IsArray,
 	IsInt,
 } from "class-validator";
-import { IsCPF, IsUserType } from "src/common/validators.validator";
+import { IsCPF, IsUserType } from "../../../../src/common/validators.validator";
 
 export class AddUserDto {
 	@IsNotEmpty()

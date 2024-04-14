@@ -16,37 +16,37 @@ export class CourseService {
 	) {}
 
 	async create(createCourseDto: CreateCourseDto): Promise<any> {
-		if (await this.findByName(createCourseDto.name))
+		const existingCourseByName = await this.findByName(createCourseDto.name);
+		console.log(existingCourseByName);
+		if (existingCourseByName) {
 			throw new BadRequestException("Name already in use");
-		if (await this.findByCode(createCourseDto.code))
+		}
+		const existingCourseByCode = await this.findByCode(createCourseDto.code);
+		if (existingCourseByCode) {
 			throw new BadRequestException("Code already in use");
-
+		}
+		// Se não houver duplicatas, crie o novo curso
 		const { activityGroupsWorkloads, ...courseDto } = createCourseDto;
 		const activityGroupsArray = Object.keys(ActivityGroups).map((value) =>
 			value.toString().toLowerCase(),
 		);
-
-		// Creating course
+		// Criando o curso
 		const course = await this.prisma.course.create({ data: courseDto });
-
-		// Setting max workload for each activity group
+		// Definindo a carga horária máxima para cada grupo de atividades
 		activityGroupsArray.forEach(async (activityGroup, index) => {
 			const value =
 				activityGroup in activityGroupsWorkloads
 					? activityGroupsWorkloads[activityGroup]
 					: 240;
-
 			await this.courseActivityGroupService.create({
 				courseId: course.id,
 				activityGroupId: index + 1,
 				maxWorkload: value,
 			});
 		});
-
 		const activityGroups = await this.courseActivityGroupService.findByCourseId(
 			course.id,
 		);
-
 		return { ...course, activityGroups: activityGroups };
 	}
 

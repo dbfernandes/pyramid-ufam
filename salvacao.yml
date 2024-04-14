@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  back:
+    container_name: loja_backend
+    build:
+        context: ./backend
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - db
+
+  front:
+    container_name: loja_frontend
+    build:
+        context: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=${NODE_ENV}
+
+
+  
+  db:
+    container_name: loja_db
+    image: mysql:8
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - mysql_db_loja:/var/lib/mysql
+      - mysql_db_loja_config:/etc/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+
+volumes:
+  mysql_db_loja:
+  mysql_db_loja_config:

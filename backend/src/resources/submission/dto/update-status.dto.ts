@@ -6,7 +6,7 @@ import {
 	IsString,
 	Validate,
 } from "class-validator";
-import { IsStatus } from "src/common/validators.validator";
+import { IsStatus } from "../../../../src/common/validators.validator";
 
 export class UpdateStatusDto {
 	@IsInt()

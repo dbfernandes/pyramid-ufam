@@ -6,7 +6,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PrismaModule } from "../prisma/prisma.module";
 import { ActivityModule } from "../activity/activity.module";
 import { SubmissionModule } from "../submission/submission.module";
-import { JwtStrategy } from "src/guards/strategies/jwt.strategy";
+import { JwtStrategy } from "../../../src/guards/strategies/jwt.strategy";
 
 @Module({
 	imports: [

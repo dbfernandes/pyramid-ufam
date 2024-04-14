@@ -8,11 +8,14 @@ import { PrismaService } from "../prisma/prisma.service";
 import { User } from "@prisma/client";
 import { AddUserDto, CreateUserDto, UpdateUserDto } from "./dto";
 import { UserTypeService } from "../userType/userType.service";
-import { UserTypes } from "src/common/enums.enum";
+import { UserTypes } from "../../../src/common/enums.enum";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { CourseActivityGroupService } from "../courseActivityGroup/courseActivityGroup.service";
-import { StatusSubmissions, UserTypeIds } from "src/common/constants.constants";
+import {
+	StatusSubmissions,
+	UserTypeIds,
+} from "../../../src/common/constants.constants";
 import { EnrollDto } from "./dto/enroll.dto";
 import {
 	decodeToken,

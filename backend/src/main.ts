@@ -2,11 +2,23 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { createSwaggerDocument } from "../swagger/swagger.config";
 import * as express from "express";
+import { ValidationPipe } from "@nestjs/common";
+import * as cors from "cors";
+// Permitir solicitações de todas as origens
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
+	app.use(
+		cors({
+			origin: "http://localhost:3366", // Defina a origem que deseja permitir
+			methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Métodos HTTP permitidos
+			preflightContinue: false,
+			optionsSuccessStatus: 204,
+			credentials: true,
+		}),
+	);
 
-	app.enableCors();
+	app.useGlobalPipes(new ValidationPipe());
 
 	app.use((req, res, next) => {
 		res.header(

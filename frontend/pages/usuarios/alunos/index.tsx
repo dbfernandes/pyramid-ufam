@@ -11,16 +11,37 @@ import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
 import UserList from "components/shared/UserList";
 import toast from "components/shared/Toast";
+import { ReloadButton } from "components/shared/Button"; // Importe o botão de recarregar aqui
 
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+import { useMediaQuery } from "react-responsive";
 
-export default function Alunos() {
+interface IAlunoProps {
+  onChange?: Function;
+}
+
+export default function Alunos({onChange = () => { }}: IAlunoProps) {
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [loaded, setLoaded] = useState(false);
   const { setLinks } = useBreadcrumb();
+  const isMobile = useMediaQuery({ maxWidth: 992 });
+  const [isReloading, setIsReloading] = useState(false);
+
+  async function handleReload() {
+    setIsReloading(true);
+
+    try {
+      const response = await axios.get(`${process.env.api}/usuarios/alunos`);
+      onChange(response.data);
+      setIsReloading(false);
+    } catch (error) {
+      console.error("Erro ao carregar cursos:", error);
+      setIsReloading(false);
+    }
+  }
 
   // Setting links used in breadcrumb
   useEffect(() => {
@@ -30,7 +51,7 @@ export default function Alunos() {
     }
 
     setLinks([
-      { title: "Usuários" },
+      { title: "Usuário" },
       { title: "Alunos" },
     ]);
   }, []);
@@ -86,7 +107,8 @@ export default function Alunos() {
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        setUsers(response.data.users);
+        const filteredUsers = response.data.users.filter(u => u.email != user.email)
+        setUsers(filteredUsers);
         setTotalPages(response.data.totalPages);
       })
       .catch((error) => {
@@ -133,6 +155,7 @@ export default function Alunos() {
           <Spinner size={"30px"} color={"var(--primary-color)"} />
         </div>
       )}
+
     </>
   );
 }

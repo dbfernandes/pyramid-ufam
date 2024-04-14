@@ -3,12 +3,13 @@
 	"version": "1.0.2",
 	"private": true,
 	"scripts": {
-		"dev": "next dev -p 3366",
-		"build": "next build",
-		"start": "next start",
+		"dev": "next dev --port 3366",
+		"build": "next build --port 3366",
+		"start": "next start --port 3366",
 		"lint": "next lint",
 		"deploy": "gcloud app deploy --no-promote --version=1-0-2",
-		"deploy:prod": "npm run deploy -- --appyaml=app-prod.yaml --project=aacc-404719"
+		"deploy:prod": "npm run deploy -- --appyaml=app-prod.yaml --project=aacc-404719",
+		"proxy": "http://localhost:3366"
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^1.8.1",
@@ -25,7 +26,7 @@
 		"react-dom": "18.0.0",
 		"react-input-mask": "^2.0.4",
 		"react-modal-sheet": "^1.9.0",
-		"react-promise": "^2.0.2",
+		"react-promise": "^3.0.2",
 		"react-redux": "^8.0.0",
 		"react-responsive": "^9.0.0-beta.6",
 		"react-select": "^5.3.1",

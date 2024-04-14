@@ -4,7 +4,6 @@ services:
     container_name: pyramid_front
     env_file:
       - ./frontend/.env
-    restart: on-failure
     build: ./frontend
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
@@ -18,27 +17,19 @@ services:
     container_name: pyramid_back
     env_file:
       - ./backend/.env
-    restart: on-failure
     build: ./backend
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - ./backend:/app
       - /app/node_modules
-    depends_on:
-      db:
-        condition: service_started
 
   db:
     container_name: pyramid_db
-    env_file:
-      - ./backend/.env
-    restart: on-failure
     image: mysql:latest
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:${MYSQL_PORT}"

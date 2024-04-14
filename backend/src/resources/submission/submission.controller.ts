@@ -12,13 +12,13 @@ import {
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
 import { UpdateStatusDto } from "./dto/update-status.dto";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserTypes } from "src/common/enums.enum";
-import { RolesGuard } from "src/guards/roles.guard";
-import { IsOwnerGuard } from "src/guards/is-owner.guard";
-import { CheckOwner } from "src/decorators/owner.decorator";
-import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
+import { Roles } from "../../../src/decorators/roles.decorator";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { RolesGuard } from "../../../src/guards/roles.guard";
+import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
+import { CheckOwner } from "../../../src/decorators/owner.decorator";
+import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
 
 @Controller("submissions")
 export class SubmissionController {

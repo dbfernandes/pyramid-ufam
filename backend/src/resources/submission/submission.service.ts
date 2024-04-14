@@ -1,4 +1,3 @@
-import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Submission } from "@prisma/client";
 import { CreateSubmissionDto, UpdateSubmissionDto } from "./dto";
@@ -8,7 +7,25 @@ import {
 	ActivityGroupIds,
 	StatusSubmissions,
 	SubmissionActionIds,
-} from "src/common/constants.constants";
+} from "../../../src/common/constants.constants";
+import { Injectable, NestMiddleware } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+
+@Injectable()
+export class FilesCorsMiddleware implements NestMiddleware {
+	use(req: Request, res: Response, next: NextFunction) {
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header(
+			"Access-Control-Allow-Methods",
+			"GET, PUT, POST, DELETE, PATCH, OPTIONS",
+		);
+		res.header(
+			"Access-Control-Allow-Headers",
+			"Origin, X-Requested-With, Content-Type, Accept, Authorization",
+		);
+		next();
+	}
+}
 
 @Injectable()
 export class SubmissionService {

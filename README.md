@@ -16,7 +16,7 @@ $ npm run setup:dev
 
 ## Swagger
 ```
-URL: http://localhost:3333/api
+URL: http://localhost:3322/api
 ```
 
 ## Frontend

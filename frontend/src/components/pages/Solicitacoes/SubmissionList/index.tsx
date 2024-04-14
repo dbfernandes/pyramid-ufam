@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import axios, { AxiosRequestConfig } from "axios";
 
-// Shared
 import { H3 } from "components/shared/Titles";
 import { Disclaimer, Filter } from "components/shared/UserList/styles";
 import SearchBar from "components/shared/SearchBar";
@@ -15,26 +15,18 @@ import {
   DangerButtonAlt,
 } from "components/shared/cards/SubmissionCard/styles";
 
-// Custom
-import {
-  Wrapper,
-  HeaderWrapper,
-  ListStyled
-} from "../styles";
+import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
+import toast from "components/shared/Toast";
 
-// Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import toast from "components/shared/Toast";
-import axios, { AxiosRequestConfig } from "axios";
+
 interface ISubmissionListProps {
   subTitle?: string;
   submissions?: any[];
   loading?: boolean;
   totalPages: number;
-
   onChange?: Function;
-
   children?: React.ReactNode;
 }
 
@@ -43,69 +35,64 @@ export default function SubmissionList({
   submissions = [],
   loading,
   totalPages,
-
-  onChange = () => { },
-
-  children
+  onChange = () => {},
+  children,
 }: ISubmissionListProps) {
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
+  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
+  const [fetching, setFetching] = useState<boolean>(false);
 
   // Filter options
-  const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
-  const statuses = router.query.status?.toString().split("-");
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
-    { title: "Pendentes", value: 1, checked: statuses?.includes("1") },
-    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: statuses?.includes("2") },
-    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
-    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
+    { title: "Pendentes", value: 1, checked: false },
+    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: false },
+    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: false },
+    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: false },
   ]);
 
-  useEffect(() => {
-    setFetchingFilter(true);
-    const debounce = setTimeout(() => {
-      const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
-      router.push({
-        query: { ...router.query, status },
-      });
+  async function handleStatusUpdate(status: string) {
+    if (checkedIds.length === 0) {
+      toast("Aviso", "Selecione pelo menos uma solicitação para alterar o status.");
+      return;
+    }
 
-      setFetchingFilter(false);
-    }, 1000);
+    setFetching(true);
 
-    return () => clearTimeout(debounce);
-  }, [filterOptions]);
+    const promises = checkedIds.map(async (id) => {
+      const currentStatus = submissions.find((submission) => submission.id === id)?.status;
 
-  async function fetchMassUpdateStatus(status) {
-    const options = {
-      url: `${process.env.api}/submissions/${checkedIds.join(",")}/status/mass-update`,
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `${user.token}`,
-      },
-      data: {
-        userId: user.id,
-        status: status
-      },
-    };
+      if (currentStatus && currentStatus !== status) {
+        const options = {
+          url: `${process.env.api}/submissions/${id}/status`,
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          data: {
+            userId: user.id,
+            status: status,
+          },
+        } as AxiosRequestConfig;
+        await axios.request(options);
+      }
+    });
 
-    await axios
-      .request(options as AxiosRequestConfig)
-      .then((response) => {
-        toast("Sucesso", "Status atualizados com sucesso.", "success");
-        onChange();
-        setCheckedIds([])
-      })
-      .catch((error) => {
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          500: error?.response?.data?.message,
-        };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
-      });
+    try {
+      await Promise.all(promises);
+      toast("Sucesso", `Status atualizado para ${status} com sucesso.`, "success");
+      setFetching(false);
+      onChange();
+    } catch (error) {
+      const errorMessages = {
+        0: "Oops, tivemos um erro. Tente novamente.",
+        500: "Erro interno do servidor.",
+      };
+      const code = 0;
+      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      setFetching(false);
+    }
   }
 
   return (
@@ -113,40 +100,30 @@ export default function SubmissionList({
       <HeaderWrapper>
         <H3>Solicitações {subTitle && `(${subTitle})`}</H3>
 
-        {checkedIds?.length > 0 &&
-          (user.userTypeId == 1
-            ? <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-              <DangerButtonAlt onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} REJEITADOS`) }}>
-                <i className="bi bi-x-lg" /> Rejeitar selecionados
-              </DangerButtonAlt>
-
-              <AcceptButton onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} APROVADOS`) }}>
-                <i className="bi bi-check2-all" /> Aprovar selecionados
-              </AcceptButton>
-            </ButtonGroup>
-            : user.userTypeId == 2 && <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-              <AcceptButton onClick={() => { alert(`[SECRETÁRIO] ${checkedIds.toString()} PRÉ-APROVADOS`) }}>
-                <i className="bi bi-check2-all" /> Pré-aprovar selecionados
-              </AcceptButton>
-            </ButtonGroup>
-          )
-        }
+        {checkedIds.length > 0 && (
+          <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
+            <DangerButtonAlt onClick={() => handleStatusUpdate("Rejeitado")}>
+              <i className="bi bi-x-lg" /> Rejeitar selecionados
+            </DangerButtonAlt>
+            <AcceptButton onClick={() => handleStatusUpdate("Pré-aprovado")}>
+              <i className="bi bi-check2-all" /> Pré-aprovar selecionados
+            </AcceptButton>
+            <AcceptButton onClick={() => handleStatusUpdate("Aprovado")}>
+              <i className="bi bi-check2-all" /> Aprovar selecionados
+            </AcceptButton>
+          </ButtonGroup>
+        )}
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible
-          options={filterOptions}
-          setOptions={setFilterOptions}
-          fetching={fetchingFilter}
-        />
-        <SearchBar
-          placeholder="Pesquisar solicitações" />
+        <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={false} />
+        <SearchBar placeholder="Pesquisar solicitações" />
       </Filter>
 
-      {submissions?.length > 0
-        ? <ListStyled>
+      {submissions.length > 0 ? (
+        <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-          {submissions?.length > 0 && submissions.map((submission, index) =>
+          {submissions.map((submission, index) => (
             <SubmissionCard
               key={index}
               submission={submission}
@@ -156,13 +133,14 @@ export default function SubmissionList({
               user={user}
               onChange={onChange}
             />
-          )}
+          ))}
           {children}
         </ListStyled>
-        : <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
-      }
+      ) : (
+        <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
+      )}
 
-      {submissions?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
+      {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
     </Wrapper>
-  )
+  );
 }

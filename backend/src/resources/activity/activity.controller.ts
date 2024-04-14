@@ -11,10 +11,10 @@ import {
 } from "@nestjs/common";
 import { ActivityService } from "./activity.service";
 import { UpdateActivityDto } from "./dto";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserTypes } from "src/common/enums.enum";
-import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
+import { Roles } from "../../../src/decorators/roles.decorator";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
 
 @Controller("activities")
 export class ActivityController {

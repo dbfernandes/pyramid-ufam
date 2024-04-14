@@ -27,6 +27,7 @@ import Spinner from "../Spinner";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+import { ReloadButton } from "../Button";
 interface IUserListProps {
   title: string;
   courseId?: number | null | undefined;
@@ -55,6 +56,26 @@ export default function UserList({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
+  const [isReloading, setIsReloading] = useState(false);
+
+  async function handleReload() {
+    setIsReloading(true);
+  
+    try {
+      const response = await axios.get(`${process.env.api}/users`, {
+        params: {
+          page: router.query.page || 1,
+          search: router.query.search || '', 
+          status: router.query.status || '1'
+        }
+      });
+      onChange(response.data);
+      setIsReloading(false);
+    } catch (error) {
+      console.error("Erro ao carregar alunos:", error);
+      setIsReloading(false);
+    }
+  }
 
   const subRoutes = {
     "alunos": {
@@ -79,6 +100,7 @@ export default function UserList({
     { title: "Inativos", value: 0, accent: "var(--danger)", checked: statuses?.includes("0") },
   ]);
 
+
   useEffect(() => {
     setFetchingFilter(true);
     const debounce = setTimeout(() => {
@@ -86,12 +108,36 @@ export default function UserList({
       router.push({
         query: { ...router.query, status },
       });
-
+  
       setFetchingFilter(false);
     }, 1000);
-
+  
+    const selectedOptionsCount = filterOptions.filter(option => option.checked).length;
+    if (selectedOptionsCount === 0) {
+      const updatedOptions = filterOptions.map(option =>
+        option.title === "Ativos" ? { ...option, checked: true } : option
+      );
+      setFilterOptions(updatedOptions);
+    }
+  
     return () => clearTimeout(debounce);
   }, [filterOptions]);
+  
+
+  useEffect(() => {
+  setFetchingFilter(true);
+  const debounce = setTimeout(() => {
+    const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
+    router.push({
+      query: { ...router.query, status },
+    });
+
+    setFetchingFilter(false);
+  }, 1000);
+
+  return () => clearTimeout(debounce);
+}, [filterOptions]);
+
 
   // Delete functions
   const [fetchingDelete, setFetchingDelete] = useState<boolean>(false);
@@ -180,6 +226,15 @@ export default function UserList({
             </AddUserLink>
           </Link>
         }
+
+      <ReloadButton onClick={handleReload} disabled={isReloading}>
+        {isReloading ? (
+          <Spinner size={"16px"} color={"var(--primary-color)"} />
+        ) : (
+          <i className="bi bi-arrow-clockwise"></i>
+        )}
+      </ReloadButton>
+      
       </HeaderWrapper>
 
       <Filter>
