@@ -8,7 +8,7 @@ import { validateEmail } from "utils";
 import Form from "components/shared/Form";
 import { LinkWrapper, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import TextAlert from "components/shared/TextAlert";
 

@@ -27,7 +27,6 @@ import Spinner from "../Spinner";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import { ReloadButton } from "../Button";
 interface IUserListProps {
   title: string;
   courseId?: number | null | undefined;
@@ -57,6 +56,7 @@ export default function UserList({
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [isReloading, setIsReloading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   async function handleReload() {
     setIsReloading(true);
@@ -205,6 +205,31 @@ export default function UserList({
     setFetchingMassDelete(false);
   }
 
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const filteredUsers = users.filter((user) => {
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      if (
+        user
+        ) {
+          const nameLower = user.name.toLowerCase();
+
+          console.log(searchTerm, nameLower)
+  
+        return (
+          nameLower.includes(searchTermLower)
+        );
+      } else {
+        return false; 
+      }
+    }
+
+    return true;
+  });
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
@@ -226,14 +251,6 @@ export default function UserList({
             </AddUserLink>
           </Link>
         }
-
-      <ReloadButton onClick={handleReload} disabled={isReloading}>
-        {isReloading ? (
-          <Spinner size={"16px"} color={"var(--primary-color)"} />
-        ) : (
-          <i className="bi bi-arrow-clockwise"></i>
-        )}
-      </ReloadButton>
       
       </HeaderWrapper>
 
@@ -244,13 +261,14 @@ export default function UserList({
           fetching={fetchingFilter}
         />
         <SearchBar
-          placeholder="Pesquisar alunos" />
+          onChange={handleSearchChange}
+          placeholder="Pesquisar usuários" />
       </Filter>
 
       {users?.length > 0 ?
         (<ListStyled>
           <User header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} subRoute={subRoute} />
-          {users.map((user, index) =>
+          {filteredUsers.map((user, index) =>
             <User
               key={index}
               user={user}

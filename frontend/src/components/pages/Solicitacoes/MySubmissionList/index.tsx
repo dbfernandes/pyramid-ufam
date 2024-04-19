@@ -34,6 +34,7 @@ interface ISubmissionListProps {
   children?: React.ReactNode;
 }
 
+
 export default function MySubmissionList({
   submissions = [],
   loading,
@@ -46,7 +47,7 @@ export default function MySubmissionList({
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>(state => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
-
+  const [searchTerm, setSearchTerm] = useState<string>("");
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
@@ -56,6 +57,10 @@ export default function MySubmissionList({
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
   ]);
+
+  const handleSearchTermChange = (term: string) => {
+    setSearchTerm(term);
+  };
 
   useEffect(() => {
     setFetchingFilter(true);
@@ -71,7 +76,40 @@ export default function MySubmissionList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  // Adicionar ações múltiplas aqui
+  const filteredSubmissions = submissions.filter((submission) => {
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      if (
+        submission &&
+        submission.user &&
+        submission.activity.activityGroup &&
+        submission.activity.description
+        ) {
+          const nameLower = submission.user.name.toLowerCase();
+          const activityNameLower = submission.activity.name.toLowerCase();
+          const activityGroupNameLower = submission.activity.activityGroup.name.toLowerCase();
+          const activityGroupHour = submission.activity.activityGroup.maxWorkload;
+
+          const descriptionLower = submission.activity.description.toLowerCase();
+
+          //console.log(searchTerm, nameLower, activityNameLower, activityGroupNameLower, activityGroupHour, descriptionLower)
+  
+        return (
+          nameLower.includes(searchTermLower) ||
+          activityNameLower.includes(searchTermLower)||
+          activityGroupNameLower.includes(searchTermLower) ||
+          (typeof activityGroupHour === "string" && activityGroupHour.includes(searchTermLower)) ||
+          (typeof activityGroupHour === "number" && activityGroupHour.toString().includes(searchTermLower)) ||
+          descriptionLower.includes(searchTermLower)
+        );
+      } else {
+        return false; 
+      }
+    }
+
+    return true;
+  });
+  
 
   return (
     <Wrapper>
@@ -93,14 +131,14 @@ export default function MySubmissionList({
           setOptions={setFilterOptions}
           fetching={fetchingFilter}
         />
-        <SearchBar
+        <SearchBar onChange={handleSearchTermChange}
           placeholder="Pesquisar solicitações" />
       </Filter>
 
       {submissions?.length > 0
         ? <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} user={user} />
-          {submissions.map((submission) =>
+          {filteredSubmissions.map((submission) =>
             <SubmissionCard
               key={submission.id}
               submission={submission}
@@ -111,6 +149,7 @@ export default function MySubmissionList({
               onChange={onChange}
             />
           )}
+
           {children}
         </ListStyled>
         : <Disclaimer>Você ainda não fez nenhuma solicitação.</Disclaimer>

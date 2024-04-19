@@ -24,7 +24,6 @@ import FormAddCourse from "components/shared/forms/FormAddCourse";
 import ICourse from "interfaces/ICourse";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import Button, { ReloadButton } from "components/shared/Button";
 import { useState } from "react";
 
 interface ICoursesProps {
@@ -46,6 +45,7 @@ export default function Courses({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const isMobile = useMediaQuery({ maxWidth: 992 });
   const [isReloading, setIsReloading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   async function handleReload() {
     setIsReloading(true);
@@ -88,6 +88,15 @@ export default function Courses({
       });
   }
 
+  const filterCourses = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const filteredCourses = courses.filter((course) => {
+    return course.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
@@ -107,18 +116,12 @@ export default function Courses({
           </AddUserButton>
         )}
 
-        <ReloadButton onClick={handleReload} disabled={isReloading}>
-          {isReloading ? (
-            <Spinner size={"16px"} color={"var(--primary-color)"} />
-            ) : (
-              <i className="bi bi-arrow-clockwise"></i>
-              )}
-        </ReloadButton>
 
       </HeaderWrapper>
 
       <Filter>
         <SearchBar
+          onChange={filterCourses}
           placeholder="Pesquisar cursos" />
       </Filter>
 
@@ -135,7 +138,7 @@ export default function Courses({
         >
           <Spinner size={"30px"} color={"var(--primary-color)"} />
         </div>
-        : courses?.length > 0 ?
+        : filteredCourses?.length > 0 ?
           (<>
             <CardGroup>
               {courses.map((course) => (

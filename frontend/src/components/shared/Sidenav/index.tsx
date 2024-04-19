@@ -115,15 +115,6 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
           title: "Solicitações por grupo de atividade",
           route: "/solicitacoes/grupo-atividade",
           permissions: [1, 2]
-        },
-        {
-          icon: <NestedIcon>
-            <i className="bi bi-list-check" />
-            <i className="bi bi-bookmark-fill" />
-          </NestedIcon>,
-          title: "Solicitações por atividade",
-          route: "/solicitacoes/atividade",
-          permissions: [1, 2]
         }
       ],
     },

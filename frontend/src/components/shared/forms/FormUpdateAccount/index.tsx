@@ -12,7 +12,7 @@ import {
   FormAlert
 } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import toast from "components/shared/Toast";
 

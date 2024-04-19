@@ -6,7 +6,7 @@ import { StatusSubmissions } from "constants/statusSubmissions.constants";
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
 import TextArea from "components/shared/TextArea";
-import Button, { DangerButton } from "components/shared/Button";
+import { Button, DangerButton } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
 import toast from "components/shared/Toast";

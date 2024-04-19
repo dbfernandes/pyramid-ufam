@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { FormAlert } from "components/shared/Form/styles";
 import FormPage from "components/shared/FormPage";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import RangeInput from "components/shared/RangeInput";
 import toast from "components/shared/Toast";

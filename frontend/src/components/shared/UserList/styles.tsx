@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button, { ButtonAlt } from "components/shared/Button";
+import { Button, ButtonAlt } from "components/shared/Button";
 
 export const HeaderWrapper = styled.div`
 	display: flex;

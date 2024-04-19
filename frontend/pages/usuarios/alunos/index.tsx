@@ -11,7 +11,6 @@ import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
 import UserList from "components/shared/UserList";
 import toast from "components/shared/Toast";
-import { ReloadButton } from "components/shared/Button"; // Importe o botão de recarregar aqui
 
 // Interfaces
 import { IRootState } from "redux/store";

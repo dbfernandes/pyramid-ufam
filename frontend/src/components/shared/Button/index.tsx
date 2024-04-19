@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Button = styled.button`
+export const Button = styled.button`
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -47,20 +47,3 @@ export const ButtonAlt = styled(Button)`
 export const DangerButton = styled(Button)`
   background-image: linear-gradient(to right, var(--danger) 0%, #da2d58 51%, var(--danger-hover) 100%);
 `;
-
-export const ReloadButton = styled.button`
-  padding: 6px 10px;
-  font-size: 0.9rem;
-  background-color:  var(--primary-color);
-  border: 0;
-  border-radius: 50px;
-  color: var(--white-1);
-  cursor: pointer;
-  transition: color 0.3s;
-
-  &:hover {
-    background-color: var(--primary-color-2);
-  }
-`;
-
-export default Button;

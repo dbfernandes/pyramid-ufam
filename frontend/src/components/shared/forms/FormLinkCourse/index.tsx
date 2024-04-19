@@ -8,7 +8,7 @@ import { store } from "redux/store";
 import { MultiField, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import SelectCustom from "components/shared/SelectCustom";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
 import toast from "components/shared/Toast";

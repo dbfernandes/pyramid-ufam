@@ -30,6 +30,11 @@ interface ISubmissionListProps {
   children?: React.ReactNode;
 }
 
+// Move a exportação da função countPendingSubmissions para fora do componente
+export const countPendingSubmissions = (submissions) => {
+  return submissions.filter((submission) => submission.status === 1).length;
+};
+
 export default function SubmissionList({
   subTitle,
   submissions = [],
@@ -42,6 +47,7 @@ export default function SubmissionList({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Filter options
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
@@ -50,6 +56,10 @@ export default function SubmissionList({
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: false },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: false },
   ]);
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+  };
 
   async function handleStatusUpdate(status: string) {
     if (checkedIds.length === 0) {
@@ -95,6 +105,40 @@ export default function SubmissionList({
     }
   }
 
+  const filteredSubmissions = submissions.filter((submission) => {
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      if (
+        submission &&
+        submission.user &&
+        submission.activity.activityGroup.name &&
+        submission.workload &&
+        submission.activity.description
+      ) {
+        const nameLower = submission.user.name.toLowerCase();
+        const activityNameLower = submission.activity.name.toLowerCase();
+        const activityGroupNameLower = submission.activity.activityGroup.name.toLowerCase();
+        const activityGroupHour = submission.workload;
+        const descriptionLower = submission.activity.description.toLowerCase();
+
+        return (
+          nameLower.includes(searchTermLower) ||
+          activityNameLower.includes(searchTermLower) ||
+          activityGroupNameLower.includes(searchTermLower) ||
+          (typeof activityGroupHour === "string" && activityGroupHour.includes(searchTermLower)) ||
+          (typeof activityGroupHour === "number" && activityGroupHour.toString().includes(searchTermLower)) ||
+          descriptionLower.includes(searchTermLower)
+        );
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  console.log(countPendingSubmissions(submissions));
+
   return (
     <Wrapper>
       <HeaderWrapper>
@@ -117,13 +161,13 @@ export default function SubmissionList({
 
       <Filter>
         <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={false} />
-        <SearchBar placeholder="Pesquisar solicitações" />
+        <SearchBar onChange={handleSearchChange} placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
       </Filter>
 
       {submissions.length > 0 ? (
         <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-          {submissions.map((submission, index) => (
+          {filteredSubmissions.map((submission, index) => (
             <SubmissionCard
               key={index}
               submission={submission}

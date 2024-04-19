@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from "axios";
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
 import toast from "components/shared/Toast";
