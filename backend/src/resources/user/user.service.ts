@@ -77,12 +77,16 @@ export class UserService {
 			..._addUserDto
 		} = addUserDto;
 
+		// ADICIONAR MAIS COLUNAS
+		const searchHash = Object.values(_addUserDto).join(";");
+
 		// Registering user
 		const userCreated = await this.create({
 			..._addUserDto,
 			cpf: addUserDto.cpf ? addUserDto.cpf.replace(/\D/g, "") : null,
 			password: password ? password : null,
 			userTypeId: UserTypeIds[userType],
+			searchHash,
 		});
 
 		if (userType === UserTypes.STUDENT) {
@@ -232,10 +236,7 @@ export class UserService {
 		const where =
 			search && search.trim() !== ""
 				? {
-						OR: [
-							{ name: { contains: search } },
-							{ email: { contains: search } },
-						],
+						searchHash: { contains: search },
 					}
 				: {};
 
