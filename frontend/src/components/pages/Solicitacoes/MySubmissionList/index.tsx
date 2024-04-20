@@ -131,14 +131,14 @@ export default function MySubmissionList({
           setOptions={setFilterOptions}
           fetching={fetchingFilter}
         />
-        <SearchBar onChange={handleSearchTermChange}
+        <SearchBar
           placeholder="Pesquisar solicitações" />
       </Filter>
 
       {submissions?.length > 0
         ? <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} user={user} />
-          {filteredSubmissions.map((submission) =>
+          {submissions.map((submission) =>
             <SubmissionCard
               key={submission.id}
               submission={submission}

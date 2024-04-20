@@ -47,19 +47,15 @@ export default function SubmissionList({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Filter options
+  const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
     { title: "Pendentes", value: 1, checked: false },
     { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: false },
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: false },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: false },
   ]);
-
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-  };
 
   async function handleStatusUpdate(status: string) {
     if (checkedIds.length === 0) {
@@ -105,6 +101,15 @@ export default function SubmissionList({
     }
   }
 
+  /*
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+  };
+  
+  console.log(countPendingSubmissions(submissions));
+  
   const filteredSubmissions = submissions.filter((submission) => {
     if (searchTerm) {
       const searchTermLower = searchTerm.toLowerCase();
@@ -135,9 +140,8 @@ export default function SubmissionList({
     }
 
     return true;
-  });
-
-  console.log(countPendingSubmissions(submissions));
+  }); 
+  */
 
   return (
     <Wrapper>
@@ -160,14 +164,14 @@ export default function SubmissionList({
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={false} />
-        <SearchBar onChange={handleSearchChange} placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
+        <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={fetchingFilter} />
+        <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
       </Filter>
 
-      {submissions.length > 0 ? (
-        <ListStyled>
+      {submissions?.length > 0
+        ? <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-          {filteredSubmissions.map((submission, index) => (
+          {submissions?.length > 0 && submissions.map((submission, index) =>
             <SubmissionCard
               key={index}
               submission={submission}
@@ -177,12 +181,11 @@ export default function SubmissionList({
               user={user}
               onChange={onChange}
             />
-          ))}
+          )}
           {children}
         </ListStyled>
-      ) : (
-        <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
-      )}
+        : <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
+      }
 
       {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
     </Wrapper>

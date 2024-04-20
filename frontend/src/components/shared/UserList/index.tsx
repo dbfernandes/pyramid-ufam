@@ -261,7 +261,6 @@ export default function UserList({
           fetching={fetchingFilter}
         />
         <SearchBar
-          onChange={handleSearchChange}
           placeholder="Pesquisar usuários" />
       </Filter>
 

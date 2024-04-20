@@ -15,10 +15,11 @@ import {
 // Interfaces
 interface ISearchBarProps {
   placeholder?: string;
-  onChange: (searchTerm: string) => void;
 }
 
-export default function SearchBar({ placeholder = "Pesquisar...", onChange }: ISearchBarProps) {
+export default function SearchBar({
+  placeholder = "Pesquisar...",
+}: ISearchBarProps) {
   const router = useRouter();
   const inputSearchRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
@@ -26,11 +27,17 @@ export default function SearchBar({ placeholder = "Pesquisar...", onChange }: IS
   const [fetching, setFetching] = useState<boolean>(false);
 
   useEffect(() => {
-    // Atualiza o estado `search` com o valor do query string da rota, se houver
-    setSearch(router.query.search ? router.query.search as string : "");
-  }, [router.query.search]);
+    setFetching(true);
+    const debounce = setTimeout(() => {
+      router.push({
+        query: { ...router.query, search, page: 1 },
+      });
+      setFetching(false);
+    }, 1000);
 
-  // Função para focar no input de pesquisa quando o botão de pesquisa é clicado
+    return () => clearTimeout(debounce);
+  }, [search]);
+
   function focusSearch() {
     if (inputSearchRef.current) {
       inputSearchRef.current.focus();
@@ -46,22 +53,16 @@ export default function SearchBar({ placeholder = "Pesquisar...", onChange }: IS
           type="text"
           value={search}
           placeholder={placeholder}
-          onChange={(e) => {
-            // Atualiza o estado `search` quando o valor do input muda
-            setSearch(e.target.value);
-            // Chama a função de onChange passada como prop para transmitir o valor ao componente pai
-            onChange(e.target.value);
-          }}
+          onChange={(e) => setSearch(e.target.value)}
           onBlur={() => setSearchBarFocused(false)} />
 
         {fetching
           ? <Spinner size={"16px"} color={"var(--text-default)"} />
-          : <SearchButton onClick={focusSearch} unstyledBorder={searchBarFocused || search.length !== 0}>
-              <i className="bi bi-search" />
-            </SearchButton>
+          : <SearchButton onClick={() => focusSearch()} unstyledBorder={searchBarFocused || search.length != 0}>
+            <i className="bi bi-search" />
+          </SearchButton>
         }
       </ExpandingSearchWrapper>
     </Wrapper>
   );
 }
-

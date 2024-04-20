@@ -211,7 +211,7 @@ export default function FormAddUser() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: data,
     };
