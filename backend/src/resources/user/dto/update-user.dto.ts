@@ -43,4 +43,8 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsDateString()
 	resetTokenExpires?: Date;
+
+	@IsOptional()
+	@IsString()
+	searchHash?: string;
 }

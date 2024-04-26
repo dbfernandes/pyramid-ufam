@@ -32,4 +32,8 @@ export class UpdateSubmissionDto {
 	@IsOptional()
 	@IsBoolean()
 	isActive?: boolean;
+
+	@IsOptional()
+	@IsString()
+	searchHash?: string;
 }

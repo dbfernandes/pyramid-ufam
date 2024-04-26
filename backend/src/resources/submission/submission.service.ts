@@ -10,6 +10,7 @@ import {
 } from "../../../src/common/constants.constants";
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
+//import { contains } from "class-validator";
 
 @Injectable()
 export class FilesCorsMiddleware implements NestMiddleware {
@@ -39,7 +40,15 @@ export class SubmissionService {
 		createSubmissionDto: CreateSubmissionDto,
 		filename: string,
 	) {
-		const { activityId, workload, description, details } = createSubmissionDto;
+		const {
+			activityId,
+			workload,
+			description,
+			details,
+			..._createSubmissionDto
+		} = createSubmissionDto;
+
+		const searchHash = Object.values(_createSubmissionDto).join(";");
 		const submission = await this.prisma.submission.create({
 			data: {
 				description,
@@ -48,6 +57,7 @@ export class SubmissionService {
 				activityId: parseInt(activityId.toString()),
 				userId,
 				file: filename,
+				searchHash,
 			},
 		});
 
@@ -174,10 +184,11 @@ export class SubmissionService {
 			search && search.trim() !== ""
 				? {
 						isActive: true,
-						OR: [
+						searchHash: { contains: search },
+						/*OR: [
 							{ description: { contains: search } },
 							{ details: { contains: search } },
-						],
+						],*/
 					}
 				: { isActive: true, User: { is: { isActive: true } } };
 

@@ -22,4 +22,8 @@ export class UpdateStatusDto {
 	@IsString()
 	@IsOptional()
 	details?: string;
+
+	@IsOptional()
+	@IsString()
+	searchHash?: string;
 }

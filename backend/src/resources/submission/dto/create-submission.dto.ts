@@ -18,4 +18,8 @@ export class CreateSubmissionDto {
 	@IsString()
 	@IsOptional()
 	details?: string;
+
+	@IsString()
+	@IsNotEmpty()
+	searchHash?: string;
 }
