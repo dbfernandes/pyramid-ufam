@@ -136,12 +136,15 @@ export class AuthService {
 		const updatedUser = await this.userService.update(user.id, { searchHash });
 
 		// Registering course
-		await this.courseUserService.create({
-			courseId,
-			enrollment,
-			startYear,
-			userId: updatedUser.id,
-		});
+
+		await this.courseUserService
+			.create({
+				courseId,
+				enrollment,
+				startYear,
+				userId: user.id,
+			})
+			.then(() => this.userService.updateSearchHash(user.id));
 
 		const courses = await this.courseService.findCoursesByUser(updatedUser.id);
 

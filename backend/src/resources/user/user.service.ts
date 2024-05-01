@@ -40,6 +40,29 @@ export class UserService {
 		private authService: AuthService,
 	) {}
 
+	async updateSearchHash(id: number) {
+		const user = await this.findById(id);
+		const courses = await this.courseService.findCoursesByUser(id);
+
+		const searchHash = [];
+
+		searchHash.push(user.id);
+		searchHash.push(user.name);
+		searchHash.push(user.email);
+		searchHash.push(user.cpf);
+
+		courses.forEach((course) => {
+			searchHash.push(course.name);
+			searchHash.push(course.enrollment);
+			searchHash.push(course.startYear);
+		});
+
+		await this.prisma.user.update({
+			where: { id },
+			data: { searchHash: searchHash.join(";") },
+		});
+	}
+
 	async addUser(addUserDto: AddUserDto, token: string): Promise<any> {
 		if (await this.findByEmail(addUserDto.email)) {
 			throw new BadRequestException("Email already in use");
@@ -77,16 +100,12 @@ export class UserService {
 			..._addUserDto
 		} = addUserDto;
 
-		// ADICIONAR MAIS COLUNAS
-		const searchHash = Object.values(_addUserDto).join(";");
-
 		// Registering user
 		const userCreated = await this.create({
 			..._addUserDto,
 			cpf: addUserDto.cpf ? addUserDto.cpf.replace(/\D/g, "") : null,
 			password: password ? password : null,
 			userTypeId: UserTypeIds[userType],
-			searchHash,
 		});
 
 		if (userType === UserTypes.STUDENT) {
@@ -118,7 +137,9 @@ export class UserService {
 		const userResponsible = await this.findById((decodeToken(token) as any).id);
 		await this.sendWelcomeEmail(userResponsible, userCreated, resetToken); // Fix to get user who called the endpoint
 
-		const courses = await this.courseService.findCoursesByUser(userCreated.id);
+		const courses = await this.courseService
+			.findCoursesByUser(userCreated.id)
+			.then(() => this.updateSearchHash(userCreated.id));
 
 		return { user: { ...userCreated, courses } };
 	}
@@ -172,12 +193,14 @@ export class UserService {
 			throw new BadRequestException("Enrollment already in use");
 		}
 
-		await this.courseUserService.create({
-			userId,
-			courseId,
-			enrollment: enrollment ? enrollment : null,
-			startYear: startYear ? startYear : null,
-		});
+		await this.courseUserService
+			.create({
+				userId,
+				courseId,
+				enrollment: enrollment ? enrollment : null,
+				startYear: startYear ? startYear : null,
+			})
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -211,10 +234,12 @@ export class UserService {
 			throw new BadRequestException("Enrollment already in use");
 		}
 
-		await this.courseUserService.update(courseUser.id, {
-			enrollment,
-			startYear,
-		});
+		await this.courseUserService
+			.update(courseUser.id, {
+				enrollment,
+				startYear,
+			})
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -225,7 +250,9 @@ export class UserService {
 		const course = await this.courseService.findById(courseId);
 		if (!course) throw new BadRequestException("Course not found");
 
-		await this.courseUserService.unlinkUserFromCourse(userId, courseId);
+		await this.courseUserService
+			.unlinkUserFromCourse(userId, courseId)
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -405,6 +432,8 @@ export class UserService {
 			where: { id },
 			data: updateUserDto,
 		});
+
+		await this.updateSearchHash(id);
 
 		return user;
 	}

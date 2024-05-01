@@ -60,8 +60,8 @@ async function SubmissionActionTypesSeeds() {
 
 async function CoursesSeeds() {
 	await courseService.create({
-		name: "Engenharia9",
-		code: "FT09",
+		name: "Ciência da Computação",
+		code: "IE08",
 		periods: 10,
 		activityGroupsWorkloads: {
 			education: 240,
@@ -69,6 +69,33 @@ async function CoursesSeeds() {
 			extension: 240,
 		},
 	});
+
+	await courseService.create({
+		name: "Engenharia de Software",
+		code: "IE17",
+		periods: 8,
+		activityGroupsWorkloads: {
+			education: 240,
+			research: 240,
+			extension: 240,
+		},
+	});
+}
+
+async function ActivitiesSeeds() {
+	let j = 1;
+	for (let i = 1; i <= 6; i++) {
+		for (let k = 1; k <= 3; k++) {
+			await activityService.create({
+				courseActivityGroupId: i,
+				name: `Atividade ${j}`,
+				description:
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur arcu vel elit vestibulum, nec convallis diam sodales. Nulla dictum laoreet dolor nec pharetra. Nullam tempor viverra laoreet. Ut id tortor non quam bibendum faucibus sit proin.",
+				maxWorkload: 30,
+			});
+			j++;
+		}
+	}
 }
 
 function disconnect(message: any) {
@@ -89,5 +116,8 @@ SubmissionActionTypesSeeds()
 	.catch((err) => disconnect(err));
 
 CoursesSeeds()
-	.then(() => disconnect("Default Courses loaded"))
+	.then(() => {
+		disconnect("Default Courses loaded");
+		ActivitiesSeeds();
+	})
 	.catch((err) => disconnect(err));

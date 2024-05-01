@@ -33,8 +33,4 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	password?: string;
-
-	@IsOptional()
-	@IsString()
-	searchHash?: string;
 }

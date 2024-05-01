@@ -89,6 +89,8 @@ model ActivityGroup {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
+  searchHash            String?   @db.Text
+
   CourseActivityGroups CourseActivityGroup[]
 
   @@map("ActivityGroups")

@@ -73,7 +73,7 @@ export default function CourseCard({
           <H4>{course.name}</H4>
           <span>
             {(course?.userCount && course?.userCount > 0)
-              ? `${course?.userCount} alunos`
+              ? `${course?.userCount - 1} alunos`
               : "Sem alunos"
             }
           </span>

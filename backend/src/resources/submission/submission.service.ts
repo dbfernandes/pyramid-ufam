@@ -35,20 +35,40 @@ export class SubmissionService {
 		private submissionActionService: SubmissionActionService,
 	) {}
 
+	async updateSearchHash(id: number) {
+		const submission = await this.findById(id);
+		const { user, activity, activityGroup } = submission;
+
+		const searchHash = [];
+
+		searchHash.push(submission.id);
+		searchHash.push(submission.description);
+		searchHash.push(submission.workload);
+		if (submission.details) {
+			searchHash.push(submission.details);
+		}
+
+		searchHash.push(user.name);
+		searchHash.push(user.email);
+		searchHash.push(user.cpf);
+		searchHash.push(user.enrollment);
+
+		searchHash.push(activityGroup.name);
+		searchHash.push(activity.name);
+
+		await this.prisma.submission.update({
+			where: { id },
+			data: { searchHash: searchHash.join(";") },
+		});
+	}
+
 	async submit(
 		userId: number,
 		createSubmissionDto: CreateSubmissionDto,
 		filename: string,
 	) {
-		const {
-			activityId,
-			workload,
-			description,
-			details,
-			..._createSubmissionDto
-		} = createSubmissionDto;
+		const { activityId, workload, description, details } = createSubmissionDto;
 
-		const searchHash = Object.values(_createSubmissionDto).join(";");
 		const submission = await this.prisma.submission.create({
 			data: {
 				description,
@@ -57,16 +77,17 @@ export class SubmissionService {
 				activityId: parseInt(activityId.toString()),
 				userId,
 				file: filename,
-				searchHash,
 			},
 		});
 
 		// Adding to history
-		await this.submissionActionService.create({
-			userId,
-			submissionId: submission.id,
-			submissionActionTypeId: SubmissionActionIds["submeteu"],
-		});
+		await this.submissionActionService
+			.create({
+				userId,
+				submissionId: submission.id,
+				submissionActionTypeId: SubmissionActionIds["submeteu"],
+			})
+			.then(() => this.updateSearchHash(submission.id));
 
 		return submission;
 	}
@@ -185,10 +206,6 @@ export class SubmissionService {
 				? {
 						isActive: true,
 						searchHash: { contains: search },
-						/*OR: [
-							{ description: { contains: search } },
-							{ details: { contains: search } },
-						],*/
 					}
 				: { isActive: true, User: { is: { isActive: true } } };
 
@@ -366,10 +383,14 @@ export class SubmissionService {
 		id: number,
 		updateSubmissionDto: UpdateSubmissionDto,
 	): Promise<Submission> {
-		return await this.prisma.submission.update({
+		const submission = await this.prisma.submission.update({
 			where: { id },
 			data: updateSubmissionDto,
 		});
+
+		this.updateSearchHash(submission.id);
+
+		return submission;
 	}
 
 	async remove(id: number): Promise<Submission> {

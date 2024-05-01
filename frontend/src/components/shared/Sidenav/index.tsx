@@ -171,7 +171,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         {
           icon: <i className="bi bi-lightbulb" />,
           title: "Extensão",
-          route: "/atividades/extensao",
+          route: "/atividades/extensão",
         },
       ],
       permissions: [1],
