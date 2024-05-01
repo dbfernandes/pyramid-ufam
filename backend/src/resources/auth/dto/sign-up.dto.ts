@@ -42,4 +42,8 @@ export class SignUpDto {
 	@IsNotEmpty()
 	@Transform((value) => parseInt(value.value, 10))
 	startYear: number;
+
+	@IsOptional()
+	@IsString()
+	searchHash: string;
 }

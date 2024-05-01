@@ -57,4 +57,8 @@ export class AddUserDto {
 	@IsString()
 	@Allow()
 	password?: string;
+
+	@IsOptional()
+	@IsString()
+	searchHash?: string;
 }

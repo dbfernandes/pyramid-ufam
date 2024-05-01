@@ -27,11 +27,13 @@ import { RolesGuard } from "../../../src/guards/roles.guard";
 import { Roles } from "../../../src/decorators/roles.decorator";
 import { UserTypes } from "../../../src/common/enums.enum";
 import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
+import { AuthService } from "../auth/auth.service";
 
 @Controller("users")
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
+		private readonly authService: AuthService,
 		private readonly submissionService: SubmissionService,
 	) {}
 

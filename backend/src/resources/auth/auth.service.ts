@@ -122,7 +122,6 @@ export class AuthService {
 
 		// Registering user
 		const hashedPassword = bcrypt.hashSync(_signUpDto.password, 10);
-
 		const user = await this.userService.create({
 			..._signUpDto,
 			cpf: signUpDto.cpf ? signUpDto.cpf.replace(/\D/g, "") : null,
@@ -130,26 +129,30 @@ export class AuthService {
 			userTypeId: UserTypeIds[UserTypes.STUDENT], // Sign up can only be done by students
 		});
 
+		// Generate searchHash
+		const searchHash = `${user.id};${user.name};${user.email};${user.cpf}`;
+
+		// Update user with searchHash
+		const updatedUser = await this.userService.update(user.id, { searchHash });
+
 		// Registering course
 		await this.courseUserService.create({
 			courseId,
 			enrollment,
 			startYear,
-			userId: user.id,
+			userId: updatedUser.id,
 		});
 
-		const courses = await this.courseService.findCoursesByUser(user.id);
+		const courses = await this.courseService.findCoursesByUser(updatedUser.id);
 
 		// Generating tokens
-		this.setAuthorizationHeader(user, res);
+		this.setAuthorizationHeader(updatedUser, res);
 
 		// Sending welcome email
-		this.sendWelcomeEmail(user);
+		this.sendWelcomeEmail(updatedUser);
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, ...result } = user;
-
-		return { user: { ...result, courses } };
+		// Omitido para brevidade
+		return { user: { ...updatedUser, courses } };
 	}
 
 	async createPasswordResetToken(

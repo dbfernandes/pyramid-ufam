@@ -29,6 +29,9 @@ export default function Dashboard() {
   const { setLinks } = useBreadcrumb();
   const [users, setUsers] = useState<any[]>([]);
   const [fetchingUsers, setFetchingUsers] = useState<boolean>(true);
+  const [totalActiveUsers, setTotalActiveUsers] = useState<number>(0);
+  const [totalInactiveUsers, setTotalInactiveUsers] = useState<number>(0);
+  const [totalStudents, setTotalStudents] = useState<number>(0);
 
   useEffect(() => {
     if (!user.logged) {
@@ -60,7 +63,7 @@ export default function Dashboard() {
     setFetchingSubmissions(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=1&limit=15&search=&status=1`, // Defina os parâmetros de busca conforme necessário
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=1&limit=15&search=&status=1`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -69,10 +72,8 @@ export default function Dashboard() {
     };
 
     try {
-      if(user.userTypeId != 3){
-        const response = await axios.request(options as AxiosRequestConfig);
-        setSubmissions(response.data.submissions);
-      }
+      const response = await axios.request(options as AxiosRequestConfig);
+      setSubmissions(response.data.submissions);
     } catch (error) {
       const errorMessages = {
         0: "Oops, tivemos um erro. Tente novamente.",
@@ -86,12 +87,11 @@ export default function Dashboard() {
     setFetchingSubmissions(false);
   }
 
-
   async function fetchUsers(_page, _search, _status) {
     setFetchingUsers(true);
 
     const options = {
-      url: `${process.env.api}/users?type=aluno&page=${_page}&limit=15&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}&status=${_status}`,
+      url: `${process.env.api}/users?type=aluno&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}&status=${_status}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -100,11 +100,17 @@ export default function Dashboard() {
     };
 
     try {
-      if(user.userTypeId != 3){
+      if (user.userTypeId != 3) {
         const response = await axios.request(options as AxiosRequestConfig);
-        // Filtrar os usuários para não incluir o usuário logado
         const filteredUsers = response.data.users.filter(u => u.email !== user.email);
         setUsers(filteredUsers);
+
+        const activeUsers = filteredUsers.filter(u => u.isActive);
+        const inactiveUsers = filteredUsers.filter(u => !u.isActive);
+        const totalStudentsCount = activeUsers.length + inactiveUsers.length;
+        setTotalActiveUsers(activeUsers.length);
+        setTotalInactiveUsers(inactiveUsers.length);
+        setTotalStudents(totalStudentsCount);
       }
     } catch (error) {
       handleFetchError(error);
@@ -138,19 +144,20 @@ export default function Dashboard() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-          }}>
+          }}
+        >
           <Spinner size={"30px"} color={"var(--primary-color)"} />
         </div>
       )}
 
       <DashboardWrapper>
         <IntroTile />
-        {loaded && user.userTypeId !== 3 ? ( // Verifica se o usuário não é do tipo aluno
+        {loaded && user.userTypeId !== 3 ? (
           <>
             <NumberTile
               icon="file-earmark-medical"
               accent="var(--danger)"
-              title="solicitações pendentes"
+              title="Solicitações pendentes"
               value={countPendingSubmissions(submissions)}
               callToAction="Solicitações"
               link="/solicitacoes"
@@ -159,9 +166,21 @@ export default function Dashboard() {
               icon="person"
               accent="var(--success)"
               title="Alunos no Curso"
-              value={users.length}
+              value={totalStudents}
               callToAction="Alunos"
               link="/usuarios/alunos"
+            />
+            <NumberTile
+              icon="person"
+              accent="var(--success)"
+              title="Alunos Ativos no Curso"
+              value={totalActiveUsers}
+            />
+            <NumberTile
+              icon="person"
+              accent="var(--success)"
+              title="Alunos Inativos no Curso"
+              value={totalInactiveUsers}
             />
           </>
         ) : (
