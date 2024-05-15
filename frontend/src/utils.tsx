@@ -77,6 +77,11 @@ export function checkAuthentication(): boolean {
   return authorized;
 }
 
+export function getPlural(word: string) {
+  word = word.toLowerCase();
+  return word.slice(0, -1) + "as";
+}
+
 export function getFirstName(name: string) {
   return name.split(" ")[0];
 }

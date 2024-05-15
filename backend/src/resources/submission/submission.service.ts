@@ -37,7 +37,10 @@ export class SubmissionService {
 
 	async updateSearchHash(id: number) {
 		const submission = await this.findById(id);
-		const { user, activity, activityGroup } = submission;
+		const { user, activity } = submission;
+		const { activityGroup } = activity;
+
+		console.log(submission, user, activity, activityGroup);
 
 		const searchHash = [];
 
@@ -338,11 +341,9 @@ export class SubmissionService {
 
 	async updateStatus(id: number, updateStatusDto: UpdateStatusDto) {
 		const { status, userId, details } = updateStatusDto;
-
 		const statusId = StatusSubmissions[status];
-
 		const submission = await this.prisma.submission.update({
-			where: { id },
+			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
 			data: { status: statusId },
 		});
 
@@ -358,22 +359,28 @@ export class SubmissionService {
 	}
 
 	async massUpdateStatus(ids: string, updateStatusDto: UpdateStatusDto) {
-		const { status, userId } = updateStatusDto;
+		const { status, userId, details } = updateStatusDto;
 		const statusId = StatusSubmissions[status];
 		const _ids = ids.split(",").map(Number);
 
 		const submissions = await this.prisma.submission.updateMany({
-			where: { id: { in: _ids } },
+			where: {
+				id: { in: _ids },
+				status: { not: StatusSubmissions["Aprovado"] },
+			},
 			data: { status: statusId },
 		});
 
 		// Adding to history for each submission
-		_ids.forEach((id) => {
-			this.submissionActionService.create({
+		_ids.forEach(async (id) => {
+			await this.submissionActionService.create({
 				userId,
 				submissionId: id,
 				submissionActionTypeId: statusId,
+				details,
 			});
+
+			this.updateSearchHash(id);
 		});
 
 		return submissions;
@@ -384,7 +391,7 @@ export class SubmissionService {
 		updateSubmissionDto: UpdateSubmissionDto,
 	): Promise<Submission> {
 		const submission = await this.prisma.submission.update({
-			where: { id },
+			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
 			data: updateSubmissionDto,
 		});
 
@@ -395,20 +402,22 @@ export class SubmissionService {
 
 	async remove(id: number): Promise<Submission> {
 		return await this.prisma.submission.update({
-			where: { id },
+			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
 			data: { isActive: false },
 		});
 	}
 
-	async massRemove(ids: string): Promise<Submission[]> {
+	async massRemove(ids: string): Promise<any> {
 		const _ids = ids.split(",").map(Number);
-		return await Promise.all(
-			_ids.map((id) =>
-				this.prisma.submission.update({
-					where: { id },
-					data: { isActive: false },
-				}),
-			),
-		);
+
+		const submissions = this.prisma.submission.updateMany({
+			where: {
+				id: { in: _ids },
+				status: { not: StatusSubmissions["Aprovado"] },
+			},
+			data: { isActive: false },
+		});
+
+		return submissions;
 	}
 }

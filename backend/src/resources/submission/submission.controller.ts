@@ -65,7 +65,7 @@ export class SubmissionController {
 		return await this.submissionService.remove(+id);
 	}
 
-	@Patch(":id/status/mass-update")
+	@Patch(":ids/status/mass-update")
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
 	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
 	@CheckOwner("submission")
@@ -79,9 +79,9 @@ export class SubmissionController {
 		return await this.submissionService.massUpdateStatus(ids, updateStatusDto);
 	}
 
-	@Delete(":id")
+	@Delete(":ids/mass-remove")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR)
+	@Roles(UserTypes.STUDENT)
 	@CheckOwner("submission")
 	async massRemove(@Param("ids") ids: string) {
 		return await this.submissionService.massRemove(ids);

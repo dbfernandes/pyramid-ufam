@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
+import { getPlural } from "utils";
 
 import { H3 } from "components/shared/Titles";
+import Spinner from "components/shared/Spinner";
 import { Disclaimer, Filter } from "components/shared/UserList/styles";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
@@ -20,7 +22,6 @@ import toast from "components/shared/Toast";
 
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-
 interface ISubmissionListProps {
   subTitle?: string;
   submissions?: any[];
@@ -40,7 +41,7 @@ export default function SubmissionList({
   submissions = [],
   loading,
   totalPages,
-  onChange = () => {},
+  onChange = () => { },
   children,
 }: ISubmissionListProps) {
   const router = useRouter();
@@ -50,98 +51,65 @@ export default function SubmissionList({
 
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
+  const statuses = router.query.status?.toString().split("-");
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
-    { title: "Pendentes", value: 1, checked: false },
-    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: false },
-    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: false },
-    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: false },
+    { title: "Pendentes", value: 1, checked: statuses?.includes("1") },
+    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: statuses?.includes("2") },
+    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
+    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
   ]);
 
-  async function handleStatusUpdate(status: string) {
-    if (checkedIds.length === 0) {
-      toast("Aviso", "Selecione pelo menos uma solicitação para alterar o status.");
-      return;
-    }
+  useEffect(() => {
+    setFetchingFilter(true);
+    const debounce = setTimeout(() => {
+      const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
+      router.push({
+        query: { ...router.query, status },
+      });
 
-    setFetching(true);
+      setFetchingFilter(false);
+    }, 1000);
 
-    const promises = checkedIds.map(async (id) => {
-      const currentStatus = submissions.find((submission) => submission.id === id)?.status;
+    return () => clearTimeout(debounce);
+  }, [filterOptions]);
 
-      if (currentStatus && currentStatus !== status) {
-        const options = {
-          url: `${process.env.api}/submissions/${id}/status`,
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          data: {
-            userId: user.id,
-            status: status,
-          },
-        } as AxiosRequestConfig;
-        await axios.request(options);
-      }
-    });
+  // Mass actions
+  const [fetchingMassUpdate, setFetchingMassUpdate] = useState<boolean>(false);
+  async function fetchMassUpdate(ids: string, status: string) {
+    setFetchingMassUpdate(true);
 
-    try {
-      await Promise.all(promises);
-      toast("Sucesso", `Status atualizado para ${status} com sucesso.`, "success");
-      setFetching(false);
-      onChange();
-    } catch (error) {
-      const errorMessages = {
-        0: "Oops, tivemos um erro. Tente novamente.",
-        500: "Erro interno do servidor.",
-      };
-      const code = 0;
-      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
-      setFetching(false);
-    }
+    const options = {
+      url: `${process.env.api}/submissions/${ids}/status/mass-update`,
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
+      },
+      data: {
+        userId: user.id,
+        status: status,
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", `Solicitações ${getPlural(status)} com sucesso`);
+        setCheckedIds([]);
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingMassUpdate(false);
   }
-
-  /*
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-  };
-  
-  console.log(countPendingSubmissions(submissions));
-  
-  const filteredSubmissions = submissions.filter((submission) => {
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      if (
-        submission &&
-        submission.user &&
-        submission.activity.activityGroup.name &&
-        submission.workload &&
-        submission.activity.description
-      ) {
-        const nameLower = submission.user.name.toLowerCase();
-        const activityNameLower = submission.activity.name.toLowerCase();
-        const activityGroupNameLower = submission.activity.activityGroup.name.toLowerCase();
-        const activityGroupHour = submission.workload;
-        const descriptionLower = submission.activity.description.toLowerCase();
-
-        return (
-          nameLower.includes(searchTermLower) ||
-          activityNameLower.includes(searchTermLower) ||
-          activityGroupNameLower.includes(searchTermLower) ||
-          (typeof activityGroupHour === "string" && activityGroupHour.includes(searchTermLower)) ||
-          (typeof activityGroupHour === "number" && activityGroupHour.toString().includes(searchTermLower)) ||
-          descriptionLower.includes(searchTermLower)
-        );
-      } else {
-        return false;
-      }
-    }
-
-    return true;
-  }); 
-  */
 
   return (
     <Wrapper>
@@ -150,15 +118,27 @@ export default function SubmissionList({
 
         {checkedIds.length > 0 && (
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => handleStatusUpdate("Rejeitado")}>
-              <i className="bi bi-x-lg" /> Rejeitar selecionados
-            </DangerButtonAlt>
-            <AcceptButton onClick={() => handleStatusUpdate("Pré-aprovado")}>
-              <i className="bi bi-check2-all" /> Pré-aprovar selecionados
-            </AcceptButton>
-            <AcceptButton onClick={() => handleStatusUpdate("Aprovado")}>
-              <i className="bi bi-check2-all" /> Aprovar selecionados
-            </AcceptButton>
+            {user.userTypeId == 1 && <>
+              <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")}>
+                {fetchingMassUpdate
+                  ? <Spinner size={"20px"} color={"var(--danger)"} />
+                  : <><i className="bi bi-x-lg" /> Rejeitar selecionados</>
+                }
+              </DangerButtonAlt>
+              <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Aprovado")}>
+                {fetchingMassUpdate
+                  ? <Spinner size={"20px"} color={"var(--danger)"} />
+                  : <><i className="bi bi-check2-all" /> Aprovar selecionados</>
+                }
+              </AcceptButton>
+            </>}
+
+            {user.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")}>
+              {fetchingMassUpdate
+                ? <Spinner size={"20px"} color={"var(--danger)"} />
+                : <><i className="bi bi-check2-all" /> Pré-aprovar selecionados</>
+              }
+            </AcceptButton>}
           </ButtonGroup>
         )}
       </HeaderWrapper>

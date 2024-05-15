@@ -28,13 +28,22 @@ export class IsOwnerGuard implements CanActivate {
 
 		const userId = parseInt(request.user.id);
 		const resourceId = parseInt(request.params.id);
+		const multipleResourceId = request.params.ids
+			? request.params.ids.split(",").map((id) => parseInt(id))
+			: null;
 		let isOwner;
 
 		if (!entityType) {
 			// If no entityType is provided, assume it's an user resource
 			isOwner = userId === resourceId;
 		} else {
-			isOwner = this.checkOwnership(userId, resourceId, entityType);
+			if (multipleResourceId && multipleResourceId.length > 0) {
+				isOwner = multipleResourceId.every((id) =>
+					this.checkOwnership(userId, id, entityType),
+				);
+			} else {
+				isOwner = this.checkOwnership(userId, resourceId, entityType);
+			}
 		}
 
 		if (!isOwner) {

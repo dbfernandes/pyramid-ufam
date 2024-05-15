@@ -24,6 +24,9 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
+import axios, { AxiosRequestConfig } from "axios";
+import toast from "components/shared/Toast";
+import Spinner from "components/shared/Spinner";
 interface ISubmissionListProps {
   submissions?: any[];
   loading?: boolean;
@@ -47,7 +50,7 @@ export default function MySubmissionList({
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>(state => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
@@ -57,10 +60,6 @@ export default function MySubmissionList({
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
   ]);
-
-  const handleSearchTermChange = (term: string) => {
-    setSearchTerm(term);
-  };
 
   useEffect(() => {
     setFetchingFilter(true);
@@ -76,40 +75,39 @@ export default function MySubmissionList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  const filteredSubmissions = submissions.filter((submission) => {
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      if (
-        submission &&
-        submission.user &&
-        submission.activity.activityGroup &&
-        submission.activity.description
-        ) {
-          const nameLower = submission.user.name.toLowerCase();
-          const activityNameLower = submission.activity.name.toLowerCase();
-          const activityGroupNameLower = submission.activity.activityGroup.name.toLowerCase();
-          const activityGroupHour = submission.activity.activityGroup.maxWorkload;
+  // Mass actions
+  const [fetchingMassCancel, setFetchingMassCancel] = useState<boolean>(false);
+  async function fetchMassCancel(ids: string) {
+    setFetchingMassCancel(true);
 
-          const descriptionLower = submission.activity.description.toLowerCase();
-
-          //console.log(searchTerm, nameLower, activityNameLower, activityGroupNameLower, activityGroupHour, descriptionLower)
-  
-        return (
-          nameLower.includes(searchTermLower) ||
-          activityNameLower.includes(searchTermLower)||
-          activityGroupNameLower.includes(searchTermLower) ||
-          (typeof activityGroupHour === "string" && activityGroupHour.includes(searchTermLower)) ||
-          (typeof activityGroupHour === "number" && activityGroupHour.toString().includes(searchTermLower)) ||
-          descriptionLower.includes(searchTermLower)
-        );
-      } else {
-        return false; 
+    const options = {
+      url: `${process.env.api}/submissions/${ids}/mass-remove`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
       }
-    }
+    };
 
-    return true;
-  });
-  
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", "Solicitações canceladas com sucesso");
+        setCheckedIds([]);
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingMassCancel(false);
+  }
 
   return (
     <Wrapper>
@@ -118,8 +116,11 @@ export default function MySubmissionList({
 
         {checkedIds?.length > 0 &&
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => { alert(`[ALUNO] ${checkedIds.toString()} DELETADOS`) }}>
-              <i className="bi bi-x-lg" /> Cancelar selecionados
+            <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
+              {fetchingMassCancel
+                ? <Spinner size={"20px"} color={"var(--danger)"} />
+                : <><i className="bi bi-x-lg" /> Cancelar selecionados</>
+              }
             </DangerButtonAlt>
           </ButtonGroup>
         }

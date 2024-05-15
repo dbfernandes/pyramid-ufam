@@ -482,15 +482,16 @@ export class UserService {
 		});
 	}
 
-	async massRemove(ids: string): Promise<User[]> {
+	async massRemove(ids: string): Promise<any> {
 		const _ids = ids.split(",").map(Number);
-		return await Promise.all(
-			_ids.map((id) =>
-				this.prisma.user.update({
-					where: { id },
-					data: { isActive: false },
-				}),
-			),
-		);
+
+		const users = this.prisma.user.updateMany({
+			where: {
+				id: { in: _ids },
+			},
+			data: { isActive: false },
+		});
+
+		return users;
 	}
 }

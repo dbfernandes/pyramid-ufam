@@ -19,6 +19,7 @@ import { Response } from "express";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { getFirstName, sendEmail } from "../utils";
+import { UserTypeService } from "../userType/userType.service";
 
 @Injectable()
 export class AuthService {
@@ -26,13 +27,14 @@ export class AuthService {
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 
+		private userTypeService: UserTypeService,
 		private courseService: CourseService,
 		private courseUserService: CourseUserService,
 		private jwtService: JwtService,
 	) {}
 
 	async setAuthorizationHeader(user: any, res: Response) {
-		const userType = user.userType ? user.userType : user.UserType;
+		const userType = await this.userTypeService.findById(user.userTypeId);
 		const token = this.jwtService.sign({
 			email: user.email,
 			id: user.id,
@@ -66,7 +68,7 @@ export class AuthService {
 			throw new UnauthorizedException("User not found");
 		}
 
-		this.setAuthorizationHeader(user, res);
+		await this.setAuthorizationHeader(user, res);
 		return {
 			message: "User reauthenticated successfully",
 		};
@@ -99,7 +101,7 @@ export class AuthService {
 		const courses = await this.courseService.findCoursesByUser(user.id);
 
 		// Generating tokens
-		this.setAuthorizationHeader(user, res);
+		await this.setAuthorizationHeader(user, res);
 
 		return { user: { ...user, courses } };
 	}
@@ -136,7 +138,6 @@ export class AuthService {
 		const updatedUser = await this.userService.update(user.id, { searchHash });
 
 		// Registering course
-
 		await this.courseUserService
 			.create({
 				courseId,
@@ -149,7 +150,7 @@ export class AuthService {
 		const courses = await this.courseService.findCoursesByUser(updatedUser.id);
 
 		// Generating tokens
-		this.setAuthorizationHeader(updatedUser, res);
+		await this.setAuthorizationHeader(updatedUser, res);
 
 		// Sending welcome email
 		this.sendWelcomeEmail(updatedUser);

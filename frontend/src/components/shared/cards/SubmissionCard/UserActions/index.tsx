@@ -5,11 +5,12 @@ import Async from "react-promise";
 import { getFirstAndLastName, getImage, parseDateAndTime } from "utils";
 
 // Shared
+import confirm from "components/shared/ConfirmModal";
 import Spinner from "components/shared/Spinner";
 import toggleModalForm from "components/shared/ModalForm";
 import toast from "components/shared/Toast";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
-import FormAddSubmission from "components/shared/forms/FormAddSubmission";
+import FormEditSubmission from "components/shared/forms/FormAddSubmission/FormEditSubmission";
 import {
   ButtonGroup,
   AcceptButton,
@@ -17,7 +18,7 @@ import {
   InfoButton,
   EditButton
 } from "../styles";
-import { fetchDelete } from "components/shared/forms/FormUpdateStatusSubmission";
+//import { fetchDelete } from "components/shared/forms/FormUpdateStatusSubmission";
 
 // Custom
 import { History, HistoryItem } from "./styles";
@@ -30,7 +31,6 @@ interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
 
-  onDelete?: Function;
   onChange?: Function;
 }
 
@@ -38,21 +38,8 @@ export default function UserActions({
   submission,
   user,
 
-  onDelete = () => { },
   onChange = () => { }
 }: IUserActionsProps) {
-  const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-
-  function handleDeletion(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    setConfirmDeletion(!confirmDeletion);
-
-    if (confirmDeletion) {
-      onDelete();
-    }
-  }
-
   // History
   const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
   const [history, setHistory] = useState<any[]>([]);
@@ -99,14 +86,6 @@ export default function UserActions({
     "submeteu": "var(--primary-color)",
   };
 
-  const handleCancelSubmission = async () => {
-    try {
-      await fetchDelete({ user, id: submission.id, status: submission.status }, onChange);
-    } catch (error) {
-      console.error('Erro ao cancelar submissão:', error);
-    }
-  }; 
-
   function SubmissionHistory() {
     return (
       <History>
@@ -133,6 +112,34 @@ export default function UserActions({
     );
   }
 
+  // Delete
+  async function fetchDelete() {
+    const options = {
+      url: `${process.env.api}/submissions/${submission.id}`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        onChange();
+        toast("Sucesso", "Solicitação cancelada com sucesso");
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+  }
+
   return (
     <ButtonGroup>
       <InfoButton onClick={() =>
@@ -149,8 +156,8 @@ export default function UserActions({
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
-            <FormAddSubmission submission={submission} user={user} onChange={onChange} />,
-            "xl"
+            <FormEditSubmission submission={submission} user={user} onChange={onChange} />,
+            "lg"
           )
         }>
           <i className="bi bi-pencil" /> Editar
@@ -196,10 +203,17 @@ export default function UserActions({
       )}
       {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
         <DangerButtonAlt
-        onClick={() => handleCancelSubmission()}>
+          onClick={() =>
+            confirm(
+              () => fetchDelete(),
+              "Tem certeza que deseja cancelar a solicitação?",
+              "Cancelar",
+              ""
+            )
+          }>
           <i className="bi bi-x-lg" /> Cancelar
         </DangerButtonAlt>
       )}
-    </ButtonGroup>
+    </ButtonGroup >
   );
 }
