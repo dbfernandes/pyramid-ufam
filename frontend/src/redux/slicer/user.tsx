@@ -61,7 +61,7 @@ const userSlice = createSlice({
     setProfileImage: (state, payload) => {
       return {
         ...state,
-        selectedCourse: payload.payload,
+        profileImage: payload.payload,
       };
     }
   },

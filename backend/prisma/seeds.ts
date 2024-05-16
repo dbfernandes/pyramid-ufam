@@ -89,9 +89,8 @@ async function ActivitiesSeeds() {
 			await activityService.create({
 				courseActivityGroupId: i,
 				name: `Atividade ${j}`,
-				description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur arcu vel
-          elit vestibulum, nec convallis diam sodales. Nulla dictum laoreet dolor nec pharetra.
-          Nullam tempor viverra laoreet. Ut id tortor non quam bibendum faucibus sit proin.`,
+				description:
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur arcu vel elit vestibulum, nec convallis diam sodales. Nulla dictum laoreet dolor nec pharetra. Nullam tempor viverra laoreet. Ut id tortor non quam bibendum faucibus sit proin.",
 				maxWorkload: 30,
 			});
 			j++;

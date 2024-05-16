@@ -11,6 +11,8 @@ import {
 	UseInterceptors,
 	UploadedFile,
 	Req,
+	HttpStatus,
+	ParseFilePipeBuilder,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -45,16 +47,28 @@ export class SubmissionController {
 	@UseInterceptors(
 		FileInterceptor("file", {
 			storage: diskStorage({
-				destination: "./public/files/submissions",
+				destination: "./public/files/tmp",
 				filename: (req, file, cb) =>
-					cb(null, `${new Date().getTime()}-${file.originalname}`),
+					cb(null, `${new Date().getTime()}-${file.originalname}.tmp`),
 			}),
 		}),
 	)
 	async update(
 		@Param("id") id: string,
 		@Body() updateSubmissionDto: UpdateSubmissionDto,
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: "pdf",
+				})
+				.addMaxSizeValidator({
+					maxSize: 5000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
 		return await this.submissionService.update(
 			+id,

@@ -18,7 +18,7 @@ import { LoginDto } from "./dto";
 import { Response } from "express";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
-import { getFirstName, sendEmail } from "../utils";
+import { getFilesLocation, getFirstName, sendEmail } from "../utils";
 import { UserTypeService } from "../userType/userType.service";
 
 @Injectable()
@@ -103,7 +103,16 @@ export class AuthService {
 		// Generating tokens
 		await this.setAuthorizationHeader(user, res);
 
-		return { user: { ...user, courses } };
+		return {
+			user: {
+				...user,
+				courses,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async signUp(signUpDto: SignUpDto, res: Response) {
@@ -155,8 +164,16 @@ export class AuthService {
 		// Sending welcome email
 		this.sendWelcomeEmail(updatedUser);
 
-		// Omitido para brevidade
-		return { user: { ...updatedUser, courses } };
+		return {
+			user: {
+				...updatedUser,
+				courses,
+				profileImage: updatedUser.profileImage
+					? `${getFilesLocation("profile-images")}/${updatedUser.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async createPasswordResetToken(

@@ -10,6 +10,8 @@ import {
 } from "../../../src/common/constants.constants";
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
+import { getFilesLocation } from "../utils";
+import * as fs from "fs";
 //import { contains } from "class-validator";
 
 @Injectable()
@@ -65,6 +67,10 @@ export class SubmissionService {
 		createSubmissionDto: CreateSubmissionDto,
 		filename: string,
 	) {
+		const tmpPath = `./public/files/tmp/`;
+		const rootPath = `./public/files/submissions/`;
+		const path = `${rootPath}${filename}`;
+
 		const { activityId, workload, description } = createSubmissionDto;
 
 		const submission = await this.prisma.submission.create({
@@ -73,7 +79,7 @@ export class SubmissionService {
 				workload: parseInt(workload.toString()),
 				activityId: parseInt(activityId.toString()),
 				userId,
-				file: filename,
+				file: filename.replace(".tmp", ""),
 			},
 		});
 
@@ -86,6 +92,8 @@ export class SubmissionService {
 			})
 			.then(() => this.updateSearchHash(submission.id));
 
+		fs.copyFileSync(`${tmpPath}${filename}`, path.replace(".tmp", ""));
+
 		return submission;
 	}
 
@@ -94,8 +102,21 @@ export class SubmissionService {
 		updateSubmissionDto: UpdateSubmissionDto,
 		filename: string,
 	): Promise<Submission> {
+		const tmpPath = `./public/files/tmp/`;
+		const rootPath = `./public/files/submissions/`;
+		const path = `${rootPath}${filename}`;
+
+		const submission = await this.findById(id);
+
+		if (submission && submission.file) {
+			const currentFilePath = `${rootPath}${submission.file}`;
+			if (fs.existsSync(currentFilePath)) {
+				fs.unlinkSync(currentFilePath);
+			}
+		}
+
 		const { userId, details, ...rest } = updateSubmissionDto;
-		const submission = await this.prisma.submission.update({
+		const _submission = await this.prisma.submission.update({
 			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
 			data: {
 				...rest,
@@ -113,10 +134,9 @@ export class SubmissionService {
 			})
 			.then(() => this.updateSearchHash(submission.id));
 
-		// CHAMAR ALGUMA FUNÇÃO PRA LIMPAR OS ARQUIVOS NÃO UTILIZADOS AQUI
-		// Ex.: fs.unlink em todos os arquivos que não estiverem vinculados a nenhuma submissão
+		fs.copyFileSync(`${tmpPath}${filename}`, path.replace(".tmp", ""));
 
-		return submission;
+		return _submission;
 	}
 
 	async findById(id: number): Promise<any> {
@@ -174,6 +194,9 @@ export class SubmissionService {
 						name: User.name,
 						email: User.email,
 						userTypeId: User.userTypeId,
+						profileImage: User.profileImage
+							? `${getFilesLocation("profile-images")}/${User.profileImage}`
+							: null,
 					},
 					action: SubmissionActionType.name,
 					details: action.details,
@@ -189,6 +212,9 @@ export class SubmissionService {
 					cpf: User.cpf,
 					course: _userCourse.Course.name,
 					enrollment: _userCourse.enrollment,
+					profileImage: User.profileImage
+						? `${getFilesLocation("profile-images")}/${User.profileImage}`
+						: null,
 				},
 				activity: {
 					id: Activity.id,
@@ -206,9 +232,7 @@ export class SubmissionService {
 					},
 				},
 				history: _submissionActions,
-				fileUrl: `${process.env.NODE_HOST}${
-					process.env.BACKEND_PORT ? ":" + process.env.BACKEND_PORT : ""
-				}/files/submissions/${file}`,
+				fileUrl: `${getFilesLocation("submissions")}/${file}`,
 				..._submission,
 				Activity: undefined,
 				User: undefined,
@@ -332,6 +356,9 @@ export class SubmissionService {
 					cpf: User.cpf,
 					course: _userCourse.Course.name,
 					enrollment: _userCourse.enrollment,
+					profileImage: User.profileImage
+						? `${getFilesLocation("profile-images")}/${User.profileImage}`
+						: null,
 				},
 				activity: {
 					id: Activity.id,
@@ -348,9 +375,7 @@ export class SubmissionService {
 						maxWorkload: CourseActivityGroup.maxWorkload,
 					},
 				},
-				fileUrl: `${process.env.NODE_HOST}${
-					process.env.BACKEND_PORT ? ":" + process.env.BACKEND_PORT : ""
-				}/files/submissions/${file}`,
+				fileUrl: `${getFilesLocation("submissions")}/${file}`,
 				...submission,
 				Activity: undefined,
 				User: undefined,

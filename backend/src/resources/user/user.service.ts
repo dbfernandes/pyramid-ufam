@@ -19,6 +19,7 @@ import {
 import { EnrollDto } from "./dto/enroll.dto";
 import {
 	decodeToken,
+	getFilesLocation,
 	getFirstAndLastName,
 	getFirstName,
 	sendEmail,
@@ -141,7 +142,15 @@ export class UserService {
 			.findCoursesByUser(userCreated.id)
 			.then(() => this.updateSearchHash(userCreated.id));
 
-		return { user: { ...userCreated, courses } };
+		return {
+			user: {
+				...userCreated,
+				courses,
+				profileImage: userCreated.profileImage
+					? `${getFilesLocation("profile-images")}/${userCreated.profileImage}`
+					: null,
+			},
+		};
 	}
 
 	async sendWelcomeEmail(
@@ -369,6 +378,9 @@ export class UserService {
 
 			return {
 				...user,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
 				courses,
 				CourseUsers: undefined,
 				password: undefined,
@@ -435,30 +447,35 @@ export class UserService {
 
 		await this.updateSearchHash(id);
 
-		return user;
+		return {
+			user: {
+				...user,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async updateProfileImage(id: number, filename: string) {
+		const tmpPath = `./public/files/tmp/`;
 		const rootPath = `./public/files/profile-images/`;
 		const path = `${rootPath}${filename}`;
 
 		const user = await this.findById(id);
 		if (!user) {
-			if (fs.existsSync(path)) {
-				fs.unlinkSync(path);
-			}
 			throw new BadRequestException("User not found");
 		}
 
 		if (user && user.profileImage) {
 			const currentImagePath = `${rootPath}${user.profileImage}`;
-
 			if (fs.existsSync(currentImagePath)) {
 				fs.unlinkSync(currentImagePath);
 			}
 		}
 
-		const resizedImage = await sharp(path)
+		const resizedImage = await sharp(`${tmpPath}${filename}`)
 			.resize({
 				fit: "cover",
 				width: 250,
@@ -467,12 +484,22 @@ export class UserService {
 			.toFormat("jpeg", { mozjpeg: true })
 			.toBuffer();
 
-		fs.writeFileSync(path, resizedImage);
+		fs.writeFileSync(path.replace(".tmp", ""), resizedImage);
 
-		return await this.prisma.user.update({
+		const _user = await this.prisma.user.update({
 			where: { id },
-			data: { profileImage: filename },
+			data: { profileImage: filename.replace(".tmp", "") },
 		});
+
+		return {
+			user: {
+				..._user,
+				profileImage: _user.profileImage
+					? `${getFilesLocation("profile-images")}/${_user.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async remove(id: number): Promise<User> {

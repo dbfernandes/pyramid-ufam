@@ -132,14 +132,14 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
   const handleImage = e => {
     function validateFile(file) {
       const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const maxSize = 3000 * 1024;
+      const maxSize = 1000 * 1024;
 
       if (file == null) return false;
       if (!allowedTypes.includes(file.type)) {
         toast("Erro", "Somente arquivos de imagem (.png, .jpg, .jpeg) são permitidos", "danger");
         return false;
       } else if (maxSize != -1 && file.size > maxSize) {
-        toast("Erro", "Somente arquivos até 5mb são permitidos", "danger");
+        toast("Erro", "Somente arquivos até 1mb são permitidos", "danger");
         return false;
       }
 
@@ -173,7 +173,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
 
     await axios.request(options as AxiosRequestConfig).then(
       (response) => {
-        dispatch(setProfileImage(response.data.profileImage));
+        dispatch(setProfileImage(response.data.user.profileImage));
 
         toast("Sucesso", "Imagem atualizada com sucesso.");
       }).catch((error) => {
@@ -194,7 +194,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
 
-        {/*<ProfilePicture>
+        <ProfilePicture>
           <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
 
           <div className="editImage">
@@ -208,7 +208,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
               />
             </label>
           </div>
-        </ProfilePicture>*/}
+        </ProfilePicture>
 
         <TextInput
           label={"Nome completo*"}
