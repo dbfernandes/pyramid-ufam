@@ -10,7 +10,7 @@ import Spinner from "components/shared/Spinner";
 import toggleModalForm from "components/shared/ModalForm";
 import toast from "components/shared/Toast";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
-import FormEditSubmission from "components/shared/forms/FormAddSubmission/FormEditSubmission";
+import FormUpdateSubmission from "components/shared/forms/FormAddSubmission/FormUpdateSubmission";
 import {
   ButtonGroup,
   AcceptButton,
@@ -18,7 +18,6 @@ import {
   InfoButton,
   EditButton
 } from "../styles";
-//import { fetchDelete } from "components/shared/forms/FormUpdateStatusSubmission";
 
 // Custom
 import { History, HistoryItem } from "./styles";
@@ -156,7 +155,7 @@ export default function UserActions({
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
-            <FormEditSubmission submission={submission} user={user} onChange={onChange} />,
+            <FormUpdateSubmission submission={submission} user={user} onChange={onChange} />,
             "lg"
           )
         }>

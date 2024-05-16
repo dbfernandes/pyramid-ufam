@@ -6,6 +6,7 @@ CREATE TABLE `UserTypes` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
 
+
     UNIQUE INDEX `UserTypes_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -26,6 +27,7 @@ CREATE TABLE `Users` (
     `updatedAt` DATETIME(3) NULL,
     `searchHash` TEXT NULL,
 
+
     UNIQUE INDEX `Users_email_key`(`email`),
     UNIQUE INDEX `Users_cpf_key`(`cpf`),
     UNIQUE INDEX `Users_resetToken_key`(`resetToken`),
@@ -43,6 +45,7 @@ CREATE TABLE `Courses` (
     `updatedAt` DATETIME(3) NULL,
     `searchHash` TEXT NULL,
 
+
     UNIQUE INDEX `Courses_name_key`(`name`),
     UNIQUE INDEX `Courses_code_key`(`code`),
     PRIMARY KEY (`id`)
@@ -58,6 +61,7 @@ CREATE TABLE `CourseUsers` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
 
+
     UNIQUE INDEX `CourseUsers_enrollment_key`(`enrollment`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -69,6 +73,7 @@ CREATE TABLE `ActivityGroups` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+
 
     UNIQUE INDEX `ActivityGroups_name_key`(`name`),
     PRIMARY KEY (`id`)
@@ -83,6 +88,7 @@ CREATE TABLE `CourseActivityGroups` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -99,6 +105,7 @@ CREATE TABLE `Activities` (
     `updatedAt` DATETIME(3) NULL,
     `searchHash` TEXT NULL,
 
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -110,13 +117,12 @@ CREATE TABLE `Submissions` (
     `description` VARCHAR(100) NOT NULL,
     `file` VARCHAR(255) NULL,
     `workload` INTEGER NOT NULL,
-    `approvedWorkload` INTEGER NULL,
     `status` INTEGER NULL DEFAULT 1,
-    `details` VARCHAR(255) NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
     `searchHash` TEXT NULL,
+
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -127,6 +133,7 @@ CREATE TABLE `SubmissionActionTypes` (
     `name` VARCHAR(30) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+
 
     UNIQUE INDEX `SubmissionActionTypes_name_key`(`name`),
     PRIMARY KEY (`id`)
@@ -142,38 +149,50 @@ CREATE TABLE `SubmissionActions` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
 
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Users` ADD CONSTRAINT `Users_userTypeId_fkey` FOREIGN KEY (`userTypeId`) REFERENCES `UserTypes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Users`
+ADD CONSTRAINT `Users_userTypeId_fkey` FOREIGN KEY (`userTypeId`) REFERENCES `UserTypes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CourseUsers` ADD CONSTRAINT `CourseUsers_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `Courses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `CourseUsers`
+ADD CONSTRAINT `CourseUsers_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `Courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CourseUsers` ADD CONSTRAINT `CourseUsers_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `CourseUsers`
+ADD CONSTRAINT `CourseUsers_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CourseActivityGroups` ADD CONSTRAINT `CourseActivityGroups_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `Courses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `CourseActivityGroups`
+ADD CONSTRAINT `CourseActivityGroups_courseId_fkey` FOREIGN KEY (`courseId`) REFERENCES `Courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CourseActivityGroups` ADD CONSTRAINT `CourseActivityGroups_activityGroupId_fkey` FOREIGN KEY (`activityGroupId`) REFERENCES `ActivityGroups`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `CourseActivityGroups`
+ADD CONSTRAINT `CourseActivityGroups_activityGroupId_fkey` FOREIGN KEY (`activityGroupId`) REFERENCES `ActivityGroups` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Activities` ADD CONSTRAINT `Activities_courseActivityGroupId_fkey` FOREIGN KEY (`courseActivityGroupId`) REFERENCES `CourseActivityGroups`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Activities`
+ADD CONSTRAINT `Activities_courseActivityGroupId_fkey` FOREIGN KEY (`courseActivityGroupId`) REFERENCES `CourseActivityGroups` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Submissions` ADD CONSTRAINT `Submissions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Submissions`
+ADD CONSTRAINT `Submissions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Submissions` ADD CONSTRAINT `Submissions_activityId_fkey` FOREIGN KEY (`activityId`) REFERENCES `Activities`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Submissions`
+ADD CONSTRAINT `Submissions_activityId_fkey` FOREIGN KEY (`activityId`) REFERENCES `Activities` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SubmissionActions` ADD CONSTRAINT `SubmissionActions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `SubmissionActions`
+ADD CONSTRAINT `SubmissionActions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SubmissionActions` ADD CONSTRAINT `SubmissionActions_submissionId_fkey` FOREIGN KEY (`submissionId`) REFERENCES `Submissions`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `SubmissionActions`
+ADD CONSTRAINT `SubmissionActions_submissionId_fkey` FOREIGN KEY (`submissionId`) REFERENCES `Submissions` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SubmissionActions` ADD CONSTRAINT `SubmissionActions_submissionActionTypeId_fkey` FOREIGN KEY (`submissionActionTypeId`) REFERENCES `SubmissionActionTypes`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `SubmissionActions`
+ADD CONSTRAINT `SubmissionActions_submissionActionTypeId_fkey` FOREIGN KEY (`submissionActionTypeId`) REFERENCES `SubmissionActionTypes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

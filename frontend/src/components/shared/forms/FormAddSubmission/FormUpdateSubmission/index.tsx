@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRouter } from "next/router";
+import { getFilename } from "utils";
 
 // Shared
 import { FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
+import TextArea from "components/shared/TextArea";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import RangeInput from "components/shared/RangeInput";
@@ -25,7 +27,7 @@ interface IFormComponentProps {
   handleCloseModalForm?: Function;
 }
 
-export default function FormEditSubmission({
+export default function FormUpdateSubmission({
   user,
   submission: submissionProp = null,
   onChange = () => { },
@@ -34,6 +36,11 @@ export default function FormEditSubmission({
   const router = useRouter();
 
   // Inputs and validators
+  const [details, setDetails] = useState<string>("");
+  const handleDetails = (value) => {
+    setDetails(value);
+  };
+
   const [activeGroup, setActiveGroup] = useState<any | null>(null);
   const [activity, setActivity] = useState<IActivity | null>(null);
   const [file, setFile] = useState(null);
@@ -47,6 +54,19 @@ export default function FormEditSubmission({
     setWorkload(value);
   };
 
+  const handleFileSetFromUrl = async (url) => {
+    try {
+      const response = await fetch(url);
+      const data = await response.blob();
+      const metadata = { type: data.type };
+      const file = new File([data], getFilename(url), metadata);
+
+      setFile(file as any);
+    } catch (error) {
+      console.error("Error fetching file from URL:", error);
+    }
+  };
+
   // Loading submission prop
   useEffect(() => {
     if (submissionProp != null) {
@@ -54,6 +74,7 @@ export default function FormEditSubmission({
       setActivity(submissionProp.activity);
       setDescription(submissionProp.description);
       setWorkload(submissionProp.workload);
+      handleFileSetFromUrl(submissionProp.fileUrl);
     }
   }, [submissionProp]);
 
@@ -75,19 +96,24 @@ export default function FormEditSubmission({
   function fetchSubmit() {
     setFetching(true);
 
+    console.log(activity, description, workload, file, user, details);
+
     const data = new FormData();
     if (file !== null) {
       data.append("file", file);
     }
-    if (activity != null) {
+    if (activity !== null) {
       data.append("activityId", String(activity.id));
     }
     data.append("description", description);
     data.append("workload", String(workload));
 
+    data.append("userId", String(user.id));
+    data.append("details", details);
+
     const config: AxiosRequestConfig = {
-      method: "POST",
-      url: `${process.env.api}/users/${user.id}/submit`,
+      method: "PATCH",
+      url: `${process.env.api}/submissions/${submissionProp.id}/`,
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${user.token}`,
@@ -98,8 +124,12 @@ export default function FormEditSubmission({
     axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Solicitação enviada com sucesso!", "success");
-        router.push("/minhas-solicitacoes");
+        toast("Sucesso", "Solicitação atualizada com sucesso", "success");
+
+        if (handleCloseModalForm) {
+          handleCloseModalForm();
+        }
+        onChange();
       })
       .catch((error) => {
         const errorMessages = {
@@ -116,6 +146,23 @@ export default function FormEditSubmission({
 
   return (
     <div style={{ padding: "0 25px 25px" }}>
+      <div style={{ width: "100%" }}>
+        <ParagraphTitle style={{ marginTop: 0 }}>
+          <b>(Opcional):</b> Alguma observação sobre o motivo da edição da solicitação?
+        </ParagraphTitle>
+
+        <TextArea
+          label={"Observações"}
+          name={"details"}
+          value={details}
+          handleValue={handleDetails}
+          displayAlert={sent}
+          maxLength={255}
+        />
+      </div>
+
+      <hr />
+
       <ActivitySelect
         activeGroup={activeGroup}
         setActiveGroup={setActiveGroup}
@@ -169,7 +216,7 @@ export default function FormEditSubmission({
               ) : (
                 <>
                   <i className="bi bi-check2-all" />
-                  Enviar
+                  Editar
                 </>
               )}
             </Button>

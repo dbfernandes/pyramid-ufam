@@ -8,6 +8,9 @@ import {
 	UsePipes,
 	ValidationPipe,
 	UseGuards,
+	UseInterceptors,
+	UploadedFile,
+	Req,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -19,6 +22,9 @@ import { RolesGuard } from "../../../src/guards/roles.guard";
 import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
 import { CheckOwner } from "../../../src/decorators/owner.decorator";
 import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { Request } from "express";
 
 @Controller("submissions")
 export class SubmissionController {
@@ -36,11 +42,25 @@ export class SubmissionController {
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
+	@UseInterceptors(
+		FileInterceptor("file", {
+			storage: diskStorage({
+				destination: "./public/files/submissions",
+				filename: (req, file, cb) =>
+					cb(null, `${new Date().getTime()}-${file.originalname}`),
+			}),
+		}),
+	)
 	async update(
 		@Param("id") id: string,
 		@Body() updateSubmissionDto: UpdateSubmissionDto,
+		@UploadedFile() file: Express.Multer.File,
 	) {
-		return await this.submissionService.update(+id, updateSubmissionDto);
+		return await this.submissionService.update(
+			+id,
+			updateSubmissionDto,
+			file.filename,
+		);
 	}
 
 	@Patch(":id/status")
@@ -51,6 +71,7 @@ export class SubmissionController {
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
 	async updateStatus(
+		@Req() req: Request,
 		@Param("id") id: string,
 		@Body() updateStatusDto: UpdateStatusDto,
 	) {

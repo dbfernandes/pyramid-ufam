@@ -3,7 +3,7 @@ import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios, { AxiosRequestConfig } from "axios";
 import { StatusSubmissions } from "constants/statusSubmissions.constants";
-import { formatCpf } from "utils";
+import { formatCpf, getFilename } from "utils";
 
 // Shared
 import { H6 } from "components/shared/Titles";
@@ -178,7 +178,7 @@ export default function SubmissionCard({
               <i className="bi bi-filetype-pdf" />
 
               <div>
-                <p>{submission.fileUrl?.split("-")[1]}</p>
+                <p>{getFilename(submission.fileUrl)}</p>
                 <p>
                   <span>{fileSize}</span>
                 </p>

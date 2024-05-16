@@ -40,16 +40,11 @@ export class SubmissionService {
 		const { user, activity } = submission;
 		const { activityGroup } = activity;
 
-		console.log(submission, user, activity, activityGroup);
-
 		const searchHash = [];
 
 		searchHash.push(submission.id);
 		searchHash.push(submission.description);
 		searchHash.push(submission.workload);
-		if (submission.details) {
-			searchHash.push(submission.details);
-		}
 
 		searchHash.push(user.name);
 		searchHash.push(user.email);
@@ -70,12 +65,11 @@ export class SubmissionService {
 		createSubmissionDto: CreateSubmissionDto,
 		filename: string,
 	) {
-		const { activityId, workload, description, details } = createSubmissionDto;
+		const { activityId, workload, description } = createSubmissionDto;
 
 		const submission = await this.prisma.submission.create({
 			data: {
 				description,
-				details,
 				workload: parseInt(workload.toString()),
 				activityId: parseInt(activityId.toString()),
 				userId,
@@ -91,6 +85,36 @@ export class SubmissionService {
 				submissionActionTypeId: SubmissionActionIds["submeteu"],
 			})
 			.then(() => this.updateSearchHash(submission.id));
+
+		return submission;
+	}
+
+	async update(
+		id: number,
+		updateSubmissionDto: UpdateSubmissionDto,
+		filename: string,
+	): Promise<Submission> {
+		const { userId, details, ...rest } = updateSubmissionDto;
+		const submission = await this.prisma.submission.update({
+			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+			data: {
+				...rest,
+				file: filename,
+			},
+		});
+
+		// Adding to history
+		await this.submissionActionService
+			.create({
+				userId,
+				submissionId: submission.id,
+				submissionActionTypeId: SubmissionActionIds["editou"],
+				details,
+			})
+			.then(() => this.updateSearchHash(submission.id));
+
+		// CHAMAR ALGUMA FUNÇÃO PRA LIMPAR OS ARQUIVOS NÃO UTILIZADOS AQUI
+		// Ex.: fs.unlink em todos os arquivos que não estiverem vinculados a nenhuma submissão
 
 		return submission;
 	}
@@ -167,6 +191,7 @@ export class SubmissionService {
 					enrollment: _userCourse.enrollment,
 				},
 				activity: {
+					id: Activity.id,
 					name: Activity.name,
 					maxWorkload: Activity.maxWorkload,
 					description: Activity.description,
@@ -309,6 +334,7 @@ export class SubmissionService {
 					enrollment: _userCourse.enrollment,
 				},
 				activity: {
+					id: Activity.id,
 					name: Activity.name,
 					maxWorkload: Activity.maxWorkload,
 					description: Activity.description,
@@ -384,20 +410,6 @@ export class SubmissionService {
 		});
 
 		return submissions;
-	}
-
-	async update(
-		id: number,
-		updateSubmissionDto: UpdateSubmissionDto,
-	): Promise<Submission> {
-		const submission = await this.prisma.submission.update({
-			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
-			data: updateSubmissionDto,
-		});
-
-		this.updateSearchHash(submission.id);
-
-		return submission;
 	}
 
 	async remove(id: number): Promise<Submission> {

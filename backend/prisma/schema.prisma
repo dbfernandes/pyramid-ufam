@@ -137,9 +137,7 @@ model Submission {
   description      String    @db.VarChar(100)
   file             String?   @db.VarChar(255)
   workload         Int
-  approvedWorkload Int?
   status           Int?      @default(1)
-  details          String?   @db.VarChar(255)
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime? @updatedAt

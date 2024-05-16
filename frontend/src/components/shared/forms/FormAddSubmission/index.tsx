@@ -21,14 +21,10 @@ import { IActivity } from "components/shared/cards/ActivityCard";
 import IUserLogged from "interfaces/IUserLogged";
 interface IFormComponentProps {
   user: IUserLogged;
-  onChange?: Function;
-  handleCloseModalForm?: Function;
 }
 
 export default function FormAddSubmission({
-  user,
-  onChange = () => { },
-  handleCloseModalForm,
+  user
 }: IFormComponentProps) {
   const router = useRouter();
 
@@ -105,7 +101,7 @@ export default function FormAddSubmission({
     axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Solicitação enviada com sucesso!", "success");
+        toast("Sucesso", "Solicitação enviada com sucesso", "success");
         router.push("/minhas-solicitacoes");
       })
       .catch((error) => {

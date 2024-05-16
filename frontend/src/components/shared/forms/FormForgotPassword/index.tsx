@@ -75,7 +75,7 @@ export default function FormForgotPassword() {
   return (
     sent && success
       ? <TextAlert displayIcon={true}>
-        Email enviado com sucesso! Você será redirecionado para a tela de Login.
+        Email enviado com sucesso. Você será redirecionado para a tela de Login.
       </TextAlert>
       : <Form title={"Esqueceu sua senha?"}>
         <p style={{ marginTop: "-20px" }}>
