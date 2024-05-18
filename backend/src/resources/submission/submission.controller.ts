@@ -31,7 +31,7 @@ export class SubmissionController {
 
 	@Patch(":id")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
 	@CheckOwner("submission")
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),

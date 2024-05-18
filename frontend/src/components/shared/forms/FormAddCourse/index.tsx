@@ -78,7 +78,7 @@ export default function FormAddCourse({
 
       const _education = courseProp.activityGroups.find((group) => group.name === "Ensino");
       const _research = courseProp.activityGroups.find((group) => group.name === "Pesquisa");
-      const _extension = courseProp.activityGroups.find((group) => group.name === "Extensão");
+      const _extension = courseProp.activityGroups.find((group) => group.name === "Extensao");
 
       setEducationWorkload(_education.maxWorkload.toString());
       setResearchWorkload(_research.maxWorkload.toString());
@@ -227,7 +227,7 @@ export default function FormAddCourse({
           />
 
           <TextInput
-            label={"Extensão*"}
+            label={"Extensao*"}
             name={"extensionWorkload"}
             value={extensionWorkload}
             handleValue={handleExtensionWorkload}

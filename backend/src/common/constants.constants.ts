@@ -23,5 +23,5 @@ export enum StatusSubmissions {
 export enum ActivityGroupIds {
 	"ensino" = 1,
 	"pesquisa" = 2,
-	"extensão" = 3,
+	"extensao" = 3,
 }

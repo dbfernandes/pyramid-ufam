@@ -39,6 +39,7 @@ export default function Atividades() {
 
   useEffect(() => {
     if (router.query) {
+      console.log(activityGroup)
       setActivityGroup(router.query.group as string);
     }
   }, [router]);

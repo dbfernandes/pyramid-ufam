@@ -39,7 +39,7 @@ export class UserController {
 
 	@Get()
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findAll(
 		@Query()
 		query: {
@@ -56,14 +56,14 @@ export class UserController {
 
 	@Get(":id")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findById(@Param("id") id: string) {
 		return await this.userService.findById(+id);
 	}
 
 	@Get(":id/submissions")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findSubmissionsByUserId(
 		@Param("id") id: string,
 		@Query()
@@ -82,7 +82,7 @@ export class UserController {
 
 	@Post()
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
-	@Roles(UserTypes.COORDINATOR)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)

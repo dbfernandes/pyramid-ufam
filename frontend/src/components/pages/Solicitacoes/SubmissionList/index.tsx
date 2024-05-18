@@ -30,10 +30,14 @@ interface ISubmissionListProps {
   children?: React.ReactNode;
 }
 
-// Move a exportação da função countPendingSubmissions para fora do componente
 export const countPendingSubmissions = (submissions) => {
   return submissions.filter((submission) => submission.status === 1).length;
 };
+
+export const countPreAprovedSubmissions = (submissions) => {
+  console.log(submissions)
+  return submissions.filter((submission) => submission.status === 2).length;
+}
 
 export default function SubmissionList({
   subTitle,
@@ -50,12 +54,27 @@ export default function SubmissionList({
 
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
+  const statuses = router.query.status?.toString().split("-");
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
-    { title: "Pendentes", value: 1, checked: false },
-    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: false },
-    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: false },
-    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: false },
+    { title: "Pendentes", value: 1, accent: "var(--sucess-hover)", checked: statuses?.includes("1") },
+    { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: statuses?.includes("2") },
+    { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
+    { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
   ]);
+
+  useEffect(() => {
+    setFetchingFilter(true);
+    const debounce = setTimeout(() => {
+      const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
+      router.push({
+        query: { ...router.query, status },
+      });
+
+      setFetchingFilter(false);
+    }, 1000);
+
+    return () => clearTimeout(debounce);
+  }, [filterOptions]);
 
   async function handleStatusUpdate(status: string) {
     if (checkedIds.length === 0) {
@@ -101,48 +120,6 @@ export default function SubmissionList({
     }
   }
 
-  /*
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-  };
-  
-  console.log(countPendingSubmissions(submissions));
-  
-  const filteredSubmissions = submissions.filter((submission) => {
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      if (
-        submission &&
-        submission.user &&
-        submission.activity.activityGroup.name &&
-        submission.workload &&
-        submission.activity.description
-      ) {
-        const nameLower = submission.user.name.toLowerCase();
-        const activityNameLower = submission.activity.name.toLowerCase();
-        const activityGroupNameLower = submission.activity.activityGroup.name.toLowerCase();
-        const activityGroupHour = submission.workload;
-        const descriptionLower = submission.activity.description.toLowerCase();
-
-        return (
-          nameLower.includes(searchTermLower) ||
-          activityNameLower.includes(searchTermLower) ||
-          activityGroupNameLower.includes(searchTermLower) ||
-          (typeof activityGroupHour === "string" && activityGroupHour.includes(searchTermLower)) ||
-          (typeof activityGroupHour === "number" && activityGroupHour.toString().includes(searchTermLower)) ||
-          descriptionLower.includes(searchTermLower)
-        );
-      } else {
-        return false;
-      }
-    }
-
-    return true;
-  }); 
-  */
-
   return (
     <Wrapper>
       <HeaderWrapper>
@@ -168,10 +145,10 @@ export default function SubmissionList({
         <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
       </Filter>
 
-      {submissions?.length > 0
-        ? <ListStyled>
+      {submissions?.length > 0 ? (
+        <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-          {submissions?.length > 0 && submissions.map((submission, index) =>
+          {submissions.map((submission, index) => (
             <SubmissionCard
               key={index}
               submission={submission}
@@ -181,11 +158,12 @@ export default function SubmissionList({
               user={user}
               onChange={onChange}
             />
-          )}
+          ))}
           {children}
         </ListStyled>
-        : <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
-      }
+      ) : (
+        <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
+      )}
 
       {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
     </Wrapper>

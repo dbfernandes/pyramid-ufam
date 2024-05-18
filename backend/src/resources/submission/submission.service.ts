@@ -80,7 +80,6 @@ export class SubmissionService {
 			},
 		});
 
-		// Adding to history
 		await this.submissionActionService
 			.create({
 				userId,

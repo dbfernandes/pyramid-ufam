@@ -170,8 +170,8 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         },
         {
           icon: <i className="bi bi-lightbulb" />,
-          title: "Extensão",
-          route: "/atividades/extensão",
+          title: "Extensao",
+          route: "/atividades/extensao",
         },
       ],
       permissions: [1],
@@ -227,7 +227,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                   {/* Fix: OverlayTrigger not working */}
                   <div>
                     {group.links.map((link, index) =>
-                      checkPermission(link, user.userTypeId)
+                      checkPermission(link, user.userTypeId) 
                         ? (<OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
                           <div>
                             {link?.route ? (

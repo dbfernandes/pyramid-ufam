@@ -14,6 +14,9 @@ import Dashboard from "components/pages/Painel/Dashboard";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+import SubmissionList from "components/pages/Solicitacoes/SubmissionList";
+import MySubmissionList from "components/pages/Solicitacoes/MySubmissionList";
+import MinhasSolicitacoes from "../minhas-solicitacoes";
 
 export default function Home() {
   const router = useRouter();
@@ -51,7 +54,7 @@ export default function Home() {
         ? <Wrapper>
           <Dashboard />
         </Wrapper>
-        : <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        :<div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Spinner size={"30px"} color={"var(--primary-color)"} />
         </div>
       }

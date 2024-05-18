@@ -61,7 +61,8 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
   return (
     <DefaultWrapper>
       <HeaderWrapper>
-        <H3>Atividades de {title.toLowerCase()}</H3>
+        {title === "Extensao" ? <H3>Atividades de extensão</H3> : <H3>Atividades de {title.toLowerCase()}</H3>}
+        
 
         <AddUserButton onClick={() =>
           toggleModalForm(

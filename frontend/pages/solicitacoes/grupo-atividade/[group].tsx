@@ -42,7 +42,7 @@ export default function SolicitacoesGrupoAtividade() {
       route: "/solicitacoes/grupo-atividade",
     },
     {
-      title: activityGroup === "extensao" ? "extensão" : ActivityGroupsNames[activityGroup]?.title,
+      title: "extensao",
     }
   ]);
   }, []);
@@ -89,7 +89,7 @@ export default function SolicitacoesGrupoAtividade() {
     let url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=${activityGroup}`;
     
     if (activityGroup === "extensao") {
-      url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=extensão`;
+      url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=extensao`;
     }
 
     const options = {

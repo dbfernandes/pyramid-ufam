@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
+import { parseUserActiveParam } from "utils";
 
 import IntroTile from "./Tile/IntroTile";
 import NumberTile from "./NumberTile";
@@ -16,7 +17,7 @@ import Spinner from "components/shared/Spinner";
 import toast from "components/shared/Toast";
 
 // Custom
-import SubmissionList, { countPendingSubmissions } from "components/pages/Solicitacoes/SubmissionList"; // Importando a função countPendingSubmissions
+import SubmissionList, { countPendingSubmissions, countPreAprovedSubmissions } from "components/pages/Solicitacoes/SubmissionList"; // Importando a função countPendingSubmissions
 
 // Interfaces
 import { IRootState } from "redux/store";
@@ -53,17 +54,16 @@ export default function Dashboard() {
       router.replace("/conta/curso");
     } else {
       fetchSubmissions();
-      fetchUsers(1, "", "active");
+      fetchUsers(0, "", "active");
       setTimeout(() => setLoaded(true), 250);
     }
-  }, [user]);
+  }, [user.logged, user.selectedCourse]);
 
-  // Função para buscar as submissões
   async function fetchSubmissions() {
     setFetchingSubmissions(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=1&limit=15&search=&status=1`,
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=&limit=&search=&status=`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -71,17 +71,9 @@ export default function Dashboard() {
       },
     };
 
-    try {
+    if(user.userTypeId !== 3) {
       const response = await axios.request(options as AxiosRequestConfig);
       setSubmissions(response.data.submissions);
-    } catch (error) {
-      const errorMessages = {
-        0: "Oops, tivemos um erro. Tente novamente.",
-        500: error?.response?.data?.message,
-      };
-
-      const code = error?.response?.status ? error.response.status : 500;
-      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
     }
 
     setFetchingSubmissions(false);
@@ -100,17 +92,13 @@ export default function Dashboard() {
     };
 
     try {
-      if (user.userTypeId != 3) {
+      if (user.userTypeId !== 3) {
         const response = await axios.request(options as AxiosRequestConfig);
         const filteredUsers = response.data.users.filter(u => u.email !== user.email);
         setUsers(filteredUsers);
 
         const activeUsers = filteredUsers.filter(u => u.isActive);
-        const inactiveUsers = filteredUsers.filter(u => !u.isActive);
-        const totalStudentsCount = activeUsers.length + inactiveUsers.length;
         setTotalActiveUsers(activeUsers.length);
-        setTotalInactiveUsers(inactiveUsers.length);
-        setTotalStudents(totalStudentsCount);
       }
     } catch (error) {
       handleFetchError(error);
@@ -126,6 +114,10 @@ export default function Dashboard() {
     };
     const code = error?.response?.status ? error.response.status : 500;
     toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+  }
+
+  function handlePreApprovedClick() {
+    router.push("/solicitacoes?page=&search=&status=2");
   }
 
   return (
@@ -152,7 +144,7 @@ export default function Dashboard() {
 
       <DashboardWrapper>
         <IntroTile />
-        {loaded && user.userTypeId !== 3 ? (
+        { user.userTypeId !== 3  && loaded ? (
           <>
             <NumberTile
               icon="file-earmark-medical"
@@ -160,31 +152,28 @@ export default function Dashboard() {
               title="Solicitações pendentes"
               value={countPendingSubmissions(submissions)}
               callToAction="Solicitações"
-              link="/solicitacoes"
+              link="/solicitacoes?page=1&search=&status=1"
+            />
+            <NumberTile
+              icon="file-earmark-medical"
+              accent="var(--danger)"
+              title="Solicitações pré-aprovadas"
+              value={countPreAprovedSubmissions(submissions)}
+              callToAction="Solicitações"
+              link="/solicitacoes?page=1&search=&status=2"
             />
             <NumberTile
               icon="person"
               accent="var(--success)"
-              title="Alunos no Curso"
-              value={totalStudents}
+              title="Alunos no curso"
+              value={totalActiveUsers}
               callToAction="Alunos"
               link="/usuarios/alunos"
             />
-            <NumberTile
-              icon="person"
-              accent="var(--success)"
-              title="Alunos Ativos no Curso"
-              value={totalActiveUsers}
-            />
-            <NumberTile
-              icon="person"
-              accent="var(--success)"
-              title="Alunos Inativos no Curso"
-              value={totalInactiveUsers}
-            />
           </>
         ) : (
-          <></>
+          <>
+          </>
         )}
       </DashboardWrapper>
     </>
