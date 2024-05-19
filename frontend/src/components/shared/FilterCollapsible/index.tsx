@@ -37,6 +37,13 @@ export default function FilterCollapsible({
   }
 
   function handleCheck(value: string | number) {
+    const checkedLength = options.filter(option => option.checked === true)?.length;
+    if (checkedLength === 1) {
+      const checkedOption = options.find(option => option.checked === true);
+
+      if (checkedOption && checkedOption.value === value) return;
+    }
+
     setOptions(options.map(option => {
       if (option.value === value) {
         return { ...option, checked: !option.checked };

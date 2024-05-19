@@ -8,6 +8,11 @@ import {
 	UsePipes,
 	ValidationPipe,
 	UseGuards,
+	UseInterceptors,
+	UploadedFile,
+	Req,
+	HttpStatus,
+	ParseFilePipeBuilder,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -19,6 +24,9 @@ import { RolesGuard } from "../../../src/guards/roles.guard";
 import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
 import { CheckOwner } from "../../../src/decorators/owner.decorator";
 import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { Request } from "express";
 
 @Controller("submissions")
 export class SubmissionController {
@@ -36,11 +44,37 @@ export class SubmissionController {
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
+	@UseInterceptors(
+		FileInterceptor("file", {
+			storage: diskStorage({
+				destination: "./public/files/tmp",
+				filename: (req, file, cb) =>
+					cb(null, `${new Date().getTime()}-${file.originalname}.tmp`),
+			}),
+		}),
+	)
 	async update(
 		@Param("id") id: string,
 		@Body() updateSubmissionDto: UpdateSubmissionDto,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: "pdf",
+				})
+				.addMaxSizeValidator({
+					maxSize: 5000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
-		return await this.submissionService.update(+id, updateSubmissionDto);
+		return await this.submissionService.update(
+			+id,
+			updateSubmissionDto,
+			file.filename,
+		);
 	}
 
 	@Patch(":id/status")
@@ -51,6 +85,7 @@ export class SubmissionController {
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
 	async updateStatus(
+		@Req() req: Request,
 		@Param("id") id: string,
 		@Body() updateStatusDto: UpdateStatusDto,
 	) {
@@ -65,7 +100,7 @@ export class SubmissionController {
 		return await this.submissionService.remove(+id);
 	}
 
-	@Patch(":id/status/mass-update")
+	@Patch(":ids/status/mass-update")
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
 	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
 	@CheckOwner("submission")
@@ -79,9 +114,9 @@ export class SubmissionController {
 		return await this.submissionService.massUpdateStatus(ids, updateStatusDto);
 	}
 
-	@Delete(":id")
+	@Delete(":ids/mass-remove")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR)
+	@Roles(UserTypes.STUDENT)
 	@CheckOwner("submission")
 	async massRemove(@Param("ids") ids: string) {
 		return await this.submissionService.massRemove(ids);

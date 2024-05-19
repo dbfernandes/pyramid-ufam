@@ -93,7 +93,7 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
   return (
     sent && success
       ? <TextAlert displayIcon={true}>
-        Senha atualizada com sucesso! Você será redirecionado para a tela de Login.
+        Senha atualizada com sucesso. Você será redirecionado para a tela de Login.
       </TextAlert>
       : <Form title={"Redefinir senha"}>
         {tokenObj && <>

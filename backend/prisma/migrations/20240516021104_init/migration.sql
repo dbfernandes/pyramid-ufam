@@ -69,6 +69,7 @@ CREATE TABLE `ActivityGroups` (
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,
+    `searchHash` TEXT NULL,
 
     UNIQUE INDEX `ActivityGroups_name_key`(`name`),
     PRIMARY KEY (`id`)
@@ -110,9 +111,7 @@ CREATE TABLE `Submissions` (
     `description` VARCHAR(100) NOT NULL,
     `file` VARCHAR(255) NULL,
     `workload` INTEGER NOT NULL,
-    `approvedWorkload` INTEGER NULL,
     `status` INTEGER NULL DEFAULT 1,
-    `details` VARCHAR(255) NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,

@@ -60,7 +60,6 @@ export default function Courses({
     }
   }
 
-
   async function fetchDelete(id) {
     const options = {
       url: `${process.env.api}/courses/${id}`,
@@ -88,15 +87,6 @@ export default function Courses({
       });
   }
 
-  const filterCourses = (term: string) => {
-    setSearchTerm(term);
-  };
-
-  const filteredCourses = courses.filter((course) => {
-    return course.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-
-
   return (
     <DefaultWrapper>
       <HeaderWrapper>
@@ -120,12 +110,8 @@ export default function Courses({
       </HeaderWrapper>
 
       <Filter>
-        <SearchBar
-          onChange={filterCourses}
-          placeholder="Pesquisar cursos" />
+        <SearchBar placeholder="Pesquisar cursos" />
       </Filter>
-
-
 
       {loading
         ? <div
@@ -138,7 +124,7 @@ export default function Courses({
         >
           <Spinner size={"30px"} color={"var(--primary-color)"} />
         </div>
-        : filteredCourses?.length > 0 ?
+        : courses?.length > 0 ?
           (<>
             <CardGroup>
               {courses.map((course) => (

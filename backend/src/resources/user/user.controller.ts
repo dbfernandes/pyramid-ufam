@@ -14,6 +14,8 @@ import {
 	ValidationPipe,
 	Put,
 	Headers,
+	ParseFilePipeBuilder,
+	HttpStatus,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { SubmissionService } from "../submission/submission.service";
@@ -114,16 +116,28 @@ export class UserController {
 	@UseInterceptors(
 		FileInterceptor("file", {
 			storage: diskStorage({
-				destination: "./public/files/submissions",
+				destination: "./public/files/tmp",
 				filename: (req, file, cb) =>
-					cb(null, `${new Date().getTime()}-${file.originalname}`),
+					cb(null, `${new Date().getTime()}-${file.originalname}.tmp`),
 			}),
 		}),
 	)
 	async submit(
 		@Param("id") id: string,
 		@Body() createSubmissionDto: CreateSubmissionDto,
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: "pdf",
+				})
+				.addMaxSizeValidator({
+					maxSize: 5000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
 		return await this.submissionService.submit(
 			+id,
@@ -140,18 +154,30 @@ export class UserController {
 	@UseInterceptors(
 		FileInterceptor("file", {
 			storage: diskStorage({
-				destination: `./public/files/profile-images`,
+				destination: `./public/files/tmp`,
 				filename: (req, file, cb) =>
 					cb(
 						null,
-						`${req.params.id}-${new Date().getTime()}-${file.originalname}`,
+						`${req.params.id}-${new Date().getTime()}-${file.originalname}.tmp`,
 					),
 			}),
 		}),
 	)
 	async updateProfileImage(
 		@Param("id") id: string,
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: ".(png|jpeg|jpg)",
+				})
+				.addMaxSizeValidator({
+					maxSize: 1000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
 		return await this.userService.updateProfileImage(+id, file.filename);
 	}

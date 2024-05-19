@@ -60,12 +60,12 @@ export default function UserList({
 
   async function handleReload() {
     setIsReloading(true);
-  
+
     try {
       const response = await axios.get(`${process.env.api}/users`, {
         params: {
           page: router.query.page || 1,
-          search: router.query.search || '', 
+          search: router.query.search || '',
           status: router.query.status || '1'
         }
       });
@@ -108,35 +108,12 @@ export default function UserList({
       router.push({
         query: { ...router.query, status },
       });
-  
+
       setFetchingFilter(false);
     }, 1000);
-  
-    const selectedOptionsCount = filterOptions.filter(option => option.checked).length;
-    if (selectedOptionsCount === 0) {
-      const updatedOptions = filterOptions.map(option =>
-        option.title === "Ativos" ? { ...option, checked: true } : option
-      );
-      setFilterOptions(updatedOptions);
-    }
-  
+
     return () => clearTimeout(debounce);
   }, [filterOptions]);
-  
-
-  useEffect(() => {
-  setFetchingFilter(true);
-  const debounce = setTimeout(() => {
-    const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
-    router.push({
-      query: { ...router.query, status },
-    });
-
-    setFetchingFilter(false);
-  }, 1000);
-
-  return () => clearTimeout(debounce);
-}, [filterOptions]);
 
 
   // Delete functions
@@ -205,31 +182,6 @@ export default function UserList({
     setFetchingMassDelete(false);
   }
 
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-  };
-
-  const filteredUsers = users.filter((user) => {
-    if (searchTerm) {
-      const searchTermLower = searchTerm.toLowerCase();
-      if (
-        user
-        ) {
-          const nameLower = user.name.toLowerCase();
-
-          console.log(searchTerm, nameLower)
-  
-        return (
-          nameLower.includes(searchTermLower)
-        );
-      } else {
-        return false; 
-      }
-    }
-
-    return true;
-  });
-
   return (
     <DefaultWrapper>
       <HeaderWrapper>
@@ -251,7 +203,7 @@ export default function UserList({
             </AddUserLink>
           </Link>
         }
-      
+
       </HeaderWrapper>
 
       <Filter>
@@ -267,7 +219,7 @@ export default function UserList({
       {users?.length > 0 ?
         (<ListStyled>
           <User header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} subRoute={subRoute} />
-          {filteredUsers.map((user, index) =>
+          {users.map((user, index) =>
             <User
               key={index}
               user={user}

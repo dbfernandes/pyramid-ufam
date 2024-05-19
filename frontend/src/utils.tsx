@@ -77,6 +77,16 @@ export function checkAuthentication(): boolean {
   return authorized;
 }
 
+export function getPlural(word: string) {
+  word = word.toLowerCase();
+  return word.slice(0, -1) + "as";
+}
+
+export function getFilename(file: string): string {
+  const result = file.split(/-(.+)?/, 2).pop();
+  return result !== undefined ? result : "";
+}
+
 export function getFirstName(name: string) {
   return name.split(" ")[0];
 }
