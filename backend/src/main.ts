@@ -10,8 +10,8 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.use(
 		cors({
-			origin: "http://localhost:3366", // Defina a origem que deseja permitir
-			methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Métodos HTTP permitidos
+			origin: "http://localhost:3366",
+			methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 			preflightContinue: false,
 			optionsSuccessStatus: 204,
 			credentials: true,

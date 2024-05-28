@@ -13,6 +13,7 @@ import {
 	Req,
 	HttpStatus,
 	ParseFilePipeBuilder,
+	Res,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -32,6 +33,10 @@ import { Request } from "express";
 export class SubmissionController {
 	constructor(private readonly submissionService: SubmissionService) {}
 
+	@Get(":id/download")
+	async downloadSubmission(@Param("id") id: string, @Res() res: any) {
+		await this.submissionService.downloadSubmission(+id, res);
+	}
 	@Get(":id")
 	findById(@Param("id") id: string) {
 		return this.submissionService.findById(+id);

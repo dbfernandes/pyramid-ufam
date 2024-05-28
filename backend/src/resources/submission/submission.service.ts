@@ -8,7 +8,12 @@ import {
 	StatusSubmissions,
 	SubmissionActionIds,
 } from "../../../src/common/constants.constants";
-import { Injectable, NestMiddleware } from "@nestjs/common";
+import {
+	HttpException,
+	HttpStatus,
+	Injectable,
+	NestMiddleware,
+} from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
 import { getFilesLocation } from "../utils";
 import * as fs from "fs";
@@ -36,6 +41,35 @@ export class SubmissionService {
 		private prisma: PrismaService,
 		private submissionActionService: SubmissionActionService,
 	) {}
+	async downloadSubmission(submissionId: number, res: any) {
+		try {
+			const submission = await this.findById(submissionId);
+
+			if (!submission) {
+				throw new HttpException("Submission not found", HttpStatus.NOT_FOUND);
+			}
+
+			const filePath = `./public/files/submissions/${submission.file}`;
+
+			if (!fs.existsSync(filePath)) {
+				throw new HttpException("File not found", HttpStatus.NOT_FOUND);
+			}
+
+			res.setHeader(
+				"Content-disposition",
+				"attachment; filename=" + submission.file,
+			);
+			res.setHeader("Content-type", "application/pdf");
+
+			const fileStream = fs.createReadStream(filePath);
+			fileStream.pipe(res);
+		} catch (error) {
+			throw new HttpException(
+				error.message,
+				error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+			);
+		}
+	}
 
 	async updateSearchHash(id: number) {
 		const submission = await this.findById(id);
