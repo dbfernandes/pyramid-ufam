@@ -100,7 +100,7 @@ export function getFirstAndLastName(name: string) {
 }
 
 export function validateCpf(cpf) {
-  if (cpf.length === 0) return true;
+  if (cpf == null || cpf.length === 0) return true;
 
   const numericCpf = cpf.replace(/\D/g, "");
   if (numericCpf.length !== 11) {
