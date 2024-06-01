@@ -16,6 +16,7 @@ const activityService = new ActivityService(prismaService);
 const courseActivityGroupService = new CourseActivityGroupService(
 	prismaService,
 );
+
 const courseService = new CourseService(
 	prismaService,
 	courseActivityGroupService,

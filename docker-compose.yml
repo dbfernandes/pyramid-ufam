@@ -23,14 +23,15 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+    command: >
+      sh -c "npm install && npm run setup && nest start"
 
   db:
     container_name: pyramid_db
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:${MYSQL_PORT}"
     volumes:

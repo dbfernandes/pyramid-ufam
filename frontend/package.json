@@ -36,7 +36,8 @@
 		"sass": "^1.50.1",
 		"slick-carousel": "^1.8.1",
 		"styled-components": "^5.3.11",
-		"swr": "^2.2.4"
+		"swr": "^2.2.4",
+		"@nestjs/cli": "^8.0.0"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^8.2.0",

@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { getImage, validateCpf, validateEmail } from "utils";
-
-import Async from "react-promise";
 import { store } from "redux/store";
 import { login, setProfileImage } from "redux/slicer/user";
 
 // Shared
 import { H5 } from "components/shared/Titles";
-import {
-  FormAlert
-} from "components/shared/Form/styles";
+import { FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
@@ -21,28 +17,22 @@ import { CustomForm, FormSection, ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+
 interface IFormUpdateAccountProps {
   user: IUserLogged;
 }
 
 export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
-  // Inputs and validators
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [cpf, setCpf] = useState<string>("");
-  const handleCpf = (value) => {
-    setCpf(value);
-  };
+  const [sent, setSent] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [fetchingUpdateImage, setFetchingUpdateImage] = useState<boolean>(false);
+  const { dispatch } = store;
 
-  // Loading user prop
   useEffect(() => {
     if (user != null) {
       setName(user.name);
@@ -51,152 +41,99 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
     }
   }, [user]);
 
-
-  // Form state
-  const [sent, setSent] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [fetching, setFetching] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-
-  function handleUpdateUser(e) {
+  const handleUpdateUser = (e) => {
     e.preventDefault();
     setSent(true);
-
-    if (
-      name.length != 0 &&
-      validateEmail(email) &&
-      (cpf.length == 0 || validateCpf(cpf))
-    ) {
-      let data: any = {
-        name,
-        email
-      };
-
-      if (cpf.trim().length > 0 && validateCpf(cpf)) data = { ...data, cpf };
-
+    if (name.length !== 0 && validateEmail(email) && (cpf.length === 0 || validateCpf(cpf))) {
+      const data = { name, email, ...(cpf.trim().length > 0 && { cpf }) };
       fetchUpdateUser(data);
     }
-  }
+  };
 
-  async function fetchUpdateUser(data) {
+  const fetchUpdateUser = async (data) => {
     setFetching(true);
-
-    const options = {
+    const options: AxiosRequestConfig = {
       url: `${process.env.api}/users/${user?.id}`,
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${user.token}`
       },
-      data: data,
+      data
     };
-
-    await axios
-      .request(options as AxiosRequestConfig)
-      .then((response) => {
-        setSuccess(true);
-        toast("Sucesso", "Informações atualizadas com sucesso.", "success");
-        dispatch(login({
-          ...user,
-          name: response.data.name,
-          email: response.data.email,
-          cpf: response.data.cpf
-        }));
-      })
-      .catch((error) => {
-        const badRequestMessages = {
-          "Email already in use": "Email já cadastrado.",
-          "CPF already in use": "CPF já cadastrado.",
-        };
-
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          400: badRequestMessages[error?.response?.data?.message],
-          403: "Recurso não disponível",
-          500: error?.response?.data?.message,
-        };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        setError(
-          code in errorMessages ? errorMessages[code] : errorMessages[0]
-        );
-
-        setSuccess(false);
-      });
-
-    setFetching(false);
-  }
-
-  // Update image
-  const [fetchingUpdateImage, setFetchingUpdateImage] = useState<boolean>(false);
-  const handleImage = e => {
-    function validateFile(file) {
-      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const maxSize = 1000 * 1024;
-
-      if (file == null) return false;
-      if (!allowedTypes.includes(file.type)) {
-        toast("Erro", "Somente arquivos de imagem (.png, .jpg, .jpeg) são permitidos", "danger");
-        return false;
-      } else if (maxSize != -1 && file.size > maxSize) {
-        toast("Erro", "Somente arquivos até 1mb são permitidos", "danger");
-        return false;
-      }
-
-      return true;
+    try {
+      const response = await axios.request(options);
+      setSuccess(true);
+      toast("Sucesso", "Informações atualizadas com sucesso.", "success");
+      dispatch(login({
+        ...user,
+        name: response.data.name,
+        email: response.data.email,
+        cpf: response.data.cpf
+      }));
+    } catch (error) {
+      handleError(error);
+      setSuccess(false);
     }
+    setFetching(false);
+  };
 
+  const handleImage = (e) => {
     const { files } = e.target;
-
     if (files.length > 0 && validateFile(files[0])) {
       fetchUpdateImage(files[0]);
     }
-  }
+  };
 
-  const { dispatch } = store;
-  async function fetchUpdateImage(file) {
-    setFetchingUpdateImage(true);
-
-    const data = new FormData();
-    if (file !== null) {
-      data.append("file", file);
+  const validateFile = (file) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const maxSize = 1000 * 1024;
+    if (!file || !allowedTypes.includes(file.type) || file.size > maxSize) {
+      toast("Erro", "Arquivo inválido", "danger");
+      return false;
     }
-    const options = {
+    return true;
+  };
+
+  const fetchUpdateImage = async (file) => {
+    setFetchingUpdateImage(true);
+    const data = new FormData();
+    data.append("file", file);
+    const options: AxiosRequestConfig = {
       url: `${process.env.api}/users/${user?.id}/image`,
       method: "PUT",
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${user.token}`
       },
-      data: data
+      data
     };
-
-    await axios.request(options as AxiosRequestConfig).then(
-      (response) => {
-        dispatch(setProfileImage(response.data.user.profileImage));
-
-        toast("Sucesso", "Imagem atualizada com sucesso.");
-      }).catch((error) => {
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          400: error?.response?.data?.message
-        };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
-      });
-
+    try {
+      const response = await axios.request(options);
+      dispatch(setProfileImage(response.data.user.profileImage));
+      toast("Sucesso", "Imagem atualizada com sucesso.");
+    } catch (error) {
+      handleError(error);
+    }
     setFetchingUpdateImage(false);
-  }
+  };
+
+  const handleError = (error) => {
+    const errorMessages = {
+      0: "Oops, tivemos um erro. Tente novamente.",
+      400: error?.response?.data?.message || "Erro desconhecido",
+      500: "Erro interno do servidor",
+    };
+    const code = error?.response?.status || 500;
+    setError(errorMessages[code] || errorMessages[0]);
+  };
 
   return (
     <CustomForm>
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
-
-        <ProfilePicture>
-          <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
-
+        {/*<ProfilePicture>
+          <img src={getImage(user?.profileImage as string)} alt="Profile" />
           <div className="editImage">
             <label>
               <i className="bi bi-camera-fill" />
@@ -204,62 +141,46 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
-                onChange={(e) => handleImage(e)}
+                onChange={handleImage}
               />
             </label>
           </div>
-        </ProfilePicture>
-
+  </ProfilePicture>*/}
         <TextInput
           label={"Nome completo*"}
           name={"name"}
           id={"name"}
           value={name}
-          handleValue={handleName}
+          handleValue={setName}
           required={true}
           displayAlert={sent}
           maxLength={255}
         />
-
         <TextInput
           label={"Email*"}
           name={"email"}
           value={email}
-          handleValue={handleEmail}
+          handleValue={setEmail}
           validate={validateEmail}
           required={true}
           alert={"Email inválido"}
           displayAlert={sent}
           maxLength={255}
         />
-
         <TextInput
           label={"CPF"}
           name={"cpf"}
           value={cpf}
-          handleValue={handleCpf}
+          handleValue={setCpf}
           validate={validateCpf}
           alert={"CPF Inválido"}
           displayAlert={sent}
           mask={"999.999.999-99"}
         />
-
-        <Button style={{ marginTop: 15 }} onClick={(e) => handleUpdateUser(e)}>
-          {fetching ? (
-            <Spinner size={"20px"} color={"var(--white-1)"} />
-          ) : (
-            <>
-              <i className="bi bi-check2-all" />
-              Atualizar
-            </>
-          )}
+        <Button style={{ marginTop: 15 }} onClick={handleUpdateUser}>
+          {fetching ? <Spinner size={"20px"} color={"var(--white-1)"} /> : "Atualizar"}
         </Button>
-
-        <>
-          {sent && !success && error?.length != 0 && (
-            <FormAlert>{error}</FormAlert>
-          )}
-        </>
+        {sent && !success && error && <FormAlert>{error}</FormAlert>}
       </FormSection>
     </CustomForm>
   );

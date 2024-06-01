@@ -76,8 +76,11 @@ export default function FormAddSubmission({
     setSent(true);
 
     if (activity != null && description.length != 0 && file != null) {
+      toast("Erro", `${activity.name}`);
       fetchSubmit();
     }
+
+
   }
 
   function fetchSubmit() {
@@ -107,6 +110,7 @@ export default function FormAddSubmission({
     axios(config)
       .then((response) => {
         setSuccess(true);
+        toast("Erro", `${data}`);
         toast("Sucesso", "Solicitação enviada com sucesso", "success");
         router.push("/minhas-solicitacoes");
       })
@@ -117,6 +121,7 @@ export default function FormAddSubmission({
         };
         console.log(error)
       });
+    
 
     setFetching(false);
   }
