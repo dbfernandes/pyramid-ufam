@@ -23,8 +23,8 @@ export const Wrapper = styled.div <{ sidenavOpen: boolean }> `
   height: calc(100% - 20px);
 
 	position: sticky;
-	left: 15px;
-	top: 10px;
+	top: 0;
+  left: 15px;
 	overflow-y: auto;
   overflow-x: hidden;
 	z-index: 10;

@@ -9,8 +9,8 @@ export enum SubmissionActionIds {
 	"pré-aprovou" = 2,
 	"aprovou" = 3,
 	"rejeitou" = 4,
-	"editou" = 5,
-	"comentou" = 6,
+	"comentou" = 5,
+	"editou" = 6,
 }
 
 export enum StatusSubmissions {

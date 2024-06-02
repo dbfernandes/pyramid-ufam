@@ -191,8 +191,11 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
 
-        {/*<ProfilePicture>
-          <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+        <ProfilePicture>
+          <img src={user?.profileImage && user?.profileImage.length > 0
+            ? user?.profileImage
+            : `${process.env.basePath}/img/user.png`
+          } alt={user?.name} />
 
           <div className="editImage">
             <label>
@@ -205,7 +208,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
               />
             </label>
           </div>
-        </ProfilePicture>*/}
+        </ProfilePicture>
 
         <TextInput
           label={"Nome completo*"}

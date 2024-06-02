@@ -60,7 +60,7 @@ export default function FormAddSubmission({
     setWorkload(value);
   };
 
-  const [ searchHash, setSearchHash ] = useState<string>("");
+  const [searchHash, setSearchHash] = useState<string>("");
   const handleSearchHash = (value) => {
     setSearchHash(value)
   }
@@ -110,7 +110,6 @@ export default function FormAddSubmission({
     axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Erro", `${data}`);
         toast("Sucesso", "Solicitação enviada com sucesso", "success");
         router.push("/minhas-solicitacoes");
       })
@@ -121,7 +120,7 @@ export default function FormAddSubmission({
         };
         console.log(error)
       });
-    
+
 
     setFetching(false);
   }

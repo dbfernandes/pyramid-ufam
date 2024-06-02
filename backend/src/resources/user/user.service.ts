@@ -448,13 +448,11 @@ export class UserService {
 		await this.updateSearchHash(id);
 
 		return {
-			user: {
-				...user,
-				profileImage: user.profileImage
-					? `${getFilesLocation("profile-images")}/${user.profileImage}`
-					: null,
-				password: undefined,
-			},
+			...user,
+			profileImage: user.profileImage
+				? `${getFilesLocation("profile-images")}/${user.profileImage}`
+				: null,
+			password: undefined,
 		};
 	}
 
@@ -492,13 +490,11 @@ export class UserService {
 		});
 
 		return {
-			user: {
-				..._user,
-				profileImage: _user.profileImage
-					? `${getFilesLocation("profile-images")}/${_user.profileImage}`
-					: null,
-				password: undefined,
-			},
+			..._user,
+			profileImage: _user.profileImage
+				? `${getFilesLocation("profile-images")}/${_user.profileImage}`
+				: null,
+			password: undefined,
 		};
 	}
 

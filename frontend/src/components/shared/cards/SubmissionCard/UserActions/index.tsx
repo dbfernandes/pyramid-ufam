@@ -83,6 +83,8 @@ export default function UserActions({
     "rejeitou": "var(--danger)",
     "pré-aprovou": "var(--success-hover)",
     "submeteu": "var(--primary-color)",
+    "editou": "var(--warning-hover)",
+    "comentou": "var(--warning-hover)",
   };
 
   function SubmissionHistory() {
@@ -95,7 +97,10 @@ export default function UserActions({
             {history.map((item, index) => (
               <HistoryItem key={index} color={colors[item.action]}>
                 <div>
-                  <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+                  <img src={user?.profileImage && user?.profileImage.length > 0
+                    ? user?.profileImage
+                    : `${process.env.basePath}/img/user.png`
+                  } alt={user.name} />
                   <p>
                     <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
                     <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
