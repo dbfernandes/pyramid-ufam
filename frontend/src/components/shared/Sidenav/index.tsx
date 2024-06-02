@@ -115,15 +115,6 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
           title: "Solicitações por grupo de atividade",
           route: "/solicitacoes/grupo-atividade",
           permissions: [1, 2]
-        },
-        {
-          icon: <NestedIcon>
-            <i className="bi bi-list-check" />
-            <i className="bi bi-bookmark-fill" />
-          </NestedIcon>,
-          title: "Solicitações por atividade",
-          route: "/solicitacoes/atividade",
-          permissions: [1, 2]
         }
       ],
     },
@@ -179,7 +170,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         },
         {
           icon: <i className="bi bi-lightbulb" />,
-          title: "Extensão",
+          title: "Extensao",
           route: "/atividades/extensao",
         },
       ],
@@ -236,7 +227,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                   {/* Fix: OverlayTrigger not working */}
                   <div>
                     {group.links.map((link, index) =>
-                      checkPermission(link, user.userTypeId)
+                      checkPermission(link, user.userTypeId) 
                         ? (<OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
                           <div>
                             {link?.route ? (

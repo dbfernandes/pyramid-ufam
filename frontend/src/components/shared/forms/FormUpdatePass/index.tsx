@@ -10,7 +10,7 @@ import { getFirstName } from "utils";
 import Form from "components/shared/Form";
 import { LinkWrapper, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import TextAlert from "components/shared/TextAlert";
 
@@ -93,7 +93,7 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
   return (
     sent && success
       ? <TextAlert displayIcon={true}>
-        Senha atualizada com sucesso! Você será redirecionado para a tela de Login.
+        Senha atualizada com sucesso. Você será redirecionado para a tela de Login.
       </TextAlert>
       : <Form title={"Redefinir senha"}>
         {tokenObj && <>

@@ -8,7 +8,7 @@ import {
 	IsInt,
 	Allow,
 } from "class-validator";
-import { IsCPF } from "src/common/validators.validator";
+import { IsCPF } from "../../../../src/common/validators.validator";
 
 export class SignUpDto {
 	@IsString()
@@ -42,4 +42,8 @@ export class SignUpDto {
 	@IsNotEmpty()
 	@Transform((value) => parseInt(value.value, 10))
 	startYear: number;
+
+	@IsOptional()
+	@IsString()
+	searchHash: string;
 }

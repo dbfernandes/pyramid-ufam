@@ -8,14 +8,18 @@ import { PrismaService } from "../prisma/prisma.service";
 import { User } from "@prisma/client";
 import { AddUserDto, CreateUserDto, UpdateUserDto } from "./dto";
 import { UserTypeService } from "../userType/userType.service";
-import { UserTypes } from "src/common/enums.enum";
+import { UserTypes } from "../../../src/common/enums.enum";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { CourseActivityGroupService } from "../courseActivityGroup/courseActivityGroup.service";
-import { StatusSubmissions, UserTypeIds } from "src/common/constants.constants";
+import {
+	StatusSubmissions,
+	UserTypeIds,
+} from "../../../src/common/constants.constants";
 import { EnrollDto } from "./dto/enroll.dto";
 import {
 	decodeToken,
+	getFilesLocation,
 	getFirstAndLastName,
 	getFirstName,
 	sendEmail,
@@ -36,6 +40,29 @@ export class UserService {
 		@Inject(forwardRef(() => AuthService))
 		private authService: AuthService,
 	) {}
+
+	async updateSearchHash(id: number) {
+		const user = await this.findById(id);
+		const courses = await this.courseService.findCoursesByUser(id);
+
+		const searchHash = [];
+
+		searchHash.push(user.id);
+		searchHash.push(user.name);
+		searchHash.push(user.email);
+		searchHash.push(user.cpf);
+
+		courses.forEach((course) => {
+			searchHash.push(course.name);
+			searchHash.push(course.enrollment);
+			searchHash.push(course.startYear);
+		});
+
+		await this.prisma.user.update({
+			where: { id },
+			data: { searchHash: searchHash.join(";") },
+		});
+	}
 
 	async addUser(addUserDto: AddUserDto, token: string): Promise<any> {
 		if (await this.findByEmail(addUserDto.email)) {
@@ -111,9 +138,19 @@ export class UserService {
 		const userResponsible = await this.findById((decodeToken(token) as any).id);
 		await this.sendWelcomeEmail(userResponsible, userCreated, resetToken); // Fix to get user who called the endpoint
 
-		const courses = await this.courseService.findCoursesByUser(userCreated.id);
+		const courses = await this.courseService
+			.findCoursesByUser(userCreated.id)
+			.then(() => this.updateSearchHash(userCreated.id));
 
-		return { user: { ...userCreated, courses } };
+		return {
+			user: {
+				...userCreated,
+				courses,
+				profileImage: userCreated.profileImage
+					? `${getFilesLocation("profile-images")}/${userCreated.profileImage}`
+					: null,
+			},
+		};
 	}
 
 	async sendWelcomeEmail(
@@ -165,12 +202,14 @@ export class UserService {
 			throw new BadRequestException("Enrollment already in use");
 		}
 
-		await this.courseUserService.create({
-			userId,
-			courseId,
-			enrollment: enrollment ? enrollment : null,
-			startYear: startYear ? startYear : null,
-		});
+		await this.courseUserService
+			.create({
+				userId,
+				courseId,
+				enrollment: enrollment ? enrollment : null,
+				startYear: startYear ? startYear : null,
+			})
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -204,10 +243,12 @@ export class UserService {
 			throw new BadRequestException("Enrollment already in use");
 		}
 
-		await this.courseUserService.update(courseUser.id, {
-			enrollment,
-			startYear,
-		});
+		await this.courseUserService
+			.update(courseUser.id, {
+				enrollment,
+				startYear,
+			})
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -218,7 +259,9 @@ export class UserService {
 		const course = await this.courseService.findById(courseId);
 		if (!course) throw new BadRequestException("Course not found");
 
-		await this.courseUserService.unlinkUserFromCourse(userId, courseId);
+		await this.courseUserService
+			.unlinkUserFromCourse(userId, courseId)
+			.then(() => this.updateSearchHash(userId));
 
 		return await this.courseService.findCoursesByUser(user.id);
 	}
@@ -229,10 +272,7 @@ export class UserService {
 		const where =
 			search && search.trim() !== ""
 				? {
-						OR: [
-							{ name: { contains: search } },
-							{ email: { contains: search } },
-						],
+						searchHash: { contains: search },
 					}
 				: {};
 
@@ -338,6 +378,9 @@ export class UserService {
 
 			return {
 				...user,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
 				courses,
 				CourseUsers: undefined,
 				password: undefined,
@@ -402,30 +445,35 @@ export class UserService {
 			data: updateUserDto,
 		});
 
-		return user;
+		await this.updateSearchHash(id);
+
+		return {
+			...user,
+			profileImage: user.profileImage
+				? `${getFilesLocation("profile-images")}/${user.profileImage}`
+				: null,
+			password: undefined,
+		};
 	}
 
 	async updateProfileImage(id: number, filename: string) {
+		const tmpPath = `./public/files/tmp/`;
 		const rootPath = `./public/files/profile-images/`;
 		const path = `${rootPath}${filename}`;
 
 		const user = await this.findById(id);
 		if (!user) {
-			if (fs.existsSync(path)) {
-				fs.unlinkSync(path);
-			}
 			throw new BadRequestException("User not found");
 		}
 
 		if (user && user.profileImage) {
 			const currentImagePath = `${rootPath}${user.profileImage}`;
-
 			if (fs.existsSync(currentImagePath)) {
 				fs.unlinkSync(currentImagePath);
 			}
 		}
 
-		const resizedImage = await sharp(path)
+		const resizedImage = await sharp(`${tmpPath}${filename}`)
 			.resize({
 				fit: "cover",
 				width: 250,
@@ -434,12 +482,20 @@ export class UserService {
 			.toFormat("jpeg", { mozjpeg: true })
 			.toBuffer();
 
-		fs.writeFileSync(path, resizedImage);
+		fs.writeFileSync(path.replace(".tmp", ""), resizedImage);
 
-		return await this.prisma.user.update({
+		const _user = await this.prisma.user.update({
 			where: { id },
-			data: { profileImage: filename },
+			data: { profileImage: filename.replace(".tmp", "") },
 		});
+
+		return {
+			..._user,
+			profileImage: _user.profileImage
+				? `${getFilesLocation("profile-images")}/${_user.profileImage}`
+				: null,
+			password: undefined,
+		};
 	}
 
 	async remove(id: number): Promise<User> {
@@ -449,15 +505,16 @@ export class UserService {
 		});
 	}
 
-	async massRemove(ids: string): Promise<User[]> {
+	async massRemove(ids: string): Promise<any> {
 		const _ids = ids.split(",").map(Number);
-		return await Promise.all(
-			_ids.map((id) =>
-				this.prisma.user.update({
-					where: { id },
-					data: { isActive: false },
-				}),
-			),
-		);
+
+		const users = this.prisma.user.updateMany({
+			where: {
+				id: { in: _ids },
+			},
+			data: { isActive: false },
+		});
+
+		return users;
 	}
 }

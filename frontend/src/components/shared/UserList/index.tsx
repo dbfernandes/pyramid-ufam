@@ -55,6 +55,27 @@ export default function UserList({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
+  const [isReloading, setIsReloading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  async function handleReload() {
+    setIsReloading(true);
+
+    try {
+      const response = await axios.get(`${process.env.api}/users`, {
+        params: {
+          page: router.query.page || 1,
+          search: router.query.search || '',
+          status: router.query.status || '1'
+        }
+      });
+      onChange(response.data);
+      setIsReloading(false);
+    } catch (error) {
+      console.error("Erro ao carregar alunos:", error);
+      setIsReloading(false);
+    }
+  }
 
   const subRoutes = {
     "alunos": {
@@ -79,6 +100,7 @@ export default function UserList({
     { title: "Inativos", value: 0, accent: "var(--danger)", checked: statuses?.includes("0") },
   ]);
 
+
   useEffect(() => {
     setFetchingFilter(true);
     const debounce = setTimeout(() => {
@@ -92,6 +114,7 @@ export default function UserList({
 
     return () => clearTimeout(debounce);
   }, [filterOptions]);
+
 
   // Delete functions
   const [fetchingDelete, setFetchingDelete] = useState<boolean>(false);
@@ -180,6 +203,7 @@ export default function UserList({
             </AddUserLink>
           </Link>
         }
+
       </HeaderWrapper>
 
       <Filter>
@@ -189,7 +213,7 @@ export default function UserList({
           fetching={fetchingFilter}
         />
         <SearchBar
-          placeholder="Pesquisar alunos" />
+          placeholder="Pesquisar usuários" />
       </Filter>
 
       {users?.length > 0 ?

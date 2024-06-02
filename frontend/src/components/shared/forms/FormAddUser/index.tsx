@@ -12,7 +12,7 @@ import {
   SectionTitle,
 } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import { H3 } from "components/shared/Titles";
 import SelectCustom from "components/shared/SelectCustom";
@@ -211,7 +211,7 @@ export default function FormAddUser() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${user.token}`,
+        "Authorization": `Bearer ${user.token}`,
       },
       data: data,
     };

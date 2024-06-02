@@ -86,7 +86,8 @@ export default function Coordenadores() {
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        setUsers(response.data.users);
+        const filteredUsers = response.data.users.filter(u => u.email != user.email)
+        setUsers(filteredUsers);
         setTotalPages(response.data.totalPages);
       })
       .catch((error) => {

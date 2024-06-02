@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import axios, { AxiosRequestConfig } from "axios";
+import { getPlural } from "utils";
 
-// Shared
 import { H3 } from "components/shared/Titles";
+import Spinner from "components/shared/Spinner";
 import { Disclaimer, Filter } from "components/shared/UserList/styles";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
@@ -15,27 +17,27 @@ import {
   DangerButtonAlt,
 } from "components/shared/cards/SubmissionCard/styles";
 
-// Custom
-import {
-  Wrapper,
-  HeaderWrapper,
-  ListStyled
-} from "../styles";
+import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
+import toast from "components/shared/Toast";
 
-// Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import toast from "components/shared/Toast";
-import axios, { AxiosRequestConfig } from "axios";
 interface ISubmissionListProps {
   subTitle?: string;
   submissions?: any[];
   loading?: boolean;
   totalPages: number;
-
   onChange?: Function;
-
   children?: React.ReactNode;
+}
+
+export const countPendingSubmissions = (submissions) => {
+  return submissions.filter((submission) => submission.status === 1).length;
+};
+
+export const countPreAprovedSubmissions = (submissions) => {
+  console.log(submissions)
+  return submissions.filter((submission) => submission.status === 2).length;
 }
 
 export default function SubmissionList({
@@ -43,20 +45,19 @@ export default function SubmissionList({
   submissions = [],
   loading,
   totalPages,
-
   onChange = () => { },
-
-  children
+  children,
 }: ISubmissionListProps) {
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
+  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
+  const [fetching, setFetching] = useState<boolean>(false);
 
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
-    { title: "Pendentes", value: 1, checked: statuses?.includes("1") },
+    { title: "Pendentes", value: 1, accent: "var(--sucess-hover)", checked: statuses?.includes("1") },
     { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: statuses?.includes("2") },
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
@@ -76,26 +77,30 @@ export default function SubmissionList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  async function fetchMassUpdateStatus(status) {
+  // Mass actions
+  const [fetchingMassUpdate, setFetchingMassUpdate] = useState<boolean>(false);
+  async function fetchMassUpdate(ids: string, status: string) {
+    setFetchingMassUpdate(true);
+
     const options = {
-      url: `${process.env.api}/submissions/${checkedIds.join(",")}/status/mass-update`,
+      url: `${process.env.api}/submissions/${ids}/status/mass-update`,
       method: "PATCH",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `${user.token}`,
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
       },
       data: {
         userId: user.id,
-        status: status
+        status: status,
       },
     };
 
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Status atualizados com sucesso.", "success");
+        toast("Sucesso", `Solicitações ${getPlural(status)} com sucesso`);
+        setCheckedIds([]);
         onChange();
-        setCheckedIds([])
       })
       .catch((error) => {
         const errorMessages = {
@@ -106,6 +111,8 @@ export default function SubmissionList({
         const code = error?.response?.status ? error.response.status : 500;
         toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
       });
+
+    setFetchingMassUpdate(false);
   }
 
   return (
@@ -113,40 +120,42 @@ export default function SubmissionList({
       <HeaderWrapper>
         <H3>Solicitações {subTitle && `(${subTitle})`}</H3>
 
-        {checkedIds?.length > 0 &&
-          (user.userTypeId == 1
-            ? <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-              <DangerButtonAlt onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} REJEITADOS`) }}>
-                <i className="bi bi-x-lg" /> Rejeitar selecionados
+        {checkedIds.length > 0 && (
+          <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
+            {user.userTypeId == 1 && <>
+              <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")}>
+                {fetchingMassUpdate
+                  ? <Spinner size={"20px"} color={"var(--danger)"} />
+                  : <><i className="bi bi-x-lg" /> Rejeitar selecionados</>
+                }
               </DangerButtonAlt>
+              <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Aprovado")}>
+                {fetchingMassUpdate
+                  ? <Spinner size={"20px"} color={"var(--danger)"} />
+                  : <><i className="bi bi-check2-all" /> Aprovar selecionados</>
+                }
+              </AcceptButton>
+            </>}
 
-              <AcceptButton onClick={() => { alert(`[COORDENADOR] ${checkedIds.toString()} APROVADOS`) }}>
-                <i className="bi bi-check2-all" /> Aprovar selecionados
-              </AcceptButton>
-            </ButtonGroup>
-            : user.userTypeId == 2 && <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-              <AcceptButton onClick={() => { alert(`[SECRETÁRIO] ${checkedIds.toString()} PRÉ-APROVADOS`) }}>
-                <i className="bi bi-check2-all" /> Pré-aprovar selecionados
-              </AcceptButton>
-            </ButtonGroup>
-          )
-        }
+            {user.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")}>
+              {fetchingMassUpdate
+                ? <Spinner size={"20px"} color={"var(--danger)"} />
+                : <><i className="bi bi-check2-all" /> Pré-aprovar selecionados</>
+              }
+            </AcceptButton>}
+          </ButtonGroup>
+        )}
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible
-          options={filterOptions}
-          setOptions={setFilterOptions}
-          fetching={fetchingFilter}
-        />
-        <SearchBar
-          placeholder="Pesquisar solicitações" />
+        <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={fetchingFilter} />
+        <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
       </Filter>
 
-      {submissions?.length > 0
-        ? <ListStyled>
+      {submissions?.length > 0 ? (
+        <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
-          {submissions?.length > 0 && submissions.map((submission, index) =>
+          {submissions.map((submission, index) => (
             <SubmissionCard
               key={index}
               submission={submission}
@@ -156,13 +165,14 @@ export default function SubmissionList({
               user={user}
               onChange={onChange}
             />
-          )}
+          ))}
           {children}
         </ListStyled>
-        : <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
-      }
+      ) : (
+        <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
+      )}
 
-      {submissions?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
+      {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
     </Wrapper>
-  )
+  );
 }

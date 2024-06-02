@@ -24,6 +24,7 @@ import FormAddCourse from "components/shared/forms/FormAddCourse";
 import ICourse from "interfaces/ICourse";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+import { useState } from "react";
 
 interface ICoursesProps {
   courses: ICourse[];
@@ -43,6 +44,21 @@ export default function Courses({
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const isMobile = useMediaQuery({ maxWidth: 992 });
+  const [isReloading, setIsReloading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  async function handleReload() {
+    setIsReloading(true);
+
+    try {
+      const response = await axios.get(`${process.env.api}/courses`);
+      onChange(response.data);
+      setIsReloading(false);
+    } catch (error) {
+      console.error("Erro ao carregar cursos:", error);
+      setIsReloading(false);
+    }
+  }
 
   async function fetchDelete(id) {
     const options = {
@@ -89,11 +105,12 @@ export default function Courses({
             Adicionar curso
           </AddUserButton>
         )}
+
+
       </HeaderWrapper>
 
       <Filter>
-        <SearchBar
-          placeholder="Pesquisar cursos" />
+        <SearchBar placeholder="Pesquisar cursos" />
       </Filter>
 
       {loading

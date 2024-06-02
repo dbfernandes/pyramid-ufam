@@ -12,13 +12,14 @@ import { UserService } from "../user/user.service";
 import * as bcrypt from "bcrypt";
 import * as uuid from "uuid";
 import { SignUpDto } from "./dto/sign-up.dto";
-import { UserTypes } from "src/common/enums.enum";
-import { UserTypeIds } from "src/common/constants.constants";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { UserTypeIds } from "../../../src/common/constants.constants";
 import { LoginDto } from "./dto";
 import { Response } from "express";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
-import { getFirstName, sendEmail } from "../utils";
+import { getFilesLocation, getFirstName, sendEmail } from "../utils";
+import { UserTypeService } from "../userType/userType.service";
 
 @Injectable()
 export class AuthService {
@@ -26,13 +27,14 @@ export class AuthService {
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 
+		private userTypeService: UserTypeService,
 		private courseService: CourseService,
 		private courseUserService: CourseUserService,
 		private jwtService: JwtService,
 	) {}
 
 	async setAuthorizationHeader(user: any, res: Response) {
-		const userType = user.userType ? user.userType : user.UserType;
+		const userType = await this.userTypeService.findById(user.userTypeId);
 		const token = this.jwtService.sign({
 			email: user.email,
 			id: user.id,
@@ -66,7 +68,7 @@ export class AuthService {
 			throw new UnauthorizedException("User not found");
 		}
 
-		this.setAuthorizationHeader(user, res);
+		await this.setAuthorizationHeader(user, res);
 		return {
 			message: "User reauthenticated successfully",
 		};
@@ -99,9 +101,18 @@ export class AuthService {
 		const courses = await this.courseService.findCoursesByUser(user.id);
 
 		// Generating tokens
-		this.setAuthorizationHeader(user, res);
+		await this.setAuthorizationHeader(user, res);
 
-		return { user: { ...user, courses } };
+		return {
+			user: {
+				...user,
+				courses,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async signUp(signUpDto: SignUpDto, res: Response) {
@@ -122,7 +133,6 @@ export class AuthService {
 
 		// Registering user
 		const hashedPassword = bcrypt.hashSync(_signUpDto.password, 10);
-
 		const user = await this.userService.create({
 			..._signUpDto,
 			cpf: signUpDto.cpf ? signUpDto.cpf.replace(/\D/g, "") : null,
@@ -130,26 +140,40 @@ export class AuthService {
 			userTypeId: UserTypeIds[UserTypes.STUDENT], // Sign up can only be done by students
 		});
 
-		// Registering course
-		await this.courseUserService.create({
-			courseId,
-			enrollment,
-			startYear,
-			userId: user.id,
-		});
+		// Generate searchHash
+		const searchHash = `${user.id};${user.name};${user.email};${user.cpf}`;
 
-		const courses = await this.courseService.findCoursesByUser(user.id);
+		// Update user with searchHash
+		const updatedUser = await this.userService.update(user.id, { searchHash });
+
+		// Registering course
+		await this.courseUserService
+			.create({
+				courseId,
+				enrollment,
+				startYear,
+				userId: user.id,
+			})
+			.then(() => this.userService.updateSearchHash(user.id));
+
+		const courses = await this.courseService.findCoursesByUser(updatedUser.id);
 
 		// Generating tokens
-		this.setAuthorizationHeader(user, res);
+		await this.setAuthorizationHeader(updatedUser, res);
 
 		// Sending welcome email
-		this.sendWelcomeEmail(user);
+		this.sendWelcomeEmail(updatedUser);
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, ...result } = user;
-
-		return { user: { ...result, courses } };
+		return {
+			user: {
+				...updatedUser,
+				courses,
+				profileImage: updatedUser.profileImage
+					? `${getFilesLocation("profile-images")}/${updatedUser.profileImage}`
+					: null,
+				password: undefined,
+			},
+		};
 	}
 
 	async createPasswordResetToken(

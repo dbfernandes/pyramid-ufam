@@ -1,18 +1,21 @@
-# Use a Node.js base image
 FROM node:latest
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the package.json files and install dependencies
-COPY package*.json ./
+COPY package.json package-lock.json ./
+
 RUN npm install
 
-# Copy the rest of the backend code
+RUN npm install -g @nestjs/cli
+
+RUN npm install -g bcrypt
+
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 3333
+EXPOSE ${BACKEND_PORT}
 
-# Command to run the application
-CMD ["npm", "run", "start:dev"]
+#RUN npm run setup:prod
+
+#CMD ["nest", "start"]
+
+CMD ["npm", "run", "start:prod"]

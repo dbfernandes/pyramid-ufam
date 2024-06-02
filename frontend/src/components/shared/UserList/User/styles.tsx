@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Dropdown, FormCheck } from "react-bootstrap";
+import { Dropdown, FormCheck, ProgressBar } from "react-bootstrap";
 
 export const Item = styled.div<{ student: boolean }>`
 	width: 100%;

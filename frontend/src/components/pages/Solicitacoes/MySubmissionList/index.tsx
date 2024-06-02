@@ -24,6 +24,9 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
+import axios, { AxiosRequestConfig } from "axios";
+import toast from "components/shared/Toast";
+import Spinner from "components/shared/Spinner";
 interface ISubmissionListProps {
   submissions?: any[];
   loading?: boolean;
@@ -33,6 +36,7 @@ interface ISubmissionListProps {
 
   children?: React.ReactNode;
 }
+
 
 export default function MySubmissionList({
   submissions = [],
@@ -71,7 +75,39 @@ export default function MySubmissionList({
     return () => clearTimeout(debounce);
   }, [filterOptions]);
 
-  // Adicionar ações múltiplas aqui
+  // Mass actions
+  const [fetchingMassCancel, setFetchingMassCancel] = useState<boolean>(false);
+  async function fetchMassCancel(ids: string) {
+    setFetchingMassCancel(true);
+
+    const options = {
+      url: `${process.env.api}/submissions/${ids}/mass-remove`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${user.token}`,
+      }
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast("Sucesso", "Solicitações canceladas com sucesso");
+        setCheckedIds([]);
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
+
+    setFetchingMassCancel(false);
+  }
 
   return (
     <Wrapper>
@@ -80,8 +116,11 @@ export default function MySubmissionList({
 
         {checkedIds?.length > 0 &&
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => { alert(`[ALUNO] ${checkedIds.toString()} DELETADOS`) }}>
-              <i className="bi bi-x-lg" /> Cancelar selecionados
+            <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
+              {fetchingMassCancel
+                ? <Spinner size={"20px"} color={"var(--danger)"} />
+                : <><i className="bi bi-x-lg" /> Cancelar selecionados</>
+              }
             </DangerButtonAlt>
           </ButtonGroup>
         }
@@ -111,6 +150,7 @@ export default function MySubmissionList({
               onChange={onChange}
             />
           )}
+
           {children}
         </ListStyled>
         : <Disclaimer>Você ainda não fez nenhuma solicitação.</Disclaimer>

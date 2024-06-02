@@ -8,7 +8,7 @@ import { validateEmail } from "utils";
 import Form from "components/shared/Form";
 import { LinkWrapper, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import TextAlert from "components/shared/TextAlert";
 
@@ -75,7 +75,7 @@ export default function FormForgotPassword() {
   return (
     sent && success
       ? <TextAlert displayIcon={true}>
-        Email enviado com sucesso! Você será redirecionado para a tela de Login.
+        Email enviado com sucesso. Você será redirecionado para a tela de Login.
       </TextAlert>
       : <Form title={"Esqueceu sua senha?"}>
         <p style={{ marginTop: "-20px" }}>

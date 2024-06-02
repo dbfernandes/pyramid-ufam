@@ -7,7 +7,7 @@ import { H5 } from "components/shared/Titles";
 import {
   FormAlert
 } from "components/shared/Form/styles";
-import Button from "components/shared/Button";
+import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import toast from "components/shared/Toast";
 

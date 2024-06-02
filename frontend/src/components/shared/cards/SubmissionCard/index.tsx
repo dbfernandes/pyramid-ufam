@@ -3,7 +3,7 @@ import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios, { AxiosRequestConfig } from "axios";
 import { StatusSubmissions } from "constants/statusSubmissions.constants";
-import { formatCpf } from "utils";
+import { formatCpf, getFilename } from "utils";
 
 // Shared
 import { H6 } from "components/shared/Titles";
@@ -38,7 +38,6 @@ interface ISubmissionCardProps {
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   user?: IUserLogged;
 
-  onDelete?: Function;
   onChange?: Function;
 }
 
@@ -50,16 +49,10 @@ export default function SubmissionCard({
   setCheckedIds = () => { },
   user,
 
-  onDelete = () => { },
   onChange = () => { },
 
   ...props
 }: ISubmissionCardProps) {
-  /*function handleDropdown(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }*/
-
   function handleCheck(e) {
     e.stopPropagation();
 
@@ -105,11 +98,10 @@ export default function SubmissionCard({
 
   const [fileSize, setFileSize] = useState<string>("");
   async function getFileSize(fileUrl) {
-    return await axios.request({
-      url: fileUrl,
-      method: "HEAD",
-    } as AxiosRequestConfig)
-      .then((response) => {
+    try {
+      const response = await axios.head(fileUrl);
+      const contentLength = response.headers['content-length'];
+      if (contentLength) {
         const length = response.headers["content-length"];
         const size = Math.round(parseInt(length) / 1024);
 
@@ -119,7 +111,10 @@ export default function SubmissionCard({
         }
 
         setFileSize(`${size.toString()} KB`);
-      });
+      }
+    } catch (error) {
+      console.error('Error fetching file size:', error);
+    }
   }
 
   useEffect(() => {
@@ -183,7 +178,7 @@ export default function SubmissionCard({
               <i className="bi bi-filetype-pdf" />
 
               <div>
-                <p>{submission.fileUrl?.split("-")[1]}</p>
+                <p>{getFilename(submission.fileUrl)}</p>
                 <p>
                   <span>{fileSize}</span>
                 </p>

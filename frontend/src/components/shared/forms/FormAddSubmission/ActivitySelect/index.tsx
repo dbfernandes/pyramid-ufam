@@ -51,11 +51,11 @@ export default function ActivitySelect({
     setFetchingGroups(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}`,
+      url: `${process.env.api}/courses/${user?.selectedCourse?.id}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${user?.token}`,
       },
     };
 
@@ -127,7 +127,7 @@ export default function ActivitySelect({
           ? <CardGroup>
             {groups.map((group) => (
               <ActivityCard
-                key={group.name}
+                key={group.id}
                 activity={group}
                 user={user}
                 editable={false}

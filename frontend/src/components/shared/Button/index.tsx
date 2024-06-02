@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Button = styled.button`
+export const Button = styled.button`
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -47,5 +47,3 @@ export const ButtonAlt = styled(Button)`
 export const DangerButton = styled(Button)`
   background-image: linear-gradient(to right, var(--danger) 0%, #da2d58 51%, var(--danger-hover) 100%);
 `;
-
-export default Button;

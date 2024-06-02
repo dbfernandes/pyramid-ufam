@@ -75,7 +75,7 @@ export default function Secretarios() {
     setFetchingUsers(true);
 
     const options = {
-      url: `${process.env.api}/users?type=coordenador&page=${_page}&limit=15&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}${parseUserActiveParam(_status)}`,
+      url: `${process.env.api}/users?type=secretário&page=${_page}&limit=15&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}${parseUserActiveParam(_status)}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -86,7 +86,8 @@ export default function Secretarios() {
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        setUsers(response.data.users);
+        const filteredUsers = response.data.users.filter(u => u.email != user.email)
+        setUsers(filteredUsers);
         setTotalPages(response.data.totalPages);
       })
       .catch((error) => {

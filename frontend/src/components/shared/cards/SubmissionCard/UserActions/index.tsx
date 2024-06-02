@@ -5,11 +5,12 @@ import Async from "react-promise";
 import { getFirstAndLastName, getImage, parseDateAndTime } from "utils";
 
 // Shared
+import confirm from "components/shared/ConfirmModal";
 import Spinner from "components/shared/Spinner";
 import toggleModalForm from "components/shared/ModalForm";
 import toast from "components/shared/Toast";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
-import FormAddSubmission from "components/shared/forms/FormAddSubmission";
+import FormUpdateSubmission from "components/shared/forms/FormAddSubmission/FormUpdateSubmission";
 import {
   ButtonGroup,
   AcceptButton,
@@ -29,7 +30,6 @@ interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
 
-  onDelete?: Function;
   onChange?: Function;
 }
 
@@ -37,20 +37,8 @@ export default function UserActions({
   submission,
   user,
 
-  onDelete = () => { },
   onChange = () => { }
 }: IUserActionsProps) {
-  const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-  function handleDeletion(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    setConfirmDeletion(!confirmDeletion);
-
-    if (confirmDeletion) {
-      onDelete();
-    }
-  }
-
   // History
   const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
   const [history, setHistory] = useState<any[]>([]);
@@ -95,6 +83,8 @@ export default function UserActions({
     "rejeitou": "var(--danger)",
     "pré-aprovou": "var(--success-hover)",
     "submeteu": "var(--primary-color)",
+    "editou": "var(--warning-hover)",
+    "comentou": "var(--warning-hover)",
   };
 
   function SubmissionHistory() {
@@ -107,7 +97,10 @@ export default function UserActions({
             {history.map((item, index) => (
               <HistoryItem key={index} color={colors[item.action]}>
                 <div>
-                  <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+                  <img src={user?.profileImage && user?.profileImage.length > 0
+                    ? user?.profileImage
+                    : `${process.env.basePath}/img/user.png`
+                  } alt={user.name} />
                   <p>
                     <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
                     <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
@@ -121,6 +114,34 @@ export default function UserActions({
         )}
       </History>
     );
+  }
+
+  // Delete
+  async function fetchDelete() {
+    const options = {
+      url: `${process.env.api}/submissions/${submission.id}`,
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user.token}`,
+      },
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        onChange();
+        toast("Sucesso", "Solicitação cancelada com sucesso");
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      });
   }
 
   return (
@@ -139,8 +160,8 @@ export default function UserActions({
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
-            <FormAddSubmission submission={submission} user={user} onChange={onChange} />,
-            "xl"
+            <FormUpdateSubmission submission={submission} user={user} onChange={onChange} />,
+            "lg"
           )
         }>
           <i className="bi bi-pencil" /> Editar
@@ -186,16 +207,17 @@ export default function UserActions({
       )}
       {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
         <DangerButtonAlt
-          onClick={() => {
-            /*fetchUpdateStatus({
-              userId: user.id,
-              id: submission.id,
-              status: StatusSubmissions["Cancelado"],
-            })*/
-          }}>
+          onClick={() =>
+            confirm(
+              () => fetchDelete(),
+              "Tem certeza que deseja cancelar a solicitação?",
+              "Cancelar",
+              ""
+            )
+          }>
           <i className="bi bi-x-lg" /> Cancelar
         </DangerButtonAlt>
       )}
-    </ButtonGroup>
+    </ButtonGroup >
   );
 }

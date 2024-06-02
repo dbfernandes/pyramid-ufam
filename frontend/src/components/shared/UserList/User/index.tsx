@@ -13,7 +13,7 @@ import {
   CustomFormCheck,
   CheckboxPreventClick,
   UserStatus,
-  CopyToClipboardSpan
+  CopyToClipboardSpan,
 } from "./styles";
 import Spinner from "components/shared/Spinner";
 
@@ -156,22 +156,41 @@ export default function User({
   }
 
   // Activity group progress bar
-  function CustomProgressBar({ current, max }) {
+  /*function CustomProgressBar({ current, max }) {
     const progress = (current / max) * 100;
     // https://react-bootstrap.netlify.app/docs/components/progress/#stacked
     return (
       <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
-        <ProgressBar now={progress} animated label={`${current}/${max}`} variant="success" />
       </OverlayTrigger>
     );
-  }
-
+  }*/
+  
+  const CustomProgressBar = ({ current, max }) => {
+    const progress = (current / max) * 100;
+  
+    return (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
+        <ProgressBar
+          animated
+          now={current === 0 ? 100 : progress}
+          label={current === 0 ? `0/0` : `${current}/${max}`}
+          variant={current === 0 ? "danger" : "success"}
+          style={{
+            borderRadius: "8px",
+            height: "15px",
+            backgroundColor: "#88CC88",
+          }}
+        />
+      </OverlayTrigger>
+    );
+  };
+  
   function WorkloadProgressBars({ workloadCount }) {
     return (
       <>
         <Column><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
         <Column><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
-        <Column><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
+        <Column><CustomProgressBar current={workloadCount["Extensao"].totalWorkload} max={workloadCount["Extensao"].maxWorkload} /></Column>
       </>
     )
   }
@@ -206,7 +225,7 @@ export default function User({
             <Column color={"var(--muted)"}>Matrícula</Column>
             <Column color={"var(--muted)"}>Horas (Ensino)</Column>
             <Column color={"var(--muted)"}>Horas (Pesquisa)</Column>
-            <Column color={"var(--muted)"}>Horas (Extensão)</Column>
+            <Column color={"var(--muted)"}>Horas (Extensao)</Column>
           </>
           : <>
             <Column color={"var(--muted)"}>Email</Column>

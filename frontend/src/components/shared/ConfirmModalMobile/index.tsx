@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 // Shared
 import { H3 } from "components/shared/Titles";
-import Button, { ButtonAlt } from "components/shared/Button";
+import { Button, ButtonAlt } from "components/shared/Button";
 
 // Custom
 import { CustomSheet, ButtonGroup } from "./styles";

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button, { ButtonAlt } from "../Button";
+import { Button, ButtonAlt } from "../Button";
 import { Collapse } from "react-bootstrap";
 
 export const Wrapper = styled.div`

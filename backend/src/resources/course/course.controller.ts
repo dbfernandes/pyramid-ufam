@@ -15,10 +15,10 @@ import { CourseService } from "./course.service";
 import { CreateCourseDto, UpdateCourseDto } from "./dto";
 import { SubmissionService } from "../submission/submission.service";
 import { CreateActivityDto } from "../activity/dto";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserTypes } from "src/common/enums.enum";
-import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
+import { Roles } from "../../../src/decorators/roles.decorator";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
 
 @Controller("courses")
 export class CourseController {

@@ -58,7 +58,7 @@ export const Logo = styled.img`
 
 export const SidenavWrapper = styled.div`
 	position: fixed;
-	z-index: 11;
+	z-index: 9998;
 	top: 0;
   bottom: 0;
 	left: ${props => props.show ? "0" : "-75%"};
@@ -80,6 +80,9 @@ export const SidenavWrapper = styled.div`
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 
+  & > div {
+    height: 100%;
+  }
   & > div > div {
     margin: 0;
   }
@@ -114,7 +117,7 @@ export const SidenavWrapper = styled.div`
 
 export const SidenavBackground = styled.div`
 	position: fixed;
-	z-index: 10;
+	z-index: 9997;
 	top: 0;
 	left: 0;
 	height: 150%;

@@ -3,7 +3,9 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl"]
+  //binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+
 }
 
 datasource db {
@@ -87,6 +89,8 @@ model ActivityGroup {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
+  searchHash            String?   @db.Text
+
   CourseActivityGroups CourseActivityGroup[]
 
   @@map("ActivityGroups")
@@ -133,9 +137,7 @@ model Submission {
   description      String    @db.VarChar(100)
   file             String?   @db.VarChar(255)
   workload         Int
-  approvedWorkload Int?
   status           Int?      @default(1)
-  details          String?   @db.VarChar(255)
   isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime? @updatedAt

@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { FormAlert } from "components/shared/Form/styles";
 import FormPage from "components/shared/FormPage";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import RangeInput from "components/shared/RangeInput";
 import toast from "components/shared/Toast";
@@ -19,18 +18,13 @@ import { ParagraphTitle, RangeWrapper } from "./styles";
 // Interfaces
 import { IActivity } from "components/shared/cards/ActivityCard";
 import IUserLogged from "interfaces/IUserLogged";
+import { Button } from "components/shared/Button";
 interface IFormComponentProps {
   user: IUserLogged;
-  submission?: any;
-  onChange?: Function;
-  handleCloseModalForm?: Function;
 }
 
 export default function FormAddSubmission({
-  user,
-  submission: submissionProp = null,
-  onChange = () => { },
-  handleCloseModalForm,
+  user
 }: IFormComponentProps) {
   const router = useRouter();
 
@@ -66,15 +60,10 @@ export default function FormAddSubmission({
     setWorkload(value);
   };
 
-  // Loading submission prop
-  useEffect(() => {
-    if (submissionProp != null) {
-      setActiveGroup(submissionProp.activity?.activityGroup);
-      setActivity(submissionProp.activity);
-      setDescription(submissionProp.description);
-      setWorkload(submissionProp.workload);
-    }
-  }, [submissionProp]);
+  const [searchHash, setSearchHash] = useState<string>("");
+  const handleSearchHash = (value) => {
+    setSearchHash(value)
+  }
 
   // Form state
   const [sent, setSent] = useState<boolean>(false);
@@ -87,8 +76,11 @@ export default function FormAddSubmission({
     setSent(true);
 
     if (activity != null && description.length != 0 && file != null) {
+      toast("Erro", `${activity.name}`);
       fetchSubmit();
     }
+
+
   }
 
   function fetchSubmit() {
@@ -103,6 +95,7 @@ export default function FormAddSubmission({
     }
     data.append("description", description);
     data.append("workload", String(workload));
+    data.append("searchHash", searchHash);
 
     const config: AxiosRequestConfig = {
       method: "POST",
@@ -117,7 +110,7 @@ export default function FormAddSubmission({
     axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Solicitação enviada com sucesso!", "success");
+        toast("Sucesso", "Solicitação enviada com sucesso", "success");
         router.push("/minhas-solicitacoes");
       })
       .catch((error) => {
@@ -125,10 +118,9 @@ export default function FormAddSubmission({
           0: "Oops, tivemos um erro. Tente novamente.",
           500: error?.response?.data?.message,
         };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        console.log(error)
       });
+
 
     setFetching(false);
   }

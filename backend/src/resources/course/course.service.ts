@@ -15,21 +15,42 @@ export class CourseService {
 		private activityService: ActivityService,
 	) {}
 
-	async create(createCourseDto: CreateCourseDto): Promise<any> {
-		if (await this.findByName(createCourseDto.name))
-			throw new BadRequestException("Name already in use");
-		if (await this.findByCode(createCourseDto.code))
-			throw new BadRequestException("Code already in use");
+	async updateSearchHash(id: number) {
+		const course = await this.findById(id);
 
+		const searchHash = [];
+
+		searchHash.push(course.id);
+		searchHash.push(course.name);
+		searchHash.push(course.code);
+		searchHash.push(course.periods);
+
+		await this.prisma.course.update({
+			where: { id },
+			data: { searchHash: searchHash.join(";") },
+		});
+	}
+
+	async create(createCourseDto: CreateCourseDto): Promise<any> {
+		const existingCourseByName = await this.findByName(createCourseDto.name);
+		if (existingCourseByName) {
+			throw new BadRequestException("Name already in use");
+		}
+		const existingCourseByCode = await this.findByCode(createCourseDto.code);
+		if (existingCourseByCode) {
+			throw new BadRequestException("Code already in use");
+		}
+
+		// Se não houver duplicatas, crie o novo curso
 		const { activityGroupsWorkloads, ...courseDto } = createCourseDto;
 		const activityGroupsArray = Object.keys(ActivityGroups).map((value) =>
 			value.toString().toLowerCase(),
 		);
 
-		// Creating course
+		// Criando o curso
 		const course = await this.prisma.course.create({ data: courseDto });
 
-		// Setting max workload for each activity group
+		// Definindo a carga horária máxima para cada grupo de atividades
 		activityGroupsArray.forEach(async (activityGroup, index) => {
 			const value =
 				activityGroup in activityGroupsWorkloads
@@ -47,6 +68,8 @@ export class CourseService {
 			course.id,
 		);
 
+		await this.updateSearchHash(course.id);
+
 		return { ...course, activityGroups: activityGroups };
 	}
 
@@ -57,10 +80,7 @@ export class CourseService {
 			search && search.trim() !== ""
 				? {
 						isActive: true,
-						OR: [
-							{ name: { contains: search } },
-							{ code: { contains: search } },
-						],
+						searchHash: { contains: search },
 					}
 				: { isActive: true };
 
@@ -305,16 +325,10 @@ export class CourseService {
 		const activityGroups =
 			await this.courseActivityGroupService.findByCourseId(id);
 
+		await this.updateSearchHash(id);
+
 		return { ...course, activityGroups: activityGroups };
 	}
-
-	/*async updateSearchHash(id: number): Promise<Course> {
-		const searchHash = "";
-		return this.prisma.course.update({
-			where: { id },
-			data: { searchHash },
-		});
-	}*/
 
 	async remove(id: number): Promise<Course> {
 		return await this.prisma.course.update({

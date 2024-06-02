@@ -41,3 +41,7 @@ export function decodeToken(token: string) {
 		throw new Error("Failed to decode token");
 	}
 }
+
+export function getFilesLocation(folder: string) {
+	return `${process.env.BACKEND_URL}/files/${folder}`;
+}

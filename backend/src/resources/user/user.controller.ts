@@ -14,30 +14,34 @@ import {
 	ValidationPipe,
 	Put,
 	Headers,
+	ParseFilePipeBuilder,
+	HttpStatus,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { SubmissionService } from "../submission/submission.service";
 import { AddUserDto, UpdateUserDto, EnrollDto } from "./dto";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
 import { CreateSubmissionDto } from "../submission/dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import { IsOwnerGuard } from "src/guards/is-owner.guard";
-import { RolesGuard } from "src/guards/roles.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserTypes } from "src/common/enums.enum";
-import { ExclusiveRolesGuard } from "src/guards/exclusive-roles.guard";
+import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
+import { RolesGuard } from "../../../src/guards/roles.guard";
+import { Roles } from "../../../src/decorators/roles.decorator";
+import { UserTypes } from "../../../src/common/enums.enum";
+import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
+import { AuthService } from "../auth/auth.service";
 
 @Controller("users")
 export class UserController {
 	constructor(
 		private readonly userService: UserService,
+		private readonly authService: AuthService,
 		private readonly submissionService: SubmissionService,
 	) {}
 
 	@Get()
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findAll(
 		@Query()
 		query: {
@@ -54,14 +58,14 @@ export class UserController {
 
 	@Get(":id")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findById(@Param("id") id: string) {
 		return await this.userService.findById(+id);
 	}
 
 	@Get(":id/submissions")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
-	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async findSubmissionsByUserId(
 		@Param("id") id: string,
 		@Query()
@@ -80,7 +84,7 @@ export class UserController {
 
 	@Post()
 	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
-	@Roles(UserTypes.COORDINATOR)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -112,16 +116,28 @@ export class UserController {
 	@UseInterceptors(
 		FileInterceptor("file", {
 			storage: diskStorage({
-				destination: "./public/files/submissions",
+				destination: "./public/files/tmp",
 				filename: (req, file, cb) =>
-					cb(null, `${new Date().getTime()}-${file.originalname}`),
+					cb(null, `${new Date().getTime()}-${file.originalname}.tmp`),
 			}),
 		}),
 	)
 	async submit(
 		@Param("id") id: string,
 		@Body() createSubmissionDto: CreateSubmissionDto,
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: "pdf",
+				})
+				.addMaxSizeValidator({
+					maxSize: 5000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
 		return await this.submissionService.submit(
 			+id,
@@ -138,18 +154,30 @@ export class UserController {
 	@UseInterceptors(
 		FileInterceptor("file", {
 			storage: diskStorage({
-				destination: `./public/files/profile-images`,
+				destination: `./public/files/tmp`,
 				filename: (req, file, cb) =>
 					cb(
 						null,
-						`${req.params.id}-${new Date().getTime()}-${file.originalname}`,
+						`${req.params.id}-${new Date().getTime()}-${file.originalname}.tmp`,
 					),
 			}),
 		}),
 	)
 	async updateProfileImage(
 		@Param("id") id: string,
-		@UploadedFile() file: Express.Multer.File,
+		@UploadedFile(
+			new ParseFilePipeBuilder()
+				.addFileTypeValidator({
+					fileType: ".(png|jpeg|jpg)",
+				})
+				.addMaxSizeValidator({
+					maxSize: 1000 * 1024,
+				})
+				.build({
+					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+				}),
+		)
+		file: Express.Multer.File,
 	) {
 		return await this.userService.updateProfileImage(+id, file.filename);
 	}

@@ -12,7 +12,6 @@ import {
   FormAlert
 } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
-import Button from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import toast from "components/shared/Toast";
 
@@ -21,12 +20,12 @@ import { CustomForm, FormSection, ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+import { Button } from "components/shared/Button";
 interface IFormUpdateAccountProps {
   user: IUserLogged;
 }
 
 export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
-  // Inputs and validators
   const [name, setName] = useState<string>("");
   const handleName = (value) => {
     setName(value);
@@ -52,7 +51,6 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
   }, [user]);
 
 
-  // Form state
   const [sent, setSent] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -127,7 +125,6 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
     setFetching(false);
   }
 
-  // Update image
   const [fetchingUpdateImage, setFetchingUpdateImage] = useState<boolean>(false);
   const handleImage = e => {
     function validateFile(file) {
@@ -194,8 +191,11 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
 
-        {/*<ProfilePicture>
-          <Async promise={getImage(user?.profileImage as string)} then={(url) => <img src={url as string} />} />
+        <ProfilePicture>
+          <img src={user?.profileImage && user?.profileImage.length > 0
+            ? user?.profileImage
+            : `${process.env.basePath}/img/user.png`
+          } alt={user?.name} />
 
           <div className="editImage">
             <label>
@@ -208,7 +208,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
               />
             </label>
           </div>
-        </ProfilePicture>*/}
+        </ProfilePicture>
 
         <TextInput
           label={"Nome completo*"}

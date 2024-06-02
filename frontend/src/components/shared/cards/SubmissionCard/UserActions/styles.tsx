@@ -24,6 +24,8 @@ export const HistoryItem = styled.div`
     & > img {
       width: 30px;
       height: 30px;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.05);
       object-fit: cover;
 
       margin-right: 10px;

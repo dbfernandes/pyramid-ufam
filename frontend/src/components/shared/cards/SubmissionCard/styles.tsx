@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FormCheck } from "react-bootstrap";
-import Button, { ButtonAlt } from "components/shared/Button";
+import { Button, ButtonAlt } from "components/shared/Button";
 
 export const ItemWrapper = styled.div`
   margin-bottom: 15px;

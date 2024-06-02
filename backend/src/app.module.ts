@@ -10,9 +10,15 @@ import { SubmissionActionModule } from "./resources/submissionAction/submissionA
 import { SubmissionActionTypeModule } from "./resources/submissionActionType/submissionActionType.module";
 import { ActivityGroupModule } from "./resources/activityGroup/activityGroup.module";
 import { CourseActivityGroupModule } from "./resources/courseActivityGroup/courseActivityGroup.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
 	imports: [
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, "..", "public"),
+			serveRoot: "/files",
+		}),
 		ConfigModule.forRoot(),
 
 		AuthModule,

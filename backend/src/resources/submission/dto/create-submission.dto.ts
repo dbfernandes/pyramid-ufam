@@ -8,6 +8,7 @@ export class CreateSubmissionDto {
 	activityId: number;
 
 	@IsString()
+	@IsNotEmpty()
 	description: string;
 
 	@IsInt()

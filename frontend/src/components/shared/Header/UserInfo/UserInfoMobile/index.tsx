@@ -27,10 +27,10 @@ export default function UserInfoMobile() {
   return (
     <Wrapper>
       <UserPic>
-        <img src={user.profileImage && user.profileImage.length > 0
-          ? `${process.env.API_URL}/files/${user.profileImage}`
+        <img src={user?.profileImage && user?.profileImage.length > 0
+          ? user?.profileImage
           : `${process.env.basePath}/img/user.png`
-        } alt={user.name} />
+        } alt={user?.name} />
       </UserPic>
       <UserName>{user.name}</UserName>
 

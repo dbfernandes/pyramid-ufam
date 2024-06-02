@@ -168,7 +168,7 @@ export const CharCount = styled.div`
   position: absolute;
   right: 8px;
   top: 4px;
-  z-index: 999;
+  z-index: 20;
 
   font-size: 0.75rem;
   font-weight: 400;

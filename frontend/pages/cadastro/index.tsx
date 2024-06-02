@@ -22,7 +22,7 @@ export default function Cadastro() {
   // Verifying user
   useEffect(() => {
     if (user.logged) {
-      router.replace("/painel");
+      router.replace("/");
     } else {
       setTimeout(() => setLoaded(true), 250);
     }

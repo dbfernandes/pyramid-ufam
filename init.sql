@@ -1,1 +1,0 @@
-GRANT ALL PRIVILEGES ON *.* TO 'pyramid_db_user' @'%';

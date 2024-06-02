@@ -7,7 +7,7 @@ export enum UserTypes {
 export enum ActivityGroups {
 	EDUCATION = "Ensino",
 	RESEARCH = "Pesquisa",
-	EXTENSION = "Extensão",
+	EXTENSION = "Extensao",
 }
 
 export enum SubmissionActionTypes {

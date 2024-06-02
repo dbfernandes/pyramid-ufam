@@ -1,0 +1,4 @@
+.extra
+dist
+node_modules
+public/files

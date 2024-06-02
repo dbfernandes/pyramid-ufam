@@ -16,6 +16,7 @@ const activityService = new ActivityService(prismaService);
 const courseActivityGroupService = new CourseActivityGroupService(
 	prismaService,
 );
+
 const courseService = new CourseService(
 	prismaService,
 	courseActivityGroupService,
@@ -82,6 +83,22 @@ async function CoursesSeeds() {
 	});
 }
 
+async function ActivitiesSeeds() {
+	let j = 1;
+	for (let i = 1; i <= 6; i++) {
+		for (let k = 1; k <= 3; k++) {
+			await activityService.create({
+				courseActivityGroupId: i,
+				name: `Atividade ${j}`,
+				description:
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur arcu vel elit vestibulum, nec convallis diam sodales. Nulla dictum laoreet dolor nec pharetra. Nullam tempor viverra laoreet. Ut id tortor non quam bibendum faucibus sit proin.",
+				maxWorkload: 30,
+			});
+			j++;
+		}
+	}
+}
+
 function disconnect(message: any) {
 	console.log(message);
 	prisma.$disconnect();
@@ -100,5 +117,8 @@ SubmissionActionTypesSeeds()
 	.catch((err) => disconnect(err));
 
 CoursesSeeds()
-	.then(() => disconnect("Default Courses loaded"))
+	.then(() => {
+		disconnect("Default Courses loaded");
+		ActivitiesSeeds();
+	})
 	.catch((err) => disconnect(err));

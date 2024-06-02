@@ -6,7 +6,7 @@ import { StatusSubmissions } from "constants/statusSubmissions.constants";
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
 import TextArea from "components/shared/TextArea";
-import Button, { DangerButton } from "components/shared/Button";
+import { Button, DangerButton } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
 import toast from "components/shared/Toast";
@@ -145,39 +145,3 @@ export default function FormUpdateStatusSubmission({
     </Content>
   );
 };
-
-async function fetchDelete({ user, id, status }, onChange) {
-  // setFetching(true);
-
-  const options = {
-    url: `${process.env.api}/submissions/${id}`,
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${user.token}`,
-    },
-    data: {
-      userId: user.id,
-      status: StatusSubmissions[status],
-    },
-  };
-
-  await axios
-    .request(options as AxiosRequestConfig)
-    .then((response) => {
-      toast("Sucesso", "Solicitação cancelada com sucesso.", "success");
-      onChange();
-    })
-    .catch((error) => {
-
-      const errorMessages = {
-        0: "Oops, tivemos um erro. Tente novamente.",
-        500: error?.response?.data?.message,
-      };
-
-      const code = error?.response?.status ? error.response.status : 500;
-      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
-    });
-
-  // setFetching(false);
-}

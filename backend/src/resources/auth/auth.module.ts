@@ -6,11 +6,13 @@ import { AuthController } from "./auth.controller";
 import { CourseUserModule } from "../courseUser/courseUser.module";
 import { CourseModule } from "../course/course.module";
 import { PrismaService } from "../prisma/prisma.service";
-import { JwtStrategy } from "src/guards/strategies/jwt.strategy";
+import { JwtStrategy } from "../../../src/guards/strategies/jwt.strategy";
+import { UserTypeModule } from "../userType/userType.module";
 
 @Module({
 	imports: [
 		forwardRef(() => UserModule),
+		UserTypeModule,
 		CourseModule,
 		CourseUserModule,
 		JwtModule.register({
