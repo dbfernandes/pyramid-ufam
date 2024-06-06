@@ -91,7 +91,6 @@ export function getFirstName(name: string) {
   return name.split(" ")[0];
 }
 
-
 export function getFirstAndLastName(name: string) {
   const _name = name.split(" ");
   if (_name.length > 1) return `${_name[0]} ${_name.pop()}`;

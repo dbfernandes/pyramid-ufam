@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { StatusSubmissions } from "constants/statusSubmissions.constants";
-import Async from "react-promise";
-import { getFirstAndLastName, getImage, parseDateAndTime } from "utils";
+import { getFirstAndLastName, parseDateAndTime } from "utils";
 
 // Shared
 import confirm from "components/shared/ConfirmModal";

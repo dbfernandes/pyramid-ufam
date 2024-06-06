@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { getImage, validateCpf, validateEmail } from "utils";
+import { validateCpf, validateEmail } from "utils";
 
-import Async from "react-promise";
 import { store } from "redux/store";
 import { login, setProfileImage } from "redux/slicer/user";
 

@@ -13,6 +13,9 @@ import { CourseActivityGroupModule } from "./resources/courseActivityGroup/cours
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 
+import { CronService } from "./resources/cron/cron.service";
+import { PrismaService } from "./resources/prisma/prisma.service";
+
 @Module({
 	imports: [
 		ServeStaticModule.forRoot({
@@ -32,5 +35,6 @@ import { join } from "path";
 		SubmissionActionModule,
 		SubmissionActionTypeModule,
 	],
+	providers: [CronService, PrismaService],
 })
 export class AppModule {}

@@ -56,6 +56,16 @@ export class UserController {
 		return await this.userService.findAll(query);
 	}
 
+	@Get(":id/report/:courseId")
+	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
+	async getUserReport(
+		@Param("id") id: string,
+		@Param("courseId") courseId: string,
+	) {
+		return await this.userService.getUserReport(+id, +courseId);
+	}
+
 	@Get(":id")
 	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
 	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
