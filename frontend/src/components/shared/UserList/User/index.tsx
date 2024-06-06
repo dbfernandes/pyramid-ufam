@@ -178,7 +178,7 @@ export default function User({
           style={{
             borderRadius: "8px",
             height: "15px",
-            backgroundColor: "#88CC88",
+            backgroundColor: "#F1F1F1",
           }}
         />
       </OverlayTrigger>

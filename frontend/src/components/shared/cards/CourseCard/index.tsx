@@ -62,18 +62,18 @@ export default function CourseCard({
     const [users, setUsers] = useState<any[]>([]);
     const [fetchingUsers, setFetchingUsers] = useState<boolean>(true);
     const [totalActiveUsers, setTotalActiveUsers] = useState<number>(0);
-    const [totalInactiveUsers, setTotalInactiveUsers] = useState<number>(0);
-    const [totalStudents, setTotalStudents] = useState<number>(0);
 
     useEffect(() => {
-      fetchUsers(0, "", "active");
-    }, [user.logged, user.selectedCourse]);
+      if (user.logged && course.id) {
+        fetchUsers(0, "", "active", course.id);
+      }
+    }, [user.logged, course.id]);
   
-    async function fetchUsers(_page, _search, _status) {
+    async function fetchUsers(_page, _search, _status, courseId) {
       setFetchingUsers(true);
 
       const options = {
-        url: `${process.env.api}/users?type=aluno&search=${_search}&courseId=${user.selectedCourse ? user.selectedCourse.id : ""}&status=${_status}`,
+        url: `${process.env.api}/users?type=aluno&search=${_search}&courseId=${courseId}&status=${_status}`,
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export default function CourseCard({
         <div>
           <H4>{course.name}</H4>
           <span>
-            {(course?.userCount && course?.userCount > 0)
+            {totalActiveUsers > 0
               ? `${totalActiveUsers} alunos`
               : "Sem alunos"
             }

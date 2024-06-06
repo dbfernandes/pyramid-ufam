@@ -144,7 +144,7 @@ export default function Dashboard() {
 
       <DashboardWrapper>
         <IntroTile />
-        { user.userTypeId !== 3  && loaded ? (
+        { user.userTypeId == 2 || user.userTypeId == 1 ? (
           <>
             <NumberTile
               icon="file-earmark-medical"

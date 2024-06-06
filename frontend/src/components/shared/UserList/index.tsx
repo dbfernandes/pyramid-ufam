@@ -27,6 +27,7 @@ import Spinner from "../Spinner";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
+
 interface IUserListProps {
   title: string;
   courseId?: number | null | undefined;
@@ -100,21 +101,25 @@ export default function UserList({
     { title: "Inativos", value: 0, accent: "var(--danger)", checked: statuses?.includes("0") },
   ]);
 
+  const handleFilterChange = (index: number) => {
+    const updatedOptions = [...filterOptions];
+    const option = updatedOptions[index];
+    const checkedOptionsCount = updatedOptions.filter(option => option.checked).length;
+
+    if (checkedOptionsCount === 1 && option.checked) {
+      toast("Atenção", "Pelo menos uma opção deve estar selecionada");
+    } else {
+      option.checked = !option.checked;
+      setFilterOptions(updatedOptions);
+    }
+  };
 
   useEffect(() => {
-    setFetchingFilter(true);
-    const debounce = setTimeout(() => {
-      const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
-      router.push({
-        query: { ...router.query, status },
-      });
-
-      setFetchingFilter(false);
-    }, 1000);
-
-    return () => clearTimeout(debounce);
+    const status = filterOptions.map(option => option.checked ? `${option.value}-` : "").join("").slice(0, -1);
+    router.push({
+      query: { ...router.query, status },
+    });
   }, [filterOptions]);
-
 
   // Delete functions
   const [fetchingDelete, setFetchingDelete] = useState<boolean>(false);

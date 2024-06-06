@@ -503,6 +503,10 @@ export class UserService {
 		const rootPath = `./public/files/profile-images/`;
 		const path = `${rootPath}${filename}`;
 
+		if (!fs.existsSync(rootPath)) {
+			fs.mkdirSync(rootPath, { recursive: true });
+		}
+
 		const user = await this.findById(id);
 		if (!user) {
 			throw new BadRequestException("User not found");
