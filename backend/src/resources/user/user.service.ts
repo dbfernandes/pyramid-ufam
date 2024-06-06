@@ -266,6 +266,80 @@ export class UserService {
 		return await this.courseService.findCoursesByUser(user.id);
 	}
 
+	async groupAndCountWorkload(submissions: any[], courseId: number) {
+		const activityGroups =
+			await this.courseActivityGroupService.findByCourseId(+courseId);
+
+		const workloadCount = {};
+		activityGroups.forEach((_activityGroup) => {
+			workloadCount[_activityGroup?.ActivityGroup?.name] = {
+				maxWorkload: _activityGroup.maxWorkload,
+				totalWorkload: 0,
+			};
+		});
+
+		submissions.forEach((submission) => {
+			const { CourseActivityGroup } = submission.Activity;
+			const { ActivityGroup, Course } = CourseActivityGroup;
+
+			if (
+				courseId == Course.id &&
+				submission.status == StatusSubmissions["Aprovado"]
+			) {
+				if (!workloadCount[ActivityGroup.name]) {
+					workloadCount[ActivityGroup.name] = {
+						maxWorkload: CourseActivityGroup.maxWorkload,
+						totalWorkload: 0,
+					};
+				}
+
+				workloadCount[ActivityGroup.name].totalWorkload += submission.workload;
+			}
+		});
+
+		return workloadCount;
+	}
+
+	async getUserReport(userId: number, courseId: number) {
+		const user = await this.findById(userId);
+		if (!user) throw new BadRequestException("User not found");
+
+		const submissions = await this.prisma.submission.findMany({
+			where: { userId },
+			include: {
+				Activity: {
+					include: {
+						CourseActivityGroup: {
+							include: {
+								Course: {
+									select: { id: true, code: true, name: true },
+								},
+								ActivityGroup: {
+									select: { name: true },
+								},
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const workloadCount = await this.groupAndCountWorkload(
+			submissions,
+			courseId,
+		);
+
+		return {
+			user: {
+				...user,
+				profileImage: user.profileImage
+					? `${getFilesLocation("profile-images")}/${user.profileImage}`
+					: null,
+			},
+			workloadCount,
+		};
+	}
+
 	async findAll(query: any): Promise<any> {
 		const { page, limit, search, type, courseId, active } = query;
 		const skip = (page - 1) * limit;
@@ -333,42 +407,7 @@ export class UserService {
 			}),
 		]);
 
-		const activityGroups =
-			await this.courseActivityGroupService.findByCourseId(+courseId);
-
-		function groupAndCountWorkload(submissions: any[]) {
-			const workloadCount = {};
-			activityGroups.forEach((_activityGroup) => {
-				workloadCount[_activityGroup?.ActivityGroup?.name] = {
-					maxWorkload: _activityGroup.maxWorkload,
-					totalWorkload: 0,
-				};
-			});
-
-			submissions.forEach((submission) => {
-				const { CourseActivityGroup } = submission.Activity;
-				const { ActivityGroup, Course } = CourseActivityGroup;
-
-				if (
-					courseId == Course.id &&
-					submission.status == StatusSubmissions["Aprovado"]
-				) {
-					if (!workloadCount[ActivityGroup.name]) {
-						workloadCount[ActivityGroup.name] = {
-							maxWorkload: CourseActivityGroup.maxWorkload,
-							totalWorkload: 0,
-						};
-					}
-
-					workloadCount[ActivityGroup.name].totalWorkload +=
-						submission.workload;
-				}
-			});
-
-			return workloadCount;
-		}
-
-		const _users = users.map((user) => {
+		const _users = users.map(async (user) => {
 			const courses = user.CourseUsers.map((courseUser) => ({
 				id: courseUser.Course.id,
 				name: courseUser.Course.name,
@@ -386,7 +425,10 @@ export class UserService {
 				password: undefined,
 				userType: user.UserType,
 				UserType: undefined,
-				workloadCount: groupAndCountWorkload(user.Submissions),
+				workloadCount: await this.groupAndCountWorkload(
+					user.Submissions,
+					+courseId,
+				),
 				Submissions: undefined,
 			};
 		});

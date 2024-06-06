@@ -93,10 +93,8 @@ export default function FormUpdateSubmission({
     }
   }
 
-  function fetchSubmit() {
+  async function fetchSubmit() {
     setFetching(true);
-
-    console.log(activity, description, workload, file, user, details);
 
     const data = new FormData();
     if (file !== null) {
@@ -121,7 +119,7 @@ export default function FormUpdateSubmission({
       data: data,
     };
 
-    axios(config)
+    await axios(config)
       .then((response) => {
         setSuccess(true);
         toast("Sucesso", "Solicitação atualizada com sucesso", "success");

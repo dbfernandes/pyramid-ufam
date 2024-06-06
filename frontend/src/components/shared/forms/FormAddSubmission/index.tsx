@@ -83,7 +83,7 @@ export default function FormAddSubmission({
 
   }
 
-  function fetchSubmit() {
+  async function fetchSubmit() {
     setFetching(true);
 
     const data = new FormData();
@@ -107,7 +107,7 @@ export default function FormAddSubmission({
       data: data,
     };
 
-    axios(config)
+    await axios(config)
       .then((response) => {
         setSuccess(true);
         toast("Sucesso", "Solicitação enviada com sucesso", "success");

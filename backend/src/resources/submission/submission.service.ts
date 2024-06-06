@@ -153,7 +153,7 @@ export class SubmissionService {
 			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
 			data: {
 				...rest,
-				file: filename,
+				file: filename.replace(".tmp", ""),
 			},
 		});
 
