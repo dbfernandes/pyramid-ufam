@@ -10,6 +10,10 @@
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "next": "^14.1.4",
+    "node-cron": "^3.0.3",
     "nodemon": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11"
   }
 }
