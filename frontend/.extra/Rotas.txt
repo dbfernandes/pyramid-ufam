@@ -1,7 +1,7 @@
 Conta
 minha conta (editar, excluir) = /conta
 
-Solicitações
+Submissões
 minhas = /solicitacoes
 nova = /solicitacoes/nova
 específica = /solicitacoes/{id}
@@ -9,7 +9,7 @@ específica = /solicitacoes/{id}
 Alunos
 lista = /usuarios/alunos?page=N
 específico = /usuarios/alunos/{id}
-solicitações = /usuarios/alunos/{id}/solicitacoes
+submissões = /usuarios/alunos/{id}/solicitacoes
 
 Coordenadores
 lista = /usuarios/coordenadores?page=N

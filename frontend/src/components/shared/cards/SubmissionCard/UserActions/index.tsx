@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { getFirstAndLastName, parseDateAndTime } from "utils";
+import { getFirstAndLastName, getToken, parseDateAndTime } from "utils";
 
 // Shared
 import confirm from "components/shared/ConfirmModal";
@@ -48,7 +48,7 @@ export default function UserActions({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -95,13 +95,19 @@ export default function UserActions({
             {history.map((item, index) => (
               <HistoryItem key={index} color={colors[item.action]}>
                 <div>
-                  <img src={user?.profileImage && user?.profileImage.length > 0
-                    ? user?.profileImage
-                    : `${process.env.basePath}/img/user.png`
-                  } alt={user.name} />
+                  <img
+                    src={user?.profileImage && user?.profileImage.length > 0
+                      ? user?.profileImage
+                      : `${process.env.basePath}/img/user.png`
+                    }
+                    alt={user.name}
+                    onError={({ currentTarget }) => {
+                      currentTarget.src = `${process.env.basePath}/img/user.png`;
+                    }}
+                  />
                   <p>
                     <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
-                    <span style={{ color: colors[item.action] }}>{item.action}</span> a solicitação em {parseDateAndTime(item.createdAt)}
+                    <span style={{ color: colors[item.action] }}>{item.action}</span> a submissão em {parseDateAndTime(item.createdAt)}
                   </p>
                 </div>
 
@@ -121,7 +127,7 @@ export default function UserActions({
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -129,7 +135,7 @@ export default function UserActions({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         onChange();
-        toast("Sucesso", "Solicitação cancelada com sucesso");
+        toast("Sucesso", "Submissão cancelada com sucesso");
       })
       .catch((error) => {
         const errorMessages = {
@@ -146,7 +152,7 @@ export default function UserActions({
     <ButtonGroup>
       <InfoButton onClick={() =>
         toggleModalForm(
-          "Histórico da solicitação",
+          "Histórico da submissão",
           <SubmissionHistory />,
           "lg"
         )
@@ -208,7 +214,7 @@ export default function UserActions({
           onClick={() =>
             confirm(
               () => fetchDelete(),
-              "Tem certeza que deseja cancelar a solicitação?",
+              "Tem certeza que deseja cancelar a submissão?",
               "Cancelar",
               ""
             )

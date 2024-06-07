@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import axios, { AxiosRequestConfig } from "axios";
+import { getToken } from "utils";
 
 // Shared
 import { H3 } from "components/shared/Titles";
@@ -22,10 +22,6 @@ import FormAddCourse from "components/shared/forms/FormAddCourse";
 
 // Interfaces
 import ICourse from "interfaces/ICourse";
-import { IRootState } from "redux/store";
-import IUserLogged from "interfaces/IUserLogged";
-import { useState } from "react";
-
 interface ICoursesProps {
   courses: ICourse[];
   loading: boolean;
@@ -42,23 +38,7 @@ export default function Courses({
   onChange = () => { }
 }: ICoursesProps) {
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const isMobile = useMediaQuery({ maxWidth: 992 });
-  const [isReloading, setIsReloading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  async function handleReload() {
-    setIsReloading(true);
-
-    try {
-      const response = await axios.get(`${process.env.api}/courses`);
-      onChange(response.data);
-      setIsReloading(false);
-    } catch (error) {
-      console.error("Erro ao carregar cursos:", error);
-      setIsReloading(false);
-    }
-  }
 
   async function fetchDelete(id) {
     const options = {
@@ -66,7 +46,7 @@ export default function Courses({
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -96,7 +76,7 @@ export default function Courses({
           <AddUserButton onClick={() =>
             toggleModalForm(
               "Adicionar curso",
-              <FormAddCourse user={user} onChange={onChange} />,
+              <FormAddCourse onChange={onChange} />,
               "md"
             )}>
             <i className={`bi bi-mortarboard-fill`}>
@@ -139,7 +119,7 @@ export default function Courses({
               ))}
             </CardGroup>
           </>)
-          : (<Disclaimer>Não há cursos cadastrados.</Disclaimer>)
+          : (<Disclaimer>Nenhum curso encontrado.</Disclaimer>)
       }
 
       {courses?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}

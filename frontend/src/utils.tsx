@@ -1,11 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { store } from "redux/store";
 import { authorize, logout } from "redux/slicer/user";
+import { resetTimer } from "redux/slicer/timer";
 
 // Shared
 import toast from "components/shared/Toast";
 
-export function checkAuthentication(): boolean {
+export async function checkAuthentication(): Promise<void> {
   function parseJwt(token) {
     let base64Url = token.split(".")[1];
     let base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -21,7 +22,6 @@ export function checkAuthentication(): boolean {
     return JSON.parse(jsonPayload);
   }
 
-  let authorized = false;
   async function authenticate(refreshToken: string) {
     const options = {
       url: `${process.env.api}/auth/refresh-token`,
@@ -36,7 +36,6 @@ export function checkAuthentication(): boolean {
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        authorized = true;
         store.dispatch(
           authorize({
             token: response.headers["x-access-token"],
@@ -45,36 +44,47 @@ export function checkAuthentication(): boolean {
         );
       })
       .catch((error) => {
-        authorized = false;
-        toast("Erro", "Houve um erro ao renovar sua sessão.", "danger");
+        if (error?.response?.status === 401) {
+          toast("Sessão", "Houve um erro ao renovar sua sessão.", "danger");
+          store.dispatch(logout());
+        } else {
+          toast("Erro", "Houve um erro ao renovar sua sessão.", "danger");
+        }
       });
   }
 
-  function kick() {
-    authorized = false;
-    store.dispatch(logout());
-  }
+  const refreshToken = getRefreshToken();
+  const { timer } = store.getState();
 
-  const { user } = store.getState();
-  if (user.token && user.refreshToken) {
+  if (refreshToken) {
     const currentTime = new Date();
 
-    const token = new Date(parseJwt(user.token).exp * 1000);
-    const tokenExpired = currentTime >= token;
+    // Check if token is expired or about to expire
+    const tokenExpired = timer.time === 60 || currentTime >= new Date(parseJwt(getToken()).exp * 1000);
 
-    const refreshToken = new Date(parseJwt(user.refreshToken).exp * 1000);
-    const refreshTokenExpired = currentTime >= refreshToken;
+    // Check if refresh token is expired
+    const refreshTokenExpired = currentTime >= new Date(parseJwt(refreshToken).exp * 1000);
 
     if (refreshTokenExpired) {
-      kick();
+      store.dispatch(logout());
     } else if (tokenExpired) {
-      authenticate(user.refreshToken);
-    } else {
-      authorized = true;
+      resetTimer();
+      await authenticate(refreshToken);
     }
+  } else {
+    // If refresh token is expired, kick user
+    store.dispatch(logout());
   }
+}
 
-  return authorized;
+export function getToken() {
+  const { user } = store.getState();
+  return user.token;
+}
+
+export function getRefreshToken() {
+  const { user } = store.getState();
+  return user.refreshToken;
 }
 
 export function getPlural(word: string) {

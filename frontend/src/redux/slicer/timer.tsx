@@ -15,8 +15,14 @@ const timerSlice = createSlice({
         time
       };
     },
+    resetTimer: (state) => {
+      return {
+        ...state,
+        time: 0
+      };
+    }
   }
 });
 
-export const { tick } = timerSlice.actions;
+export const { tick, resetTimer } = timerSlice.actions;
 export default timerSlice.reducer;

@@ -39,7 +39,6 @@ export default function Atividades() {
 
   useEffect(() => {
     if (router.query) {
-      console.log(activityGroup)
       setActivityGroup(router.query.group as string);
     }
   }, [router]);
@@ -104,8 +103,8 @@ export default function Atividades() {
       {loaded ? (
         <Wrapper>
           - Info da atividade<br />
-          - Dashboard (n de alunos, n de solicitações)<br />
-          - Link pra solicitações por atividade<br />
+          - Dashboard (n de alunos, n de submissões)<br />
+          - Link pra submissões por atividade<br />
         </Wrapper>
       ) : (
         <div

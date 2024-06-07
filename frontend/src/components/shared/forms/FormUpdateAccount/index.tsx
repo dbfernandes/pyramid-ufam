@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { validateCpf, validateEmail } from "utils";
+import { getToken, validateCpf, validateEmail } from "utils";
 
 import { store } from "redux/store";
 import { login, setProfileImage } from "redux/slicer/user";
@@ -49,7 +49,6 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
     }
   }, [user]);
 
-
   const [sent, setSent] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -83,7 +82,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`
+        "Authorization": `Bearer ${getToken()}`
       },
       data: data,
     };
@@ -135,7 +134,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
         toast("Erro", "Somente arquivos de imagem (.png, .jpg, .jpeg) são permitidos", "danger");
         return false;
       } else if (maxSize != -1 && file.size > maxSize) {
-        toast("Erro", "Somente arquivos até 5mb são permitidos", "danger");
+        toast("Erro", "Somente arquivos até 3 mb são permitidos", "danger");
         return false;
       }
 
@@ -162,7 +161,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       method: "PUT",
       headers: {
         "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${user.token}`
+        "Authorization": `Bearer ${getToken()}`
       },
       data: data
     };
@@ -191,10 +190,16 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
         <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
 
         <ProfilePicture>
-          <img src={user?.profileImage && user?.profileImage.length > 0
-            ? user?.profileImage
-            : `${process.env.basePath}/img/user.png`
-          } alt={user?.name} />
+          <img
+            src={user?.profileImage && user?.profileImage.length > 0
+              ? user?.profileImage
+              : `${process.env.basePath}/img/user.png`
+            }
+            alt={user?.name}
+            onError={({ currentTarget }) => {
+              currentTarget.src = `${process.env.basePath}/img/user.png`;
+            }}
+          />
 
           <div className="editImage">
             <label>

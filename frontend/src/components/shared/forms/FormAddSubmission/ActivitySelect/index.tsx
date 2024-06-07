@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import toast from "components/shared/Toast";
-import { slugify } from "utils";
+import { getToken, slugify } from "utils";
 
 // Shared
 import { ActivityGroupsNames } from "constants/activityGroups.constants";
@@ -55,7 +55,7 @@ export default function ActivitySelect({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -88,7 +88,7 @@ export default function ActivitySelect({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -140,7 +140,7 @@ export default function ActivitySelect({
               />
             ))}
           </CardGroup>
-          : <Disclaimer>Não há grupos de atividades vinculados à este curso.</Disclaimer>
+          : <Disclaimer>Nenhum grupo de atividades vinculados à este curso foi encontrado.</Disclaimer>
       }
 
       {
@@ -149,7 +149,7 @@ export default function ActivitySelect({
           : activities.length > 0
             ? (
               <>
-                <p style={{ color: "var(--muted)", marginBottom: "10px" }} id="activities">Sua solicitação é para qual tipo de atividade?</p>
+                <p style={{ color: "var(--muted)", marginBottom: "10px" }} id="activities">Sua submissão é para qual tipo de atividade?</p>
 
                 <CardGroup>
                   {activities?.map((_activity, index) => (
@@ -166,7 +166,7 @@ export default function ActivitySelect({
                 </CardGroup>
               </>
             )
-            : activeGroup && <Disclaimer>Não há atividades para este grupo de atividade neste curso.</Disclaimer>
+            : activeGroup && <Disclaimer>Nenhuma atividade desde grupo de atividade (para este curso) foi encontrada.</Disclaimer>
       }
     </Wrapper >
   );

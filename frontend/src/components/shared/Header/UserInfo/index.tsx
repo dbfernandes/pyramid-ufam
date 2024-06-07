@@ -38,10 +38,16 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
     <Wrapper>
       <UserName>
         <UserPic>
-          <img src={user?.profileImage && user?.profileImage.length > 0
-            ? user?.profileImage
-            : `${process.env.basePath}/img/user.png`
-          } alt={user?.name} />
+          <img
+            src={user?.profileImage && user?.profileImage.length > 0
+              ? user?.profileImage
+              : `${process.env.basePath}/img/user.png`
+            }
+            alt={user?.name}
+            onError={({ currentTarget }) => {
+              currentTarget.src = `${process.env.basePath}/img/user.png`;
+            }}
+          />
         </UserPic>
 
         <p>{isMobile ? getFirstName(user.name) : user.name}</p>

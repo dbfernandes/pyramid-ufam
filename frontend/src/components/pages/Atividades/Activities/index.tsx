@@ -1,4 +1,4 @@
-import { slugify } from "utils";
+import { getToken, slugify } from "utils";
 import { GroupIcons } from "constants/groupIcons.constants.";
 import { useSelector } from "react-redux";
 import axios, { AxiosRequestConfig } from "axios";
@@ -37,7 +37,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -61,8 +61,8 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
   return (
     <DefaultWrapper>
       <HeaderWrapper>
-        {title === "Extensao" ? <H3>Atividades de extensão</H3> : <H3>Atividades de {title.toLowerCase()}</H3>}
-        
+        {title === "Extensão" ? <H3>Atividades de extensão</H3> : <H3>Atividades de {title.toLowerCase()}</H3>}
+
 
         <AddUserButton onClick={() =>
           toggleModalForm(
@@ -92,7 +92,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
             />
           ))}
         </CardGroup>)
-        : (<Disclaimer>Não há atividades cadastrados.</Disclaimer>)
+        : (<Disclaimer>Nenhuma atividade encontrada.</Disclaimer>)
       }
     </DefaultWrapper>
   );

@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useRouter } from "next/router";
+import { getToken } from "utils";
 
 // Shared
 import { FormAlert } from "components/shared/Form/styles";
@@ -19,6 +20,7 @@ import { ParagraphTitle, RangeWrapper } from "./styles";
 import { IActivity } from "components/shared/cards/ActivityCard";
 import IUserLogged from "interfaces/IUserLogged";
 import { Button } from "components/shared/Button";
+
 interface IFormComponentProps {
   user: IUserLogged;
 }
@@ -60,11 +62,6 @@ export default function FormAddSubmission({
     setWorkload(value);
   };
 
-  const [searchHash, setSearchHash] = useState<string>("");
-  const handleSearchHash = (value) => {
-    setSearchHash(value)
-  }
-
   // Form state
   const [sent, setSent] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -79,8 +76,6 @@ export default function FormAddSubmission({
       toast("Erro", `${activity.name}`);
       fetchSubmit();
     }
-
-
   }
 
   async function fetchSubmit() {
@@ -95,14 +90,13 @@ export default function FormAddSubmission({
     }
     data.append("description", description);
     data.append("workload", String(workload));
-    data.append("searchHash", searchHash);
 
     const config: AxiosRequestConfig = {
       method: "POST",
       url: `${process.env.api}/users/${user.id}/submit`,
       headers: {
         "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: data,
     };
@@ -110,7 +104,7 @@ export default function FormAddSubmission({
     await axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Solicitação enviada com sucesso", "success");
+        toast("Sucesso", "Submissão enviada com sucesso", "success");
         router.push("/minhas-solicitacoes");
       })
       .catch((error) => {
@@ -118,15 +112,13 @@ export default function FormAddSubmission({
           0: "Oops, tivemos um erro. Tente novamente.",
           500: error?.response?.data?.message,
         };
-        console.log(error)
       });
-
 
     setFetching(false);
   }
 
   return (
-    <FormPage title="Nova solicitação" fullscreen={true}>
+    <FormPage title="Nova submissão" fullscreen={true}>
       <ActivitySelect
         activeGroup={activeGroup}
         setActiveGroup={setActiveGroup}
@@ -149,7 +141,7 @@ export default function FormAddSubmission({
             displayAlert={sent}
           />
           <ParagraphTitle>
-            Descreva sua solicitação (Exemplo:{" "}
+            Descreva sua submissão (Exemplo:{" "}
             <i>Certificado Angular Seminfo 2023</i>)*
           </ParagraphTitle>
           <TextInput

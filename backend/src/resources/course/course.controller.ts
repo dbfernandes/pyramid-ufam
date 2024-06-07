@@ -27,6 +27,13 @@ export class CourseController {
 		private readonly submissionService: SubmissionService,
 	) {}
 
+	@Get(":id/report")
+	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY)
+	async getCourseReport(@Param("id") id: string) {
+		return await this.courseService.getCourseReport(+id);
+	}
+
 	@Get()
 	async findAll(
 		@Query()

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { StatusSubmissions } from "constants/statusSubmissions.constants";
-
+import { getToken } from "utils";
 
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
@@ -57,7 +57,7 @@ export default function FormUpdateStatusSubmission({
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: {
         userId: user.id,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useDispatch } from "react-redux";
-import { login, authorize, defaultCourse } from "redux/slicer/user";
+import { login, defaultCourse, authorize } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { validateEmail } from "utils";
@@ -69,12 +69,10 @@ export default function FormLogin() {
         setSuccess(true);
 
         if (response.data.user) {
-          dispatch(
-            authorize({
-              token: response.headers["x-access-token"],
-              refreshToken: response.headers["x-refresh-token"],
-            })
-          );
+          dispatch(authorize({
+            token: response.headers["x-access-token"],
+            refreshToken: response.headers["x-refresh-token"],
+          }));
           dispatch(login(response.data.user));
 
           if (response.data.user.courses.length === 1) {

@@ -28,23 +28,23 @@ export default function SolicitacoesGrupoAtividade() {
   // Setting links used in breadcrumb
   useEffect(() => {
     const url = router.asPath;
-  if (!url.includes("page") || !url.includes("search") || !url.includes("status")) {
-    router.replace(`${url.split("?")[0]}?page=1&search=&status=1`);
-  }
-
-
-  setLinks([
-    {
-      title: "Solicitações",
-    },
-    {
-      title: "Grupos de atividade",
-      route: "/solicitacoes/grupo-atividade",
-    },
-    {
-      title: "extensao",
+    if (!url.includes("page") || !url.includes("search") || !url.includes("status")) {
+      router.replace(`${url.split("?")[0]}?page=1&search=&status=1`);
     }
-  ]);
+
+
+    setLinks([
+      {
+        title: "Submissões",
+      },
+      {
+        title: "Grupos de atividade",
+        route: "/solicitacoes/grupo-atividade",
+      },
+      {
+        title: "extensao",
+      }
+    ]);
   }, []);
 
   // Verifying user
@@ -87,7 +87,7 @@ export default function SolicitacoesGrupoAtividade() {
     setFetchingSubmissions(true);
 
     let url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=${activityGroup}`;
-    
+
     if (activityGroup === "extensao") {
       url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=extensao`;
     }
@@ -123,7 +123,7 @@ export default function SolicitacoesGrupoAtividade() {
   return (
     <>
       <Head>
-        <title>Solicitações ({ActivityGroupsNames[activityGroup].title}) - {process.env.title}</title>
+        <title>Submissões ({ActivityGroupsNames[activityGroup].title}) - {process.env.title}</title>
       </Head>
 
       {loaded ? (

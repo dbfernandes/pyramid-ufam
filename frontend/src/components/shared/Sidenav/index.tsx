@@ -88,13 +88,13 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       links: [
         {
           icon: <i className="bi bi-file-earmark-plus" />,
-          title: "Nova solicitação",
+          title: "Nova submissão",
           route: "/minhas-solicitacoes/nova",
           permissions: [3],
         },
         {
           icon: <i className="bi bi-list-check" />,
-          title: "Minhas solicitações",
+          title: "Minhas submissões",
           route: "/minhas-solicitacoes",
           permissions: [3],
         },
@@ -103,7 +103,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
             <i className="bi bi-list-check" />
             <i className="bi bi-file-earmark-medical-fill" />
           </NestedIcon>,
-          title: "Solicitações do curso",
+          title: "Submissões do curso",
           route: "/solicitacoes",
           permissions: [1, 2],
         },
@@ -112,7 +112,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
             <i className="bi bi-list-check" />
             <i className="bi bi-grid-fill" />
           </NestedIcon>,
-          title: "Solicitações por grupo de atividade",
+          title: "Submissões por grupo de atividade",
           route: "/solicitacoes/grupo-atividade",
           permissions: [1, 2]
         }
@@ -170,7 +170,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
         },
         {
           icon: <i className="bi bi-lightbulb" />,
-          title: "Extensao",
+          title: "Extensão",
           route: "/atividades/extensao",
         },
       ],
@@ -227,7 +227,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                   {/* Fix: OverlayTrigger not working */}
                   <div>
                     {group.links.map((link, index) =>
-                      checkPermission(link, user.userTypeId) 
+                      checkPermission(link, user.userTypeId)
                         ? (<OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
                           <div>
                             {link?.route ? (

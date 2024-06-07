@@ -6,6 +6,7 @@ import { CourseActivityGroupService } from "../courseActivityGroup/courseActivit
 import { ActivityGroups } from "../../common/enums.enum";
 import { ActivityService } from "../activity/activity.service";
 import { CreateActivityDto } from "../activity/dto";
+import { StatusSubmissions } from "../../../src/common/constants.constants";
 
 @Injectable()
 export class CourseService {
@@ -71,6 +72,52 @@ export class CourseService {
 		await this.updateSearchHash(course.id);
 
 		return { ...course, activityGroups: activityGroups };
+	}
+
+	async getCourseReport(id: number): Promise<any> {
+		const course = await this.findById(id);
+		if (!course) throw new BadRequestException("Course not found");
+
+		const totalStudents = await this.prisma.courseUser.count({
+			where: {
+				id,
+				enrollment: { not: null },
+			},
+		});
+
+		const submissions = await this.prisma.submission.findMany({
+			where: {
+				id,
+			},
+			select: {
+				id: true,
+				status: true,
+			},
+		});
+
+		const totalSubmissions = submissions.length;
+		const pendingSubmissions = submissions.filter(
+			(submission) => submission.status === StatusSubmissions["Submetido"],
+		).length;
+		const preApprovedSubmissions = submissions.filter(
+			(submission) => submission.status === StatusSubmissions["Pré-aprovado"],
+		).length;
+		const approvedSubmissions = submissions.filter(
+			(submission) => submission.status === StatusSubmissions["Aprovado"],
+		).length;
+		const rejectedSubmissions = submissions.filter(
+			(submission) => submission.status === StatusSubmissions["Rejeitado"],
+		).length;
+
+		return {
+			course: course,
+			totalStudents: totalStudents,
+			totalSubmissions: totalSubmissions,
+			pendingSubmissions: pendingSubmissions,
+			preApprovedSubmissions: preApprovedSubmissions,
+			approvedSubmissions: approvedSubmissions,
+			rejectedSubmissions: rejectedSubmissions,
+		};
 	}
 
 	async findAll(query: any): Promise<any> {

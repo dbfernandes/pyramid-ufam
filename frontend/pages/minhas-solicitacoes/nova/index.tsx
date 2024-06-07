@@ -25,11 +25,11 @@ export default function NovaSolicitacao() {
   useEffect(() => {
     setLinks([
       {
-        title: "Minhas solicitações",
+        title: "Minhas submissões",
         route: "/minhas-solicitacoes"
       },
       {
-        title: "Nova solicitação"
+        title: "Nova submissão"
       }
     ]);
   }, []);
@@ -48,7 +48,7 @@ export default function NovaSolicitacao() {
   return (
     <>
       <Head>
-        <title>Nova solicitação - {process.env.title}</title>
+        <title>Nova submissão - {process.env.title}</title>
       </Head>
 
       {loaded

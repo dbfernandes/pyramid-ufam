@@ -32,7 +32,7 @@ export default function Solicitacoes() {
 
     setLinks([
       {
-        title: "Solicitações",
+        title: "Submissões",
       },
     ]);
   }, []);
@@ -41,7 +41,7 @@ export default function Solicitacoes() {
   useEffect(() => {
     if (!user.logged) {
       router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
+    } else if (user.selectedCourse === null) {
       router.replace("/conta/curso");
     } else {
       setTimeout(() => setLoaded(true), 250);
@@ -107,7 +107,7 @@ export default function Solicitacoes() {
   return (
     <>
       <Head>
-        <title>Solicitações ({user?.selectedCourse?.name}) - {process.env.title}</title>
+        <title>Submissões ({user?.selectedCourse?.name}) - {process.env.title}</title>
       </Head>
 
       {loaded ? (

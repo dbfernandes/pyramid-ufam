@@ -9,6 +9,6 @@ export const ActivityGroupsNames = {
 	},
 	extensao: {
 		slug: "extension",
-		title: "Extensao",
+		title: "Extensão",
 	},
 };

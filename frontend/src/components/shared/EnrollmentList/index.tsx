@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { defaultCourse, setCourses } from "redux/slicer/user";
+import { setCourses } from "redux/slicer/user";
+import { getToken } from "utils";
 
 // Shared
 import toggleModalForm from "components/shared/ModalForm";
@@ -12,7 +13,7 @@ import { store } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
 import toast from "components/shared/Toast";
-import { H4, H5 } from "../Titles";
+import { H5 } from "../Titles";
 
 interface IEnrollmentListProps {
   user: IUserLogged;
@@ -30,7 +31,7 @@ export default function EnrollmentList({ user }: IEnrollmentListProps) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 

@@ -8,6 +8,8 @@ import { CourseService } from "../src/resources/course/course.service";
 import { ActivityService } from "../src/resources/activity/activity.service";
 import { PrismaService } from "../src/resources/prisma/prisma.service";
 import { CourseActivityGroupService } from "../src/resources/courseActivityGroup/courseActivityGroup.service";
+import { UserTypeIds } from "../src/common/constants.constants";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -99,6 +101,38 @@ async function ActivitiesSeeds() {
 	}
 }
 
+async function DefaultAdminSeed() {
+	const hashedPassword = bcrypt.hashSync(
+		process.env.DEFAULT_ADMIN_PASSWORD,
+		10,
+	);
+
+	await prisma.user.create({
+		data: {
+			name: "Admin",
+			email: process.env.DEFAULT_ADMIN_EMAIL,
+			userTypeId: UserTypeIds["Coordenador"],
+			password: hashedPassword,
+		},
+	});
+}
+
+async function DefaultSecretarySeed() {
+	const hashedPassword = bcrypt.hashSync(
+		process.env.DEFAULT_ADMIN_PASSWORD + "a",
+		10,
+	);
+
+	await prisma.user.create({
+		data: {
+			name: "Secretary",
+			email: process.env.DEFAULT_ADMIN_EMAIL + "a",
+			userTypeId: UserTypeIds["Secretário"],
+			password: hashedPassword,
+		},
+	});
+}
+
 function disconnect(message: any) {
 	console.log(message);
 	prisma.$disconnect();
@@ -121,4 +155,12 @@ CoursesSeeds()
 		disconnect("Default Courses loaded");
 		ActivitiesSeeds();
 	})
+	.catch((err) => disconnect(err));
+
+DefaultAdminSeed()
+	.then(() => disconnect("Default Admin loaded"))
+	.catch((err) => disconnect(err));
+
+DefaultSecretarySeed()
+	.then(() => disconnect("Default Secretary loaded"))
 	.catch((err) => disconnect(err));

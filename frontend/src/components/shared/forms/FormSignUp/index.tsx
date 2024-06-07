@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import { useDispatch } from "react-redux";
-import { login, authorize, defaultCourse } from "redux/slicer/user";
+import { login, defaultCourse, authorize } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { validateCpf, validateEmail } from "utils";
-
 
 // Shared
 import Form from "components/shared/Form";
@@ -176,13 +175,11 @@ export default function FormSignUp() {
         setSuccess(true);
 
         if (response.data.user) {
+          dispatch(authorize({
+            token: response.headers["x-access-token"],
+            refreshToken: response.headers["x-refresh-token"],
+          }));
           dispatch(defaultCourse(response.data.user.courses[0]));
-          dispatch(
-            authorize({
-              token: response.headers["x-access-token"],
-              refreshToken: response.headers["x-refresh-token"],
-            })
-          );
           dispatch(login(response.data.user));
 
           setTimeout(() => router.push(

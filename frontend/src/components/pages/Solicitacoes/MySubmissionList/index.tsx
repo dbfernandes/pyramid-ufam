@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import { getToken } from "utils";
 
 // Shared
 import { H3 } from "components/shared/Titles";
@@ -36,7 +37,6 @@ interface ISubmissionListProps {
 
   children?: React.ReactNode;
 }
-
 
 export default function MySubmissionList({
   submissions = [],
@@ -85,14 +85,14 @@ export default function MySubmissionList({
       method: "DELETE",
       headers: {
         "Content-Type": "application",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       }
     };
 
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Solicitações canceladas com sucesso");
+        toast("Sucesso", "Submissões canceladas com sucesso");
         setCheckedIds([]);
         onChange();
       })
@@ -112,7 +112,7 @@ export default function MySubmissionList({
   return (
     <Wrapper>
       <HeaderWrapper>
-        <H3>Minhas solicitações</H3>
+        <H3>Minhas submissões</H3>
 
         {checkedIds?.length > 0 &&
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
@@ -133,7 +133,7 @@ export default function MySubmissionList({
           fetching={fetchingFilter}
         />
         <SearchBar
-          placeholder="Pesquisar solicitações" />
+          placeholder="Pesquisar submissões" />
       </Filter>
 
       {submissions?.length > 0
@@ -153,7 +153,7 @@ export default function MySubmissionList({
 
           {children}
         </ListStyled>
-        : <Disclaimer>Você ainda não fez nenhuma solicitação.</Disclaimer>
+        : <Disclaimer>Você ainda não fez nenhuma submissão.</Disclaimer>
       }
 
       {submissions?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}

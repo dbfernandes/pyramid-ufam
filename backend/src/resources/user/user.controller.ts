@@ -57,7 +57,7 @@ export class UserController {
 	}
 
 	@Get(":id/report/:courseId")
-	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
 	@Roles(UserTypes.COORDINATOR, UserTypes.SECRETARY, UserTypes.STUDENT)
 	async getUserReport(
 		@Param("id") id: string,

@@ -36,7 +36,7 @@ export default function Solicitacoes() {
         route: `/usuarios/alunos/${router.query.id}`
       },
       {
-        title: "Solicitações"
+        title: "Submissões"
       }
     ]);
   }, []);
@@ -84,7 +84,7 @@ export default function Solicitacoes() {
     {
       user: { id: 1, enrollment: "256123456", name: "Guilherme Almeida", email: "teste@gmail.com", cpf: "123.456.789-00", course: "Engenharia de Software" },
       id: 3,
-      activityGroup: "Extensao",
+      activityGroup: "Extensão",
       activityType: "Participação em Monitoria",
       workload: "30h/40h",
       description: "Certificado de participação em monitoria",
@@ -93,7 +93,7 @@ export default function Solicitacoes() {
     {
       user: { id: 1, enrollment: "256123456", name: "Guilherme Almeida", email: "teste@gmail.com", cpf: "123.456.789-00", course: "Engenharia de Software" },
       id: 4,
-      activityGroup: "Extensao",
+      activityGroup: "Extensão",
       activityType: "Participação em Monitoria",
       workload: "30h/40h",
       description: "Certificado de participação em monitoria",
@@ -104,7 +104,7 @@ export default function Solicitacoes() {
   return (
     <>
       <Head>
-        <title>Solicitações - [Nome do aluno] - {process.env.title}</title>
+        <title>Submissões - [Nome do aluno] - {process.env.title}</title>
       </Head>
 
       {loaded ? (

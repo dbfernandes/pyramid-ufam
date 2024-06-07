@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { useRouter } from "next/router";
-import { getFilename } from "utils";
+import { getFilename, getToken } from "utils";
 
 // Shared
 import { FormAlert } from "components/shared/Form/styles";
@@ -33,8 +32,6 @@ export default function FormUpdateSubmission({
   onChange = () => { },
   handleCloseModalForm,
 }: IFormComponentProps) {
-  const router = useRouter();
-
   // Inputs and validators
   const [details, setDetails] = useState<string>("");
   const handleDetails = (value) => {
@@ -114,7 +111,7 @@ export default function FormUpdateSubmission({
       url: `${process.env.api}/submissions/${submissionProp.id}/`,
       headers: {
         "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: data,
     };
@@ -122,7 +119,7 @@ export default function FormUpdateSubmission({
     await axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Solicitação atualizada com sucesso", "success");
+        toast("Sucesso", "Submissão atualizada com sucesso", "success");
 
         if (handleCloseModalForm) {
           handleCloseModalForm();
@@ -146,7 +143,7 @@ export default function FormUpdateSubmission({
     <div style={{ padding: "0 25px 25px" }}>
       <div style={{ width: "100%" }}>
         <ParagraphTitle style={{ marginTop: 0 }}>
-          <b>(Opcional):</b> Alguma observação sobre o motivo da edição da solicitação?
+          <b>(Opcional):</b> Alguma observação sobre o motivo da edição da submissão?
         </ParagraphTitle>
 
         <TextArea
@@ -183,7 +180,7 @@ export default function FormUpdateSubmission({
             displayAlert={sent}
           />
           <ParagraphTitle>
-            Descreva sua solicitação (Exemplo:{" "}
+            Descreva sua submissão (Exemplo:{" "}
             <i>Certificado Angular Seminfo 2023</i>)*
           </ParagraphTitle>
           <TextInput

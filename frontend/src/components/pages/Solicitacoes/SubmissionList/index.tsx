@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
-import { getPlural } from "utils";
+import { getPlural, getToken } from "utils";
 
 import { H3 } from "components/shared/Titles";
 import Spinner from "components/shared/Spinner";
@@ -29,15 +29,6 @@ interface ISubmissionListProps {
   totalPages: number;
   onChange?: Function;
   children?: React.ReactNode;
-}
-
-export const countPendingSubmissions = (submissions) => {
-  return submissions.filter((submission) => submission.status === 1).length;
-};
-
-export const countPreAprovedSubmissions = (submissions) => {
-  console.log(submissions)
-  return submissions.filter((submission) => submission.status === 2).length;
 }
 
 export default function SubmissionList({
@@ -87,7 +78,7 @@ export default function SubmissionList({
       method: "PATCH",
       headers: {
         "Content-Type": "application",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: {
         userId: user.id,
@@ -98,7 +89,7 @@ export default function SubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", `Solicitações ${getPlural(status)} com sucesso`);
+        toast("Sucesso", `Submissões ${getPlural(status)} com sucesso`);
         setCheckedIds([]);
         onChange();
       })
@@ -118,7 +109,7 @@ export default function SubmissionList({
   return (
     <Wrapper>
       <HeaderWrapper>
-        <H3>Solicitações {subTitle && `(${subTitle})`}</H3>
+        <H3>Submissões {subTitle && `(${subTitle})`}</H3>
 
         {checkedIds.length > 0 && (
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
@@ -169,7 +160,7 @@ export default function SubmissionList({
           {children}
         </ListStyled>
       ) : (
-        <Disclaimer>Não há solicitações nesta categoria. Tente alterar o filtro.</Disclaimer>
+        <Disclaimer>Nenhuma submissão nessa categoria foi encontrada. Tente alterar o filtro.</Disclaimer>
       )}
 
       {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}

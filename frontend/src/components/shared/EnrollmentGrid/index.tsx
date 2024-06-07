@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { defaultCourse, setCourses } from "redux/slicer/user";
+import { getToken } from "utils";
 
 // Shared
 import toggleModalForm from "components/shared/ModalForm";
@@ -29,7 +30,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 

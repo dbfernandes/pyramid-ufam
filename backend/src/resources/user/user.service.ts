@@ -64,7 +64,7 @@ export class UserService {
 		});
 	}
 
-	async addUser(addUserDto: AddUserDto, token: string): Promise<any> {
+	async addUser(addUserDto: AddUserDto, token: string = ""): Promise<any> {
 		if (await this.findByEmail(addUserDto.email)) {
 			throw new BadRequestException("Email already in use");
 		}
@@ -129,14 +129,16 @@ export class UserService {
 			});
 		}
 
-		// Setting password reset token and sending welcome email
-		const resetToken = await this.authService.createPasswordResetToken(
-			userCreated.email,
-			48,
-		);
-
 		const userResponsible = await this.findById((decodeToken(token) as any).id);
-		await this.sendWelcomeEmail(userResponsible, userCreated, resetToken); // Fix to get user who called the endpoint
+		if (userResponsible) {
+			// Setting password reset token and sending welcome email
+			const resetToken = await this.authService.createPasswordResetToken(
+				userCreated.email,
+				48,
+			);
+
+			await this.sendWelcomeEmail(userResponsible, userCreated, resetToken);
+		}
 
 		const courses = await this.courseService
 			.findCoursesByUser(userCreated.id)
@@ -270,7 +272,7 @@ export class UserService {
 		const activityGroups =
 			await this.courseActivityGroupService.findByCourseId(+courseId);
 
-		const workloadCount = {};
+		const workloadCount = { totalWorkload: 0 };
 		activityGroups.forEach((_activityGroup) => {
 			workloadCount[_activityGroup?.ActivityGroup?.name] = {
 				maxWorkload: _activityGroup.maxWorkload,
@@ -296,6 +298,25 @@ export class UserService {
 				workloadCount[ActivityGroup.name].totalWorkload += submission.workload;
 			}
 		});
+
+		workloadCount.totalWorkload = Object.values(workloadCount).reduce(
+			(acc, activity) => {
+				if (
+					typeof activity === "object" &&
+					activity &&
+					(activity as { maxWorkload?: number; totalWorkload?: number })
+						?.totalWorkload
+				) {
+					return (
+						acc +
+						(activity as { maxWorkload?: number; totalWorkload?: number })
+							?.totalWorkload
+					);
+				}
+				return acc;
+			},
+			0,
+		);
 
 		return workloadCount;
 	}
@@ -324,8 +345,27 @@ export class UserService {
 			},
 		});
 
+		const courseSubmissions = submissions.filter(
+			(submission) =>
+				submission.Activity.CourseActivityGroup.Course.id === courseId,
+		);
+
+		const totalSubmissions = courseSubmissions.length;
+		const pendingSubmissions = courseSubmissions.filter(
+			(submission) => submission.status === StatusSubmissions["Submetido"],
+		).length;
+		const preApprovedSubmissions = courseSubmissions.filter(
+			(submission) => submission.status === StatusSubmissions["Pré-aprovado"],
+		).length;
+		const approvedSubmissions = courseSubmissions.filter(
+			(submission) => submission.status === StatusSubmissions["Aprovado"],
+		).length;
+		const rejectedSubmissions = courseSubmissions.filter(
+			(submission) => submission.status === StatusSubmissions["Rejeitado"],
+		).length;
+
 		const workloadCount = await this.groupAndCountWorkload(
-			submissions,
+			courseSubmissions,
 			courseId,
 		);
 
@@ -337,6 +377,11 @@ export class UserService {
 					: null,
 			},
 			workloadCount,
+			totalSubmissions,
+			pendingSubmissions,
+			preApprovedSubmissions,
+			approvedSubmissions,
+			rejectedSubmissions,
 		};
 	}
 
@@ -407,31 +452,33 @@ export class UserService {
 			}),
 		]);
 
-		const _users = users.map(async (user) => {
-			const courses = user.CourseUsers.map((courseUser) => ({
-				id: courseUser.Course.id,
-				name: courseUser.Course.name,
-				enrollment: courseUser.enrollment,
-				startYear: courseUser.startYear,
-			}));
+		const _users = await Promise.all(
+			users.map(async (user) => {
+				const courses = user.CourseUsers.map((courseUser) => ({
+					id: courseUser.Course.id,
+					name: courseUser.Course.name,
+					enrollment: courseUser.enrollment,
+					startYear: courseUser.startYear,
+				}));
 
-			return {
-				...user,
-				profileImage: user.profileImage
-					? `${getFilesLocation("profile-images")}/${user.profileImage}`
-					: null,
-				courses,
-				CourseUsers: undefined,
-				password: undefined,
-				userType: user.UserType,
-				UserType: undefined,
-				workloadCount: await this.groupAndCountWorkload(
-					user.Submissions,
-					+courseId,
-				),
-				Submissions: undefined,
-			};
-		});
+				return {
+					...user,
+					profileImage: user.profileImage
+						? `${getFilesLocation("profile-images")}/${user.profileImage}`
+						: null,
+					courses,
+					CourseUsers: undefined,
+					password: undefined,
+					userType: user.UserType,
+					UserType: undefined,
+					workloadCount:
+						user.userTypeId === UserTypeIds.Aluno
+							? await this.groupAndCountWorkload(user.Submissions, +courseId)
+							: undefined,
+					Submissions: undefined,
+				};
+			}),
+		);
 
 		return {
 			users: _users.filter((user) => user !== undefined && user !== null),

@@ -25,7 +25,7 @@ export default function SolicitacoesGruposAtividades() {
   useEffect(() => {
     setLinks([
       {
-        title: "Solicitações",
+        title: "Submissões",
       },
       {
         title: "Grupos de atividade",
@@ -47,7 +47,7 @@ export default function SolicitacoesGruposAtividades() {
   return (
     <>
       <Head>
-        <title>Solicitações por grupo de atividade - {process.env.title}</title>
+        <title>Submissões por grupo de atividade - {process.env.title}</title>
       </Head>
 
       {loaded ? (

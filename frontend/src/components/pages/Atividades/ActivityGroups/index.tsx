@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-
-// Shared
-import { H3 } from "components/shared/Titles";
-import { DefaultWrapper } from "components/shared/Wrapper/styles";
+import { getToken, slugify } from "utils";
 
 // Custom
-import ActivityCard, { IActivity } from "components/shared/cards/ActivityCard";
+import ActivityCard from "components/shared/cards/ActivityCard";
 import { CardGroup } from "../styles";
 import axios, { AxiosRequestConfig } from "axios";
 import toast from "components/shared/Toast";
 import { useSelector } from "react-redux";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import { slugify } from "utils";
 
 // Interfaces
 interface IActivityGroupsProps {
@@ -41,7 +37,7 @@ export default function ActivityGroups({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 

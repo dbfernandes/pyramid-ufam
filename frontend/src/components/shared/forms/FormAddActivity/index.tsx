@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
+import { getToken } from "utils";
 
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
@@ -12,7 +13,6 @@ import toast from "components/shared/Toast";
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
 import TextArea from "components/shared/TextArea";
-import { useRouter } from "next/router";
 
 interface IFormComponentProps {
   activity?: any;
@@ -92,7 +92,7 @@ export default function FormAddActivity({
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: data,
     };

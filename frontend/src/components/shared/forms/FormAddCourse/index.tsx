@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-
+import { getToken } from "utils";
 
 // Shared
 import { MultiField, FormAlert, SectionTitle } from "components/shared/Form/styles";
@@ -15,14 +15,12 @@ import IUserLogged from "interfaces/IUserLogged";
 
 interface IFormComponentProps {
   course?: any;
-  user: IUserLogged;
   onChange?: Function;
   handleCloseModalForm?: Function;
 }
 
 export default function FormAddCourse({
   course: courseProp = null,
-  user,
   onChange = () => { },
   handleCloseModalForm,
 }: IFormComponentProps) {
@@ -78,7 +76,7 @@ export default function FormAddCourse({
 
       const _education = courseProp.activityGroups.find((group) => group.name === "Ensino");
       const _research = courseProp.activityGroups.find((group) => group.name === "Pesquisa");
-      const _extension = courseProp.activityGroups.find((group) => group.name === "Extensao");
+      const _extension = courseProp.activityGroups.find((group) => group.name === "Extensão");
 
       setEducationWorkload(_education.maxWorkload.toString());
       setResearchWorkload(_research.maxWorkload.toString());
@@ -125,7 +123,7 @@ export default function FormAddCourse({
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: data,
     };
@@ -227,7 +225,7 @@ export default function FormAddCourse({
           />
 
           <TextInput
-            label={"Extensao*"}
+            label={"Extensão*"}
             name={"extensionWorkload"}
             value={extensionWorkload}
             handleValue={handleExtensionWorkload}

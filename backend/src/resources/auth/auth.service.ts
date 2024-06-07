@@ -35,11 +35,14 @@ export class AuthService {
 
 	async setAuthorizationHeader(user: any, res: Response) {
 		const userType = await this.userTypeService.findById(user.userTypeId);
-		const token = this.jwtService.sign({
-			email: user.email,
-			id: user.id,
-			userType: userType.name,
-		});
+		const token = this.jwtService.sign(
+			{
+				email: user.email,
+				id: user.id,
+				userType: userType.name,
+			},
+			{ expiresIn: "30m" },
+		);
 
 		const refreshToken = this.jwtService.sign(
 			{
@@ -58,20 +61,24 @@ export class AuthService {
 	}
 
 	async refreshToken(refreshToken: string, res: Response) {
-		const decoded = this.jwtService.verify(refreshToken);
-		if (!decoded.isRefreshToken) {
+		try {
+			const decoded = this.jwtService.verify(refreshToken);
+			if (!decoded.isRefreshToken) {
+				throw new UnauthorizedException("Invalid refresh token");
+			}
+
+			const user = await this.userService.findByEmail(decoded.email);
+			if (!user) {
+				throw new UnauthorizedException("User not found");
+			}
+
+			await this.setAuthorizationHeader(user, res);
+			return {
+				message: "User reauthenticated successfully",
+			};
+		} catch (error) {
 			throw new UnauthorizedException("Invalid refresh token");
 		}
-
-		const user = await this.userService.findByEmail(decoded.email);
-		if (!user) {
-			throw new UnauthorizedException("User not found");
-		}
-
-		await this.setAuthorizationHeader(user, res);
-		return {
-			message: "User reauthenticated successfully",
-		};
 	}
 
 	async validateUser(email: string, password: string): Promise<any> {

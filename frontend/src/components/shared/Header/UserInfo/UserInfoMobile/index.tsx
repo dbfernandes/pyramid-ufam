@@ -27,10 +27,16 @@ export default function UserInfoMobile() {
   return (
     <Wrapper>
       <UserPic>
-        <img src={user?.profileImage && user?.profileImage.length > 0
-          ? user?.profileImage
-          : `${process.env.basePath}/img/user.png`
-        } alt={user?.name} />
+        <img
+          src={user?.profileImage && user?.profileImage.length > 0
+            ? user?.profileImage
+            : `${process.env.basePath}/img/user.png`
+          }
+          alt={user?.name}
+          onError={({ currentTarget }) => {
+            currentTarget.src = `${process.env.basePath}/img/user.png`;
+          }}
+        />
       </UserPic>
       <UserName>{user.name}</UserName>
 

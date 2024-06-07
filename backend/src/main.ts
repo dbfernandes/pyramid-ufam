@@ -4,7 +4,7 @@ import { createSwaggerDocument } from "../swagger/swagger.config";
 import * as express from "express";
 import { ValidationPipe } from "@nestjs/common";
 import * as cors from "cors";
-// Permitir solicitações de todas as origens
+// Permitir submissões de todas as origens
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);

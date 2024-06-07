@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import { getToken } from "utils";
 
 // Shared
 import { H4 } from "components/shared/Titles";
@@ -24,7 +25,6 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
 import toast from "components/shared/Toast";
-import { useRouter } from "next/router";
 
 interface ICourseCard {
   course: ICourse;
@@ -64,11 +64,11 @@ export default function CourseCard({
     const [totalActiveUsers, setTotalActiveUsers] = useState<number>(0);
 
     useEffect(() => {
-      if (user.logged && course.id) {
+      if (user?.logged && course.id) {
         fetchUsers(0, "", "active", course.id);
       }
-    }, [user.logged, course.id]);
-  
+    }, [user?.logged, course.id]);
+
     async function fetchUsers(_page, _search, _status, courseId) {
       setFetchingUsers(true);
 
@@ -77,7 +77,7 @@ export default function CourseCard({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${user.token}`,
+          "Authorization": `Bearer ${getToken()}`,
         },
       };
 
@@ -94,17 +94,17 @@ export default function CourseCard({
         handleFetchError(error);
       }
 
-    setFetchingUsers(false);
-  }
+      setFetchingUsers(false);
+    }
 
-  function handleFetchError(error) {
-    const errorMessages = {
-      0: "Oops, tivemos um erro. Tente novamente.",
-      500: error?.response?.data?.message,
-    };
-    const code = error?.response?.status ? error.response.status : 500;
-    toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
-  }
+    function handleFetchError(error) {
+      const errorMessages = {
+        0: "Oops, tivemos um erro. Tente novamente.",
+        500: error?.response?.data?.message,
+      };
+      const code = error?.response?.status ? error.response.status : 500;
+      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+    }
 
     function handleDeletion(e) {
       e.preventDefault();
@@ -144,7 +144,7 @@ export default function CourseCard({
                   onClick={() =>
                     toggleModalForm(
                       `Editar curso (${course.name})`,
-                      <FormEditCourse user={user} course={course} onChange={onChange} />,
+                      <FormEditCourse course={course} onChange={onChange} />,
                       "md"
                     )
                   }

@@ -32,7 +32,7 @@ export default function MinhasSolicitacoes() {
 
     setLinks([
       {
-        title: "Minhas solicitações",
+        title: "Minhas submissões",
       },
     ]);
   }, []);
@@ -107,7 +107,7 @@ export default function MinhasSolicitacoes() {
   return (
     <>
       <Head>
-        <title>Minhas solicitações - {process.env.title}</title>
+        <title>Minhas submissões - {process.env.title}</title>
       </Head>
 
       {loaded ? (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-
+import { getToken } from "utils";
 import { setCourses } from "redux/slicer/user";
 import { store } from "redux/store";
 
@@ -55,7 +55,7 @@ export default function FormLinkCourse({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
     };
 
@@ -146,7 +146,7 @@ export default function FormLinkCourse({
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user.token}`,
+        "Authorization": `Bearer ${getToken()}`,
       },
       data: {
         enrollment: data.enrollment,
