@@ -80,14 +80,20 @@ export class CourseService {
 
 		const totalStudents = await this.prisma.courseUser.count({
 			where: {
-				id,
+				courseId: id,
 				enrollment: { not: null },
 			},
 		});
 
 		const submissions = await this.prisma.submission.findMany({
 			where: {
-				id,
+				Activity: {
+					CourseActivityGroup: {
+						Course: {
+							id: id,
+						},
+					},
+				},
 			},
 			select: {
 				id: true,
