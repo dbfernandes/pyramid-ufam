@@ -180,7 +180,7 @@ export default function User({
       <>
         <Column><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
         <Column><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
-        <Column><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
+        <Column><CustomProgressBar current={workloadCount["Extensao"].totalWorkload} max={workloadCount["Extensao"].maxWorkload} /></Column>
       </>
     )
   }

@@ -88,6 +88,7 @@ export default function Secretarios() {
       .then((response) => {
         const filteredUsers = response.data.users.filter(u => u.email != user.email)
         setUsers(filteredUsers);
+        console.log(filteredUsers)
         setTotalPages(response.data.totalPages);
       })
       .catch((error) => {

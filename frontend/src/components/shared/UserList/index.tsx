@@ -107,7 +107,8 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Aluno desativado com sucesso");
+
+        toast("Sucesso", "Desativado com sucesso");
         onChange();
       })
       .catch((error) => {
