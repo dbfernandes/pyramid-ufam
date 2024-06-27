@@ -58,8 +58,8 @@ export default function DashboardStudent({
           accent="var(--success)"
           title="horas concluídas"
           value={`${report?.workloadCount?.totalWorkload}/240`}
-          callToAction="Nova submissão"
-          link="/minhas-solicitacoes/nova"
+          callToAction="Submissões"
+          link="/minhas-solicitacoes?page=1&search=&status=3"
         />
         <NumberTile
           icon="file-earmark-medical"

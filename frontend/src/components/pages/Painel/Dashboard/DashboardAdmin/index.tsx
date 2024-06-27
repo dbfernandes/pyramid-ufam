@@ -70,6 +70,14 @@ export default function DashboardAdmin({
           link="/solicitacoes?page=1&search=&status=2"
         />
         <NumberTile
+          icon="file-earmark-medical"
+          accent="var(--success)"
+          title="submissões aprovadas"
+          value={report?.preApprovedSubmissions}
+          callToAction="Submissões"
+          link="/solicitacoes?page=1&search=&status=3"
+        />
+        <NumberTile
           icon="person"
           accent="var(--success)"
           title="alunos no curso"
