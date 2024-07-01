@@ -12,7 +12,7 @@ import { Disclaimer } from "components/shared/UserList/styles";
 import Paginator from "components/shared/Paginator";
 import { useMediaQuery } from "react-responsive";
 import FloatingMenu from "components/shared/FloatingMenu";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import Spinner from "components/shared/Spinner";
 
 // Custom
@@ -54,7 +54,7 @@ export default function Courses({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         onChange();
-        toast("Sucesso", "Curso removido com sucesso");
+        toast.success("Curso removido com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {
@@ -63,7 +63,7 @@ export default function Courses({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
   }
 

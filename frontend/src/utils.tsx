@@ -4,7 +4,7 @@ import { authorize, logout } from "redux/slicer/user";
 import { resetTimer } from "redux/slicer/timer";
 
 // Shared
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 export async function checkAuthentication(): Promise<void> {
   function parseJwt(token) {
@@ -45,10 +45,10 @@ export async function checkAuthentication(): Promise<void> {
       })
       .catch((error) => {
         if (error?.response?.status === 401) {
-          toast("Sessão", "Houve um erro ao renovar sua sessão.", "danger");
+          toast.error("Houve um erro ao renovar sua sessão.");
           store.dispatch(logout());
         } else {
-          toast("Erro", "Houve um erro ao renovar sua sessão.", "danger");
+          toast.error("Houve um erro ao renovar sua sessão.");
         }
       });
   }

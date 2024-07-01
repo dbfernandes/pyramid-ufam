@@ -54,6 +54,7 @@ model Course {
   name        String    @unique @db.VarChar(100)
   code        String    @unique @db.VarChar(10)
   periods     Int
+  minWorkload Int       @default(240)
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt

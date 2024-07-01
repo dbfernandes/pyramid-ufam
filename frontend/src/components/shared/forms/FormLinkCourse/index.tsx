@@ -11,7 +11,7 @@ import SelectCustom from "components/shared/SelectCustom";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -74,7 +74,7 @@ export default function FormLinkCourse({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingCourses(false);
@@ -162,7 +162,7 @@ export default function FormLinkCourse({
           handleCloseModalForm();
         }
         dispatch(setCourses(response.data));
-        toast("Sucesso", isEdit ? "Matrícula alterada com sucesso" : "Curso vinculado com sucesso", "success");
+        toast.success(isEdit ? "Matrícula alterada com sucesso." : "Curso vinculado com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {

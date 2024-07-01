@@ -7,6 +7,7 @@ import {
 	Max,
 	IsNotEmpty,
 	ValidateNested,
+	IsOptional,
 } from "class-validator";
 
 class ActivityGroups {
@@ -45,6 +46,12 @@ export class CreateCourseDto {
 	@Min(1)
 	@Max(16)
 	periods: number;
+
+	@IsOptional()
+	@IsInt()
+	@Min(1)
+	@Max(500)
+	minWorkload: number;
 
 	@IsNotEmpty()
 	@ValidateNested()

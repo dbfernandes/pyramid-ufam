@@ -5,7 +5,7 @@ import NumberTile from "../NumberTile";
 
 // Shared
 import Spinner from "components/shared/Spinner";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 import IUserLogged from "interfaces/IUserLogged";
 export default function DashboardStudent({
@@ -33,6 +33,7 @@ export default function DashboardStudent({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
+        console.log(response.data);
         setReport(response.data);
       })
       .catch((error) => handleFetchError(error));
@@ -46,7 +47,7 @@ export default function DashboardStudent({
       500: error?.response?.data?.message,
     };
     const code = error?.response?.status ? error.response.status : 500;
-    toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+    toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
   }
 
   return (
@@ -57,16 +58,16 @@ export default function DashboardStudent({
           icon="file-earmark-check"
           accent="var(--success)"
           title="horas concluídas"
-          value={`${report?.workloadCount?.totalWorkload}/240`}
-          callToAction="Submissões"
+          value={`${report?.workloadCount?.totalWorkload}/${report?.course.minWorkload}`}
+          callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=3"
         />
         <NumberTile
           icon="file-earmark-medical"
           accent="var(--danger)"
-          title="submissões pendentes"
+          title="submissões a serem avaliadas"
           value={report?.pendingSubmissions}
-          callToAction="Submissões"
+          callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=1"
         />
         <NumberTile
@@ -74,7 +75,7 @@ export default function DashboardStudent({
           accent="var(--warning-hover)"
           title="submissões pré-aprovadas"
           value={report?.preApprovedSubmissions}
-          callToAction="Submissões"
+          callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=2"
         />
       </>

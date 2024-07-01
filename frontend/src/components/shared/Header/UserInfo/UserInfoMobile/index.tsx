@@ -20,10 +20,6 @@ export default function UserInfoMobile() {
   const dispatch = useDispatch();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
 
-  function handleChangeCourse() {
-    dispatch(defaultCourse(null));
-  }
-
   return (
     <Wrapper>
       <UserPic>

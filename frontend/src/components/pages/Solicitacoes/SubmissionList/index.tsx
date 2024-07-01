@@ -18,7 +18,7 @@ import {
 } from "components/shared/cards/SubmissionCard/styles";
 
 import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
@@ -89,7 +89,7 @@ export default function SubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", `Submissões ${getPlural(status)} com sucesso`);
+        toast.success(`Submissões ${getPlural(status)} com sucesso.`);
         setCheckedIds([]);
         onChange();
       })
@@ -100,7 +100,7 @@ export default function SubmissionList({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingMassUpdate(false);

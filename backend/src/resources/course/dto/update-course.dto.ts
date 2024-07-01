@@ -48,6 +48,12 @@ export class UpdateCourseDto {
 	periods?: number;
 
 	@IsOptional()
+	@IsInt()
+	@Min(1)
+	@Max(500)
+	minWorkload: number;
+
+	@IsOptional()
 	@ValidateNested()
 	@Type(() => ActivityGroups)
 	activityGroupsWorkloads?: ActivityGroups;

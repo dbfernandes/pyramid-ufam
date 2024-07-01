@@ -12,7 +12,7 @@ import {
 } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import Spinner from "components/shared/Spinner";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Custom
 import { CustomForm, FormSection, ProfilePicture } from "./styles";
@@ -91,7 +91,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Informações atualizadas com sucesso.", "success");
+        toast.success("Informações atualizadas com sucesso.");
         dispatch(login({
           ...user,
           name: response.data.name,
@@ -131,10 +131,10 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
 
       if (file == null) return false;
       if (!allowedTypes.includes(file.type)) {
-        toast("Erro", "Somente arquivos de imagem (.png, .jpg, .jpeg) são permitidos", "danger");
+        toast.error("Somente arquivos de imagem (.png, .jpg, .jpeg) são permitidos.");
         return false;
       } else if (maxSize != -1 && file.size > maxSize) {
-        toast("Erro", "Somente arquivos até 3 mb são permitidos", "danger");
+        toast.error("Somente arquivos até 3 mb são permitidos.");
         return false;
       }
 
@@ -170,7 +170,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       (response) => {
         dispatch(setProfileImage(response.data.profileImage));
 
-        toast("Sucesso", "Imagem atualizada com sucesso.");
+        toast.success("Imagem atualizada com sucesso.");
       }).catch((error) => {
         const errorMessages = {
           0: "Oops, tivemos um erro. Tente novamente.",
@@ -178,7 +178,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingUpdateImage(false);

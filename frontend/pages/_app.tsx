@@ -9,21 +9,18 @@ import BreadcrumbContextProvider, { useBreadcrumb } from "contexts/BreadcrumbCon
 import { checkAuthentication } from "utils";
 import { useMediaQuery } from "react-responsive";
 import NextNProgress from "nextjs-progressbar";
+import { ToastContainer, toast } from "react-toastify";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "react-toastify/dist/ReactToastify.css";
 import "../public/styles/main.css";
 
 import SessionWatcher from "components/shared/SessionWatcher";
 import Header from "components/shared/Header";
 import Sidenav from "components/shared/Sidenav";
-import toast from "components/shared/Toast";
-
-// Interfaces
-import { IRootState } from "redux/store";
-import IUserLogged from "interfaces/IUserLogged";
 
 export default function AppWrapper(props: any) {
   return (
@@ -40,7 +37,6 @@ export default function AppWrapper(props: any) {
 function App(props: any) {
   const disabledMenusRoutes = ["entrar", "cadastro", "conta/curso", "conta/senha"];
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
   const isMobile = useMediaQuery({ maxWidth: 992 });
 
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -104,6 +100,19 @@ function App(props: any) {
       </>}
 
       <div id="modals" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      // transition="Bounce"
+      />
     </section>
   );
 }

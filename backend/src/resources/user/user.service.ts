@@ -345,6 +345,7 @@ export class UserService {
 			},
 		});
 
+		const course = await this.courseService.findById(courseId);
 		const courseSubmissions = submissions.filter(
 			(submission) =>
 				submission.Activity.CourseActivityGroup.Course.id === courseId,
@@ -376,6 +377,7 @@ export class UserService {
 					? `${getFilesLocation("profile-images")}/${user.profileImage}`
 					: null,
 			},
+			course,
 			workloadCount,
 			totalSubmissions,
 			pendingSubmissions,

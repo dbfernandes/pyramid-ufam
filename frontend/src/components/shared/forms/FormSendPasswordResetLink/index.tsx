@@ -9,7 +9,7 @@ import {
 } from "components/shared/Form/styles";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Custom
 import { CustomForm, FormSection } from "./styles";
@@ -50,7 +50,7 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Email enviado com sucesso.", "success");
+        toast.success("Email enviado com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {

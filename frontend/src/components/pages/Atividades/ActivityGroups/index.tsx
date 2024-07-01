@@ -5,7 +5,7 @@ import { getToken, slugify } from "utils";
 import ActivityCard from "components/shared/cards/ActivityCard";
 import { CardGroup } from "../styles";
 import axios, { AxiosRequestConfig } from "axios";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
@@ -53,7 +53,7 @@ export default function ActivityGroups({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingGroups(false);

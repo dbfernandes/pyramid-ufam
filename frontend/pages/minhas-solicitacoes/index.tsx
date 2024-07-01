@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
+import { toast } from "react-toastify";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
-import toast from "components/shared/Toast";
 
 // Custom
 import MySubmissionList from "components/pages/Solicitacoes/MySubmissionList";
@@ -98,7 +98,7 @@ export default function MinhasSolicitacoes() {
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingSubmissions(false);

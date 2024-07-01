@@ -5,7 +5,7 @@ import NumberTile from "../NumberTile";
 
 // Shared
 import Spinner from "components/shared/Spinner";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 import IUserLogged from "interfaces/IUserLogged";
 export default function DashboardAdmin({
@@ -46,7 +46,7 @@ export default function DashboardAdmin({
       500: error?.response?.data?.message,
     };
     const code = error?.response?.status ? error.response.status : 500;
-    toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+    toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
   }
 
   return (
@@ -58,7 +58,7 @@ export default function DashboardAdmin({
           accent="var(--danger)"
           title="submissões pendentes"
           value={report?.pendingSubmissions}
-          callToAction="Submissões"
+          callToAction="Visualizar"
           link="/solicitacoes?page=1&search=&status=1"
         />
         <NumberTile
@@ -66,7 +66,7 @@ export default function DashboardAdmin({
           accent="var(--warning-hover)"
           title="submissões pré-aprovadas"
           value={report?.preApprovedSubmissions}
-          callToAction="Submissões"
+          callToAction="Visualizar"
           link="/solicitacoes?page=1&search=&status=2"
         />
         <NumberTile
@@ -74,7 +74,7 @@ export default function DashboardAdmin({
           accent="var(--success)"
           title="submissões aprovadas"
           value={report?.preApprovedSubmissions}
-          callToAction="Submissões"
+          callToAction="Visualizar"
           link="/solicitacoes?page=1&search=&status=3"
         />
         <NumberTile
@@ -82,7 +82,7 @@ export default function DashboardAdmin({
           accent="var(--success)"
           title="alunos no curso"
           value={report?.totalStudents}
-          callToAction="Alunos"
+          callToAction="Visualizar"
           link="/usuarios/alunos"
         />
       </>

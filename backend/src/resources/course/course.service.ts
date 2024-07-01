@@ -25,6 +25,7 @@ export class CourseService {
 		searchHash.push(course.name);
 		searchHash.push(course.code);
 		searchHash.push(course.periods);
+		searchHash.push(course.minWorkload);
 
 		await this.prisma.course.update({
 			where: { id },
@@ -147,6 +148,7 @@ export class CourseService {
 					name: true,
 					code: true,
 					periods: true,
+					minWorkload: true,
 					isActive: true,
 					createdAt: true,
 					updatedAt: true,
@@ -202,6 +204,7 @@ export class CourseService {
 				name: true,
 				code: true,
 				periods: true,
+				minWorkload: true,
 				isActive: true,
 				createdAt: true,
 				updatedAt: true,
@@ -276,6 +279,7 @@ export class CourseService {
 				name: true,
 				code: true,
 				periods: true,
+				minWorkload: true,
 			},
 		});
 

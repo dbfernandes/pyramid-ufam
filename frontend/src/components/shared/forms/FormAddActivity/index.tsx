@@ -8,7 +8,7 @@ import TextInput from "components/shared/TextInput";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -105,7 +105,7 @@ export default function FormAddActivity({
         if (handleCloseModalForm) {
           handleCloseModalForm();
         }
-        toast("Sucesso", isEdit ? "Atividade alterada com sucesso" : "Atividade adicionada com sucesso", "success");
+        toast.success(isEdit ? "Atividade alterada com sucesso." : "Atividade adicionada com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {

@@ -24,7 +24,7 @@ import ICourse from "interfaces/ICourse";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 interface ICourseCard {
   course: ICourse;
@@ -103,7 +103,7 @@ export default function CourseCard({
         500: error?.response?.data?.message,
       };
       const code = error?.response?.status ? error.response.status : 500;
-      toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+      toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
     }
 
     function handleDeletion(e) {

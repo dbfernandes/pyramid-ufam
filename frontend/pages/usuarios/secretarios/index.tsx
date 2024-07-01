@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
 import { parseUserActiveParam } from "utils";
+import { toast } from "react-toastify";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
 import Spinner from "components/shared/Spinner";
 import UserList from "components/shared/UserList";
-import toast from "components/shared/Toast";
 
 // Interfaces
 import { IRootState } from "redux/store";
@@ -98,7 +98,7 @@ export default function Secretarios() {
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingUsers(false);

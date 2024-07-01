@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `courses` ADD COLUMN `minWorkload` INTEGER NOT NULL DEFAULT 240;

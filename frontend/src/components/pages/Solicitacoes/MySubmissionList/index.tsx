@@ -26,7 +26,7 @@ import IUserLogged from "interfaces/IUserLogged";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
 import axios, { AxiosRequestConfig } from "axios";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import Spinner from "components/shared/Spinner";
 interface ISubmissionListProps {
   submissions?: any[];
@@ -92,7 +92,7 @@ export default function MySubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Submissões canceladas com sucesso");
+        toast.success("Submissões canceladas com sucesso.");
         setCheckedIds([]);
         onChange();
       })
@@ -103,7 +103,7 @@ export default function MySubmissionList({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingMassCancel(false);

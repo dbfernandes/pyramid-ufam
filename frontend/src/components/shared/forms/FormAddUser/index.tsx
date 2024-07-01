@@ -15,7 +15,7 @@ import Spinner from "components/shared/Spinner";
 import { H3 } from "components/shared/Titles";
 import SelectCustom from "components/shared/SelectCustom";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Custom
 import { CustomForm, FormSection } from "./styles";
@@ -212,7 +212,7 @@ export default function FormAddUser() {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Usuário adicionado com sucesso.", "success");
+        toast.success("Usuário adicionado com sucesso.");
         setDefaultState();
       })
       .catch((error) => {

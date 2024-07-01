@@ -9,7 +9,7 @@ import TextArea from "components/shared/TextArea";
 import { Button, DangerButton } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -69,7 +69,7 @@ export default function FormUpdateStatusSubmission({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Status atualizado com sucesso.", "success");
+        toast.success("Status atualizado com sucesso.");
         onChange();
       })
       .catch((error) => {
@@ -79,7 +79,7 @@ export default function FormUpdateStatusSubmission({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     if (handleCloseModalForm) {

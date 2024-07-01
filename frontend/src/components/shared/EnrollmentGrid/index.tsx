@@ -12,7 +12,7 @@ import EnrollmentCard from "components/shared/cards/EnrollmentCard";
 import { store } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 interface IEnrollmentGridProps {
   user: IUserLogged;
@@ -38,7 +38,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         dispatch(setCourses(response.data));
-        toast("Sucesso", "Curso desvinculado com sucesso.");
+        toast.success("Curso desvinculado com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {
@@ -48,7 +48,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
         setFetching(false);
       });
   }

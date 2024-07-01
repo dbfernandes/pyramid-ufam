@@ -8,7 +8,7 @@ import TextInput from "components/shared/TextInput";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import Content from "components/shared/ModalForm/Content";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -47,6 +47,11 @@ export default function FormAddCourse({
   }
 
   // Workloads
+  const [minWorkload, setMinWorkload] = useState<string>("240");
+  const handleMinWorkload = (value) => {
+    setMinWorkload(value);
+  };
+
   const [educationWorkload, setEducationWorkload] = useState<string>("240");
   const handleEducationWorkload = (value) => {
     setEducationWorkload(value);
@@ -73,6 +78,7 @@ export default function FormAddCourse({
       setName(courseProp.name);
       setCode(courseProp.code.toString());
       setPeriods(courseProp.periods.toString());
+      setMinWorkload(courseProp.minWorkload.toString());
 
       const _education = courseProp.activityGroups.find((group) => group.name === "Ensino");
       const _research = courseProp.activityGroups.find((group) => group.name === "Pesquisa");
@@ -99,6 +105,7 @@ export default function FormAddCourse({
       code.length > 0 &&
       periods.length > 0 &&
       validatePeriods(periods) &&
+      validateWorkload(minWorkload) &&
       validateWorkload(educationWorkload) &&
       validateWorkload(researchWorkload) &&
       validateWorkload(extensionWorkload)) {
@@ -106,6 +113,7 @@ export default function FormAddCourse({
         name,
         code: code,
         periods: parseInt(periods),
+        minWorkload: parseInt(minWorkload),
         activityGroupsWorkloads: {
           education: parseInt(educationWorkload),
           research: parseInt(researchWorkload),
@@ -136,7 +144,7 @@ export default function FormAddCourse({
         if (handleCloseModalForm) {
           handleCloseModalForm();
         }
-        toast("Sucesso", isEdit ? "Curso alterado com sucesso" : "Curso adicionado com sucesso", "success");
+        toast.success(isEdit ? "Curso alterado com sucesso." : "Curso adicionado com sucesso.");
       })
       .catch((error) => {
         const badRequestMessages = {
@@ -197,8 +205,19 @@ export default function FormAddCourse({
           />
         </MultiField>
 
+        <TextInput
+          label={"Carga horária mínima (horas)*"}
+          name={"minWorkoad"}
+          value={minWorkload}
+          handleValue={handleMinWorkload}
+          mask={"999"}
+          validate={validateWorkload}
+          required={true}
+          displayAlert={sent}
+        />
+
         <SectionTitle>
-          <b>2.</b> Carga horária por grupo de atividade
+          <b>2.</b> Carga horária por grupo de atividade (horas)
         </SectionTitle>
 
         <MultiField customGrid={"1fr 1fr 1fr"}>

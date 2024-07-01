@@ -7,7 +7,7 @@ import { formatCpf, getFilename } from "utils";
 
 // Shared
 import { H6 } from "components/shared/Titles";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import UserActions from "./UserActions";
 
 // Custom

@@ -10,7 +10,7 @@ import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import { AddUserButton, HeaderWrapper } from "components/shared/UserList/styles";
 import { Disclaimer } from "components/shared/UserList/styles";
 import ActivityCard from "components/shared/cards/ActivityCard";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import FormAddActivity from "components/shared/forms/FormAddActivity";
 
 // Custom
@@ -45,7 +45,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       .request(options as AxiosRequestConfig)
       .then((response) => {
         onChange();
-        toast("Sucesso", "Curso removido com sucesso");
+        toast.success("Curso removido com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {
@@ -54,7 +54,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
   }
 

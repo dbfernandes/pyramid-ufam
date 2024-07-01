@@ -9,7 +9,7 @@ import TextArea from "components/shared/TextArea";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import RangeInput from "components/shared/RangeInput";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Custom
 import ActivitySelect from "../ActivitySelect";
@@ -119,7 +119,7 @@ export default function FormUpdateSubmission({
     await axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Submissão atualizada com sucesso", "success");
+        toast.success("Submissão atualizada com sucesso.");
 
         if (handleCloseModalForm) {
           handleCloseModalForm();
@@ -133,7 +133,7 @@ export default function FormUpdateSubmission({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetching(false);

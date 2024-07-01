@@ -9,7 +9,7 @@ import FormPage from "components/shared/FormPage";
 import TextInput from "components/shared/TextInput";
 import Spinner from "components/shared/Spinner";
 import RangeInput from "components/shared/RangeInput";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 
 // Custom
 import ActivitySelect from "./ActivitySelect";
@@ -73,7 +73,6 @@ export default function FormAddSubmission({
     setSent(true);
 
     if (activity != null && description.length != 0 && file != null) {
-      toast("Erro", `${activity.name}`);
       fetchSubmit();
     }
   }
@@ -104,7 +103,7 @@ export default function FormAddSubmission({
     await axios(config)
       .then((response) => {
         setSuccess(true);
-        toast("Sucesso", "Submissão enviada com sucesso", "success");
+        toast.success("Submissão enviada com sucesso.");
         router.push("/minhas-solicitacoes");
       })
       .catch((error) => {
@@ -112,6 +111,12 @@ export default function FormAddSubmission({
           0: "Oops, tivemos um erro. Tente novamente.",
           500: error?.response?.data?.message,
         };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        setError(
+          code in errorMessages ? errorMessages[code] : errorMessages[0]
+        );
+        setSuccess(false);
       });
 
     setFetching(false);

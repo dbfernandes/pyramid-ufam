@@ -35,7 +35,7 @@ const userSlice = createSlice({
         logged: true,
       };
     },
-    logout: (state) => {
+    logout: () => {
       return initialState;
     },
     authorize: (state, payload) => {

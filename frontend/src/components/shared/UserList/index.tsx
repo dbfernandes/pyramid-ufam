@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
 import { getToken } from "utils";
+import { toast } from "react-toastify";
 
 // Shared
 import { H3 } from "components/shared/Titles";
@@ -11,7 +12,6 @@ import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "../FilterCollapsible";
-import toast from "../Toast";
 
 // Custom
 import {
@@ -49,7 +49,6 @@ export default function UserList({
 
   children
 }: IUserListProps) {
-  console.log(users);
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
@@ -108,7 +107,7 @@ export default function UserList({
       .request(options as AxiosRequestConfig)
       .then((response) => {
 
-        toast("Sucesso", "Desativado com sucesso");
+        toast.success("Usuário desativado com sucesso.");
         onChange();
       })
       .catch((error) => {
@@ -118,7 +117,7 @@ export default function UserList({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingDelete(false);
@@ -140,7 +139,7 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast("Sucesso", "Alunos desativados com sucesso");
+        toast.success("Alunos desativados com sucesso.");
         setCheckedIds([]);
         onChange();
       })
@@ -151,7 +150,7 @@ export default function UserList({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingMassDelete(false);

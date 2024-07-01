@@ -6,7 +6,7 @@ import { getFirstAndLastName, getToken, parseDateAndTime } from "utils";
 import confirm from "components/shared/ConfirmModal";
 import Spinner from "components/shared/Spinner";
 import toggleModalForm from "components/shared/ModalForm";
-import toast from "components/shared/Toast";
+import { toast } from "react-toastify";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
 import FormUpdateSubmission from "components/shared/forms/FormAddSubmission/FormUpdateSubmission";
 import {
@@ -64,7 +64,7 @@ export default function UserActions({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingHistory(false);
@@ -135,7 +135,7 @@ export default function UserActions({
       .request(options as AxiosRequestConfig)
       .then((response) => {
         onChange();
-        toast("Sucesso", "Submissão cancelada com sucesso");
+        toast.success("Submissão cancelada com sucesso.");
       })
       .catch((error) => {
         const errorMessages = {
@@ -144,7 +144,7 @@ export default function UserActions({
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
   }
 

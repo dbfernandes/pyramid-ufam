@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
+import { toast } from "react-toastify";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -15,7 +16,6 @@ import Courses from "components/pages/Cursos/Courses";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import toast from "components/shared/Toast";
 
 export default function Cursos() {
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function Cursos() {
         };
 
         const code = error?.response?.status ? error.response.status : 500;
-        toast("Erro", code in errorMessages ? errorMessages[code] : errorMessages[0], "danger");
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
       });
 
     setFetchingCourses(false);
