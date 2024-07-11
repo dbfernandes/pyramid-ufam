@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev --port 3366",
-		"build": "next build --port 3366",
+		"build": "next build",
 		"start": "next start --port 3366",
 		"lint": "next lint",
 		"deploy": "gcloud app deploy --no-promote --version=1-0-2",
