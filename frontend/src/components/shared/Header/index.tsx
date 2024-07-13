@@ -32,7 +32,7 @@ export default function Header({ isMobile }: IHeaderProps) {
                 <i className={"bi bi-list"} />
               </Burger>
 
-              <Logo src={`${process.env.basePath}/img/full-logo.png`} />
+              <Logo src={`${process.env.img}/full-logo.png`} />
             </div>
 
             <UserInfo isMobile />

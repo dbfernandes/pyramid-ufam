@@ -193,11 +193,11 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           <img
             src={user?.profileImage && user?.profileImage.length > 0
               ? user?.profileImage
-              : `${process.env.basePath}/img/user.png`
+              : `${process.env.img}/user.png`
             }
             alt={user?.name}
             onError={({ currentTarget }) => {
-              currentTarget.src = `${process.env.basePath}/img/user.png`;
+              currentTarget.src = `${process.env.img}/user.png`;
             }}
           />
 

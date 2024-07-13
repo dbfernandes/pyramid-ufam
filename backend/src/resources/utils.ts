@@ -43,5 +43,5 @@ export function decodeToken(token: string) {
 }
 
 export function getFilesLocation(folder: string) {
-	return `${process.env.BACKEND_URL}/files/${folder}`;
+	return `${process.env.API_URL}/files/${folder}`;
 }

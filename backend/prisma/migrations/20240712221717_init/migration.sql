@@ -38,6 +38,7 @@ CREATE TABLE `Courses` (
     `name` VARCHAR(100) NOT NULL,
     `code` VARCHAR(10) NOT NULL,
     `periods` INTEGER NOT NULL,
+    `minWorkload` INTEGER NOT NULL DEFAULT 240,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL,

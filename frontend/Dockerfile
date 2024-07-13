@@ -1,11 +1,13 @@
-FROM node:latest
+FROM node:21.6.1
 
 WORKDIR /app
 
 COPY package.json ./
+
 RUN npm install
 
-COPY ./ ./
+COPY . .
 
 EXPOSE ${FRONTEND_PORT}
+
 CMD ["npm", "run", "dev"]

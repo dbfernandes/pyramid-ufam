@@ -2,8 +2,6 @@
 
 require("dotenv").config();
 
-const basePath = "";
-
 module.exports = {
 	/*async redirects() {
 		return [
@@ -16,9 +14,8 @@ module.exports = {
 	},*/
 	reactStrictMode: true,
 	env: {
-		basePath: basePath,
-		img: `${basePath}/img`,
-		api: `${basePath}/api`,
+		img: `${process.env.FRONTEND_URL}/img`,
+		api: `${process.env.API_URL}`,
 		title: "Pyramid",
 	},
 	typescript: {

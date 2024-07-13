@@ -63,11 +63,11 @@ function App(props: any) {
         {/* Favicon */}
         <link
           rel="apple-touch-icon"
-          href={`${process.env.basePath}/img/favicon.png`}
+          href={`${process.env.img}/favicon.png`}
         />
         <link
           rel="icon"
-          href={`${process.env.basePath}/img/favicon.png`}
+          href={`${process.env.img}/favicon.png`}
         />
       </Head>
 

@@ -1,8 +1,8 @@
-FROM node:latest
+FROM node:21.6.1
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 RUN npm install
 

@@ -199,7 +199,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       <div>
         {!isMobile &&
           <LogoWrapper>
-            {sidenavOpen && <Logo src={`${process.env.basePath}/img/full-logo.png`} />}
+            {sidenavOpen && <Logo src={`${process.env.img}/full-logo.png`} />}
             <Burger
               onClick={() => toggleSidenavOpen()}>
               <i className={"bi bi-list"} />

@@ -227,7 +227,7 @@ export default function FormSignUp() {
       >
         <H3 style={{ marginBottom: 35 }}>Cadastro</H3>
         <Logo
-          src={`${process.env.basePath}/img/full-logo.png`}
+          src={`${process.env.img}/full-logo.png`}
           style={{ height: 30, marginTop: "-15px" }}
         />
       </div>

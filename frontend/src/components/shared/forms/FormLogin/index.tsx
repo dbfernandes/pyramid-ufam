@@ -114,7 +114,7 @@ export default function FormLogin() {
   return (
     <>
       <Form>
-        <Logo src={`${process.env.basePath}/img/full-logo.png`} />
+        <Logo src={`${process.env.img}/full-logo.png`} />
 
         <Info>
           Bem vindo ao <b>Pyramid</b>! Uma plataforma para gerenciar suas
@@ -173,8 +173,8 @@ export default function FormLogin() {
       </Form>
 
       <InstitutionalLogos>
-        <img src={`${process.env.basePath}/img/icomp.png`} />
-        <img src={`${process.env.basePath}/img/ufam.png`} />
+        <img src={`${process.env.img}/icomp.png`} />
+        <img src={`${process.env.img}/ufam.png`} />
       </InstitutionalLogos>
     </>
   );
