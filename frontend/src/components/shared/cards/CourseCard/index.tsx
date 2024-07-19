@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import { getToken } from "utils";
 
 // Shared
 import { H4 } from "components/shared/Titles";
@@ -21,11 +19,6 @@ import {
 
 // Interfaces
 import ICourse from "interfaces/ICourse";
-import { IRootState } from "redux/store";
-import IUserLogged from "interfaces/IUserLogged";
-import axios, { AxiosRequestConfig } from "axios";
-import { toast } from "react-toastify";
-
 interface ICourseCard {
   course: ICourse;
   link?: string;
@@ -58,53 +51,6 @@ export default function CourseCard({
 
   function CardBody({ course, marked, blurred }: ICourseCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-    const user = useSelector<IRootState, IUserLogged>((state) => state.user);
-    const [users, setUsers] = useState<any[]>([]);
-    const [fetchingUsers, setFetchingUsers] = useState<boolean>(true);
-    const [totalActiveUsers, setTotalActiveUsers] = useState<number>(0);
-
-    useEffect(() => {
-      if (user?.logged && course.id) {
-        fetchUsers(0, "", "active", course.id);
-      }
-    }, [user?.logged, course.id]);
-
-    async function fetchUsers(_page, _search, _status, courseId) {
-      setFetchingUsers(true);
-
-      const options = {
-        url: `${process.env.api}/users?type=aluno&search=${_search}&courseId=${courseId}&status=${_status}`,
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${getToken()}`,
-        },
-      };
-
-      try {
-        if (user.userTypeId !== 3) {
-          const response = await axios.request(options as AxiosRequestConfig);
-          const filteredUsers = response.data.users.filter(u => u.email !== user.email);
-          setUsers(filteredUsers);
-
-          const activeUsers = filteredUsers.filter(u => u.isActive);
-          setTotalActiveUsers(activeUsers.length);
-        }
-      } catch (error) {
-        handleFetchError(error);
-      }
-
-      setFetchingUsers(false);
-    }
-
-    function handleFetchError(error) {
-      const errorMessages = {
-        0: "Oops, tivemos um erro. Tente novamente.",
-        500: error?.response?.data?.message,
-      };
-      const code = error?.response?.status ? error.response.status : 500;
-      toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
-    }
 
     function handleDeletion(e) {
       e.preventDefault();
@@ -121,8 +67,8 @@ export default function CourseCard({
         <div>
           <H4>{course.name}</H4>
           <span>
-            {totalActiveUsers > 0
-              ? `${totalActiveUsers} alunos`
+            {course.userCount && course.userCount > 0
+              ? `${course.userCount} alunos`
               : "Sem alunos"
             }
           </span>

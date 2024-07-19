@@ -18,17 +18,7 @@ import {
 import Spinner from "components/shared/Spinner";
 
 // Interfaces
-interface IUser {
-  id: number;
-  isActive: boolean;
-  name: string;
-  email: string;
-  cpf: string;
-  enrollment?: string;
-  courses: any[];
-  workloadCount?: any[];
-}
-
+import IUser from "interfaces/IUser";
 interface IUserProps {
   user?: IUser | null;
   courseId?: number | null | undefined;
@@ -232,7 +222,7 @@ export default function User({
           <div></div>
         </Item >
         : (//<Link href={`/usuarios/${subRoute}/${user?.id}`} passHref><a>
-          <Item Item student={subRoute === "alunos"}>
+          <Item student={subRoute === "alunos"}>
             <CustomFormCheck
               inline
               name="users"
@@ -264,7 +254,7 @@ export default function User({
                 <Column>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
                     <span>
-                      {user?.courses[0]?.name
+                      {user?.courses && user?.courses.length > 0 && user?.courses[0]?.name
                         ? (<div className="text-with-ribbon">
                           <span>{user?.courses[0]?.name}</span>
                           {(user?.courses && user?.courses?.length > 1) &&

@@ -139,7 +139,7 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success("Alunos desativados com sucesso.");
+        toast.success("Usuários desativados com sucesso.");
         setCheckedIds([]);
         onChange();
       })

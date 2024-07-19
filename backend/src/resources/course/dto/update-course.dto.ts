@@ -51,7 +51,7 @@ export class UpdateCourseDto {
 	@IsInt()
 	@Min(1)
 	@Max(500)
-	minWorkload: number;
+	minWorkload?: number;
 
 	@IsOptional()
 	@ValidateNested()
