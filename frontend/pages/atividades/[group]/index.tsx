@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
+import { restrictPageForLoggedUsers } from "utils";
 
 // Shared
 import { ActivityGroupsNames } from "constants/activityGroups.constants";
@@ -18,7 +19,6 @@ import Activities from "components/pages/Atividades/Activities";
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 
-
 export default function Atividades() {
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>(state => state.user);
@@ -27,13 +27,7 @@ export default function Atividades() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
-      router.replace("/conta/curso");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2]);
   }, [user]);
 
   // Activities

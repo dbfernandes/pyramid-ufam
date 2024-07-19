@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import { restrictPageForUsersWithoutSelectedCourse } from "utils";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -21,13 +22,7 @@ export default function Curso() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse != null) {
-      router.replace("/painel");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForUsersWithoutSelectedCourse(user, router, setLoaded);
   }, [user]);
 
   return (

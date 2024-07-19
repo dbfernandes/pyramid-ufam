@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
-import { parseUserActiveParam } from "utils";
+import { parseUserActiveParam, restrictPageForLoggedUsers } from "utils";
 import { toast } from "react-toastify";
 
 // Shared
@@ -27,20 +27,6 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
   const [loaded, setLoaded] = useState(false);
   const { setLinks } = useBreadcrumb();
   const isMobile = useMediaQuery({ maxWidth: 992 });
-  const [isReloading, setIsReloading] = useState(false);
-
-  async function handleReload() {
-    setIsReloading(true);
-
-    try {
-      const response = await axios.get(`${process.env.api}/usuarios/alunos`);
-      onChange(response.data);
-      setIsReloading(false);
-    } catch (error) {
-      console.error("Erro ao carregar cursos:", error);
-      setIsReloading(false);
-    }
-  }
 
   // Setting links used in breadcrumb
   useEffect(() => {
@@ -57,13 +43,7 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
-      router.replace("/conta/curso");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2]);
   }, [user]);
 
   // Users

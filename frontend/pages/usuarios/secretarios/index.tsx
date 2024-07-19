@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
-import { parseUserActiveParam } from "utils";
+import { parseUserActiveParam, restrictPageForLoggedUsers } from "utils";
 import { toast } from "react-toastify";
 
 // Shared
@@ -37,13 +37,7 @@ export default function Secretarios() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
-      router.replace("/conta/curso");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForLoggedUsers(user, router, setLoaded, [1]);
   }, [user]);
 
   // Users

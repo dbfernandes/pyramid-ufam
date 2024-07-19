@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
 import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
+import { restrictPageForLoggedUsers } from "utils";
 
 // Shared
 import { ActivityGroupsNames } from "constants/activityGroups.constants";
@@ -49,13 +50,7 @@ export default function SolicitacoesGrupoAtividade() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
-      router.replace("/conta/curso");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2]);
   }, [user]);
 
   // Submissions

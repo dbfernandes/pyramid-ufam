@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
+import { restrictPageForLoggedUsers } from "utils";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -35,13 +36,7 @@ export default function SolicitacoesGruposAtividades() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
-      router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
-      router.replace("/conta/curso");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2]);
   }, [user]);
 
   return (

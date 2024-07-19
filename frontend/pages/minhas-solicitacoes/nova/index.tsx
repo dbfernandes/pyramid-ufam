@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useBreadcrumb } from "contexts/BreadcrumbContext";
+import { restrictPageForLoggedUsers } from "utils";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -43,6 +44,7 @@ export default function NovaSolicitacao() {
     } else {
       setTimeout(() => setLoaded(true), 250);
     }
+    restrictPageForLoggedUsers(user, router, setLoaded, [3]);
   }, [user]);
 
   return (

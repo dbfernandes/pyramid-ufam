@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import { restrictPageForUnloggedUsers } from "utils";
 
 // Shared
 import Wrapper from "components/shared/Wrapper";
@@ -21,11 +22,7 @@ export default function Cadastro() {
 
   // Verifying user
   useEffect(() => {
-    if (user.logged) {
-      router.replace("/");
-    } else {
-      setTimeout(() => setLoaded(true), 250);
-    }
+    restrictPageForUnloggedUsers(user, router, setLoaded);
   }, [user]);
 
   return (

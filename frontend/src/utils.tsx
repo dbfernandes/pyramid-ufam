@@ -5,6 +5,8 @@ import { resetTimer } from "redux/slicer/timer";
 
 // Shared
 import { toast } from "react-toastify";
+import IUserLogged from "interfaces/IUserLogged";
+import { NextRouter } from "next/router";
 
 export async function checkAuthentication(): Promise<void> {
   function parseJwt(token) {
@@ -85,6 +87,36 @@ export function getToken() {
 export function getRefreshToken() {
   const { user } = store.getState();
   return user.refreshToken;
+}
+
+export function restrictPageForLoggedUsers(user: IUserLogged, router: NextRouter, setLoaded: Function, roles: number[] = []) {
+  if (!user.logged) {
+    router.replace("/entrar");
+  } else if (user.selectedCourse === null) {
+    router.replace("/conta/curso");
+  } else if (roles.length > 0 && !roles.includes(user.userTypeId)) {
+    router.replace("/painel");
+  } else {
+    setTimeout(() => setLoaded(true), 250);
+  }
+}
+
+export function restrictPageForUnloggedUsers(user: IUserLogged, router: NextRouter, setLoaded: Function) {
+  if (user.logged) {
+    router.replace("/painel");
+  } else {
+    setTimeout(() => setLoaded(true), 250);
+  }
+}
+
+export function restrictPageForUsersWithoutSelectedCourse(user: IUserLogged, router: NextRouter, setLoaded: Function) {
+  if (!user.logged) {
+    router.replace("/entrar");
+  } else if (user.selectedCourse !== null) {
+    router.replace("/painel");
+  } else {
+    setTimeout(() => setLoaded(true), 250);
+  }
 }
 
 export function getPlural(word: string) {

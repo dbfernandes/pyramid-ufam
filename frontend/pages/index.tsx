@@ -6,7 +6,7 @@ export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/conta/curso");
+    router.replace("/entrar");
   }, []);
 
   return (
