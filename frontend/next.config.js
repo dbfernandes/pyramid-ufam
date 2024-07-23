@@ -12,10 +12,11 @@ module.exports = {
 			}
 		]
 	},*/
+  swcMinify: false,
 	reactStrictMode: true,
 	env: {
-		img: `${process.env.FRONTEND_URL}/img`,
-		api: `${process.env.API_URL}`,
+		img: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/img`,
+		api: `${process.env.NEXT_PUBLIC_API_URL}`,
 		title: "Pyramid",
 	},
 	typescript: {
