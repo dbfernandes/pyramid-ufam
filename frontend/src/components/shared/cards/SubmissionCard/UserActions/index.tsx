@@ -160,7 +160,7 @@ export default function UserActions({
         <i className="bi bi-clock-history" /> Histórico
       </InfoButton>
 
-      {[1, 2].includes(submission.status) && (
+      {[1, 2, 4].includes(submission.status) && (
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
@@ -172,13 +172,13 @@ export default function UserActions({
         </EditButton>
       )}
 
-      {(user?.userTypeId == 1 && [1, 2].includes(submission.status)) && (
+      {(user?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
         <>
           <DangerButtonAlt
             onClick={() =>
               toggleModalForm(
                 "Rejeitar submissão",
-                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Rejeitado"} />,
+                <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Rejeitado"} />,
                 "md"
               )
             }>
@@ -189,7 +189,7 @@ export default function UserActions({
             onClick={() =>
               toggleModalForm(
                 "Aprovar submissão",
-                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Aprovado"} />,
+                <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Aprovado"} />,
                 "md"
               )
             }>
@@ -202,14 +202,14 @@ export default function UserActions({
           onClick={() =>
             toggleModalForm(
               "Pré-aprovar submissão",
-              <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Pré-aprovado"} />,
+              <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Pré-aprovado"} />,
               "md"
             )
           }>
           <i className="bi bi-check2-all" /> Pré-aprovar
         </AcceptButton>
       )}
-      {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
+      {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
         <DangerButtonAlt
           onClick={() =>
             confirm(

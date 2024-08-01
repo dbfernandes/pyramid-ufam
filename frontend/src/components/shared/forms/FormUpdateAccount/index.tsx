@@ -26,19 +26,8 @@ interface IFormUpdateAccountProps {
 
 export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [cpf, setCpf] = useState<string>("");
-  const handleCpf = (value) => {
-    setCpf(value);
-  };
 
   // Loading user prop
   useEffect(() => {
@@ -219,7 +208,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           name={"name"}
           id={"name"}
           value={name}
-          handleValue={handleName}
+          handleValue={setName}
           required={true}
           displayAlert={sent}
           maxLength={255}
@@ -229,7 +218,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           label={"Email*"}
           name={"email"}
           value={email}
-          handleValue={handleEmail}
+          handleValue={setEmail}
           validate={validateEmail}
           required={true}
           alert={"Email inválido"}
@@ -241,7 +230,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           label={"CPF"}
           name={"cpf"}
           value={cpf}
-          handleValue={handleCpf}
+          handleValue={setCpf}
           validate={validateCpf}
           alert={"CPF Inválido"}
           displayAlert={sent}

@@ -33,20 +33,8 @@ export default function FormAddActivity({
 
   // Inputs and validators
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [description, setDescription] = useState<string>("");
-  const handleDescription = (value) => {
-    setDescription(value);
-  };
-
   const [maxWorkload, setMaxWorkload] = useState<string>("240");
-  const handleMaxWorkload = (value) => {
-    setMaxWorkload(value);
-  };
-
   function validateWorkload(value) {
     const _value = parseInt(value);
     return !isNaN(_value) && _value > 0 && _value <= 300;
@@ -129,7 +117,7 @@ export default function FormAddActivity({
           label={"Nome*"}
           name={"name"}
           value={name}
-          handleValue={handleName}
+          handleValue={setName}
           required={true}
           displayAlert={sent}
         />
@@ -138,7 +126,7 @@ export default function FormAddActivity({
           label={"Carga horária máxima*"}
           name={"maxWorkload"}
           value={maxWorkload}
-          handleValue={handleMaxWorkload}
+          handleValue={setMaxWorkload}
           required={true}
           displayAlert={sent}
         />
@@ -147,7 +135,7 @@ export default function FormAddActivity({
           label={"Descrição"}
           name={"description"}
           value={description}
-          handleValue={handleDescription}
+          handleValue={setDescription}
           displayAlert={sent}
           maxLength={255}
         />

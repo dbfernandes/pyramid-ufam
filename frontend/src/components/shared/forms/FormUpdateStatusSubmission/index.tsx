@@ -12,11 +12,9 @@ import Content from "components/shared/ModalForm/Content";
 import { toast } from "react-toastify";
 
 // Interfaces
-import IUserLogged from "interfaces/IUserLogged";
 
 interface IFormUpdateStatusSubmissionProps {
   submission: any; //ISubmission;
-  user: IUserLogged;
   status: string;
   onChange?: Function;
   handleCloseModalForm?: Function;
@@ -24,16 +22,12 @@ interface IFormUpdateStatusSubmissionProps {
 
 export default function FormUpdateStatusSubmission({
   submission,
-  user,
   status,
   onChange = () => { },
   handleCloseModalForm,
 }: IFormUpdateStatusSubmissionProps) {
   // Inputs and validators
   const [details, setDetails] = useState<string>("");
-  const handleDetails = (value) => {
-    setDetails(value);
-  };
 
   // Form state
   const [sent, setSent] = useState<boolean>(false);
@@ -60,7 +54,6 @@ export default function FormUpdateStatusSubmission({
         "Authorization": `Bearer ${getToken()}`,
       },
       data: {
-        userId: user.id,
         status: status,
         details: details
       },
@@ -106,7 +99,7 @@ export default function FormUpdateStatusSubmission({
           label={"Observações"}
           name={"details"}
           value={details}
-          handleValue={handleDetails}
+          handleValue={setDetails}
           displayAlert={sent}
           maxLength={255}
         />

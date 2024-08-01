@@ -4,14 +4,16 @@ import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
 import { getToken } from "utils";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 // Shared
 import { H3 } from "components/shared/Titles";
-import { DangerButtonAlt } from "components/shared/cards/SubmissionCard/styles";
+import { ButtonGroup, DangerButtonAlt, InfoButton, WarningButtonAlt } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
 import FilterCollapsible, { IFilterOption } from "../FilterCollapsible";
+import Spinner from "../Spinner";
 
 // Custom
 import {
@@ -22,8 +24,10 @@ import {
   Filter
 } from "./styles";
 import User from "./User";
-import Spinner from "../Spinner";
 
+// Interfaces
+import { IRootState } from "redux/store";
+import IUserLogged from "interfaces/IUserLogged";
 interface IUserListProps {
   title: string;
   courseId?: number | null | undefined;
@@ -49,6 +53,7 @@ export default function UserList({
 
   children
 }: IUserListProps) {
+  const loggedUser = useSelector<IRootState, IUserLogged>((state) => state.user);
   const router = useRouter();
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
@@ -131,7 +136,7 @@ export default function UserList({
       url: `${process.env.api}/users/${ids}/mass-remove`,
       method: "DELETE",
       headers: {
-        "Content-Type": "application",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${getToken()}`,
       }
     };
@@ -139,7 +144,7 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success("Usuários desativados com sucesso.");
+        toast.success(`${response.data.count} usuários desativados com sucesso.`);
         setCheckedIds([]);
         onChange();
       })
@@ -156,27 +161,103 @@ export default function UserList({
     setFetchingMassDelete(false);
   }
 
+  // Restore functions
+  const [fetchingRestore, setFetchingRestore] = useState<boolean>(false);
+  async function fetchRestore(id: string) {
+    setFetchingRestore(true);
+
+    const options = {
+      url: `${process.env.api}/users/${id}/restore`,
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application",
+        "Authorization": `Bearer ${getToken()}`,
+      }
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+
+        toast.success("Usuário reativado com sucesso.");
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
+      });
+
+    setFetchingRestore(false);
+  }
+
+  const [fetchingMassRestore, setFetchingMassRestore] = useState<boolean>(false);
+  async function fetchMassRestore(ids: string) {
+    setFetchingMassRestore(true);
+
+    const options = {
+      url: `${process.env.api}/users/${ids}/mass-restore`,
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`,
+      }
+    };
+
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        toast.success(`${response.data.count} usuários reativados com sucesso.`);
+        setCheckedIds([]);
+        onChange();
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
+      });
+
+    setFetchingMassRestore(false);
+  }
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
         <H3>{title}</H3>
 
         {checkedIds?.length > 0
-          ? <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
-            {fetchingMassDelete
-              ? <Spinner size={"20px"} color={"var(--danger)"} />
-              : <><i className="bi bi-x-lg" /> Desativar selecionados</>
-            }
-          </DangerButtonAlt>
-          : <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
-            <AddUserLink>
-              <i className={`bi bi-${subRoutes[subRoute].icon}`}>
-                <i className="bi bi-plus" />
-              </i>
-              Adicionar {subRoutes[subRoute].singleTitle}
-            </AddUserLink>
-          </Link>
-        }
+          ? (<ButtonGroup style={{ margin: 0, width: "fit-content" }}>
+            <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
+              {fetchingMassDelete
+                ? <Spinner size={"20px"} color={"var(--danger)"} />
+                : <><i className="bi bi-x-lg" /> Desativar selecionados</>
+              }
+            </DangerButtonAlt>
+
+            <InfoButton onClick={() => fetchMassRestore(checkedIds.join(","))} disabled={fetchingMassRestore}>
+              {fetchingMassRestore
+                ? <Spinner size={"20px"} color={"var(--success)"} />
+                : <><i className="bi bi-exclamation-lg" /> Reativar selecionados</>
+              }
+            </InfoButton>
+          </ButtonGroup>) : (
+            <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
+              <AddUserLink>
+                <i className={`bi bi-${subRoutes[subRoute].icon}`}>
+                  <i className="bi bi-plus" />
+                </i>
+                Adicionar {subRoutes[subRoute].singleTitle}
+              </AddUserLink>
+            </Link>
+          )}
 
       </HeaderWrapper>
 
@@ -203,10 +284,14 @@ export default function UserList({
 
               fetchingDelete={fetchingDelete}
               onDelete={() => fetchDelete(user?.id)}
+              fetchingRestore={fetchingRestore}
+              onRestore={() => fetchRestore(user?.id)}
               onChange={onChange}
 
               checkedIds={checkedIds}
               setCheckedIds={setCheckedIds}
+
+              disableMenu={loggedUser?.id === user?.id}
             />
           )}
           {children}

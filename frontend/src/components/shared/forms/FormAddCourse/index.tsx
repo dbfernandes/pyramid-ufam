@@ -28,19 +28,8 @@ export default function FormAddCourse({
 
   // Inputs and validators
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [code, setCode] = useState<string>("");
-  const handleCode = (value) => {
-    setCode(value.toUpperCase());
-  };
-
   const [periods, setPeriods] = useState<string>("");
-  const handlePeriods = (value) => {
-    setPeriods(value);
-  };
   function validatePeriods(value) {
     const _value = parseInt(value);
     return !isNaN(_value) && _value > 0 && _value <= 16;
@@ -48,24 +37,9 @@ export default function FormAddCourse({
 
   // Workloads
   const [minWorkload, setMinWorkload] = useState<string>("240");
-  const handleMinWorkload = (value) => {
-    setMinWorkload(value);
-  };
-
   const [educationWorkload, setEducationWorkload] = useState<string>("240");
-  const handleEducationWorkload = (value) => {
-    setEducationWorkload(value);
-  };
-
   const [researchWorkload, setResearchWorkload] = useState<string>("240");
-  const handleResearchWorkload = (value) => {
-    setResearchWorkload(value);
-  };
-
   const [extensionWorkload, setExtensionWorkload] = useState<string>("240");
-  const handleExtensionWorkload = (value) => {
-    setExtensionWorkload(value);
-  };
 
   function validateWorkload(value) {
     const _value = parseInt(value);
@@ -178,7 +152,7 @@ export default function FormAddCourse({
           label={"Nome*"}
           name={"name"}
           value={name}
-          handleValue={handleName}
+          handleValue={setName}
           required={true}
           displayAlert={sent}
         />
@@ -188,7 +162,7 @@ export default function FormAddCourse({
             label={"Código*"}
             name={"code"}
             value={code}
-            handleValue={handleCode}
+            handleValue={setCode}
             required={true}
             displayAlert={sent}
           />
@@ -197,7 +171,7 @@ export default function FormAddCourse({
             label={"Períodos*"}
             name={"periods"}
             value={periods}
-            handleValue={handlePeriods}
+            handleValue={setPeriods}
             mask={"99"}
             validate={validatePeriods}
             required={true}
@@ -209,7 +183,7 @@ export default function FormAddCourse({
           label={"Carga horária mínima (horas)*"}
           name={"minWorkoad"}
           value={minWorkload}
-          handleValue={handleMinWorkload}
+          handleValue={setMinWorkload}
           mask={"999"}
           validate={validateWorkload}
           required={true}
@@ -225,7 +199,7 @@ export default function FormAddCourse({
             label={"Educação*"}
             name={"educationWorkload"}
             value={educationWorkload}
-            handleValue={handleEducationWorkload}
+            handleValue={setEducationWorkload}
             mask={"999"}
             validate={validateWorkload}
             required={true}
@@ -236,7 +210,7 @@ export default function FormAddCourse({
             label={"Pesquisa*"}
             name={"researchWorkload"}
             value={researchWorkload}
-            handleValue={handleResearchWorkload}
+            handleValue={setResearchWorkload}
             mask={"999"}
             validate={validateWorkload}
             required={true}
@@ -247,7 +221,7 @@ export default function FormAddCourse({
             label={"Extensão*"}
             name={"extensionWorkload"}
             value={extensionWorkload}
-            handleValue={handleExtensionWorkload}
+            handleValue={setExtensionWorkload}
             mask={"999"}
             validate={validateWorkload}
             required={true}

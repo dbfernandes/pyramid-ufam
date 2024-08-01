@@ -104,7 +104,7 @@ export class CourseService {
 
 		const totalSubmissions = submissions.length;
 		const pendingSubmissions = submissions.filter(
-			(submission) => submission.status === StatusSubmissions["Submetido"],
+			(submission) => submission.status === StatusSubmissions["Pendente"],
 		).length;
 		const preApprovedSubmissions = submissions.filter(
 			(submission) => submission.status === StatusSubmissions["Pré-aprovado"],

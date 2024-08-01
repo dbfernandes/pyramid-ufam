@@ -9,13 +9,14 @@ import {
 	SubmissionActionIds,
 } from "../../../src/common/constants.constants";
 import {
+	BadRequestException,
 	HttpException,
 	HttpStatus,
 	Injectable,
 	NestMiddleware,
 } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
-import { getFilesLocation } from "../utils";
+import { decodeToken, getFilesLocation } from "../utils";
 import * as fs from "fs";
 //import { contains } from "class-validator";
 
@@ -134,42 +135,49 @@ export class SubmissionService {
 		id: number,
 		updateSubmissionDto: UpdateSubmissionDto,
 		filename: string,
+		token: string,
 	): Promise<Submission> {
-		const tmpPath = `./public/files/tmp/`;
-		const rootPath = `./public/files/submissions/`;
-		const path = `${rootPath}${filename}`;
+		try {
+			const userId = (decodeToken(token) as any).id;
 
-		const submission = await this.findById(id);
+			const tmpPath = `./public/files/tmp/`;
+			const rootPath = `./public/files/submissions/`;
+			const path = `${rootPath}${filename}`;
 
-		if (submission && submission.file) {
-			const currentFilePath = `${rootPath}${submission.file}`;
-			if (fs.existsSync(currentFilePath)) {
-				fs.unlinkSync(currentFilePath);
+			const submission = await this.findById(id);
+
+			if (submission && submission.file) {
+				const currentFilePath = `${rootPath}${submission.file}`;
+				if (fs.existsSync(currentFilePath)) {
+					fs.unlinkSync(currentFilePath);
+				}
 			}
+
+			const { details, ...rest } = updateSubmissionDto;
+			const _submission = await this.prisma.submission.update({
+				where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+				data: {
+					...rest,
+					file: filename.replace(".tmp", ""),
+				},
+			});
+
+			// Adding to history
+			await this.submissionActionService
+				.create({
+					userId,
+					submissionId: submission.id,
+					submissionActionTypeId: SubmissionActionIds["editou"],
+					details,
+				})
+				.then(() => this.updateSearchHash(submission.id));
+
+			fs.copyFileSync(`${tmpPath}${filename}`, path.replace(".tmp", ""));
+
+			return _submission;
+		} catch {
+			throw new BadRequestException("Invalid token.");
 		}
-
-		const { userId, details, ...rest } = updateSubmissionDto;
-		const _submission = await this.prisma.submission.update({
-			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
-			data: {
-				...rest,
-				file: filename.replace(".tmp", ""),
-			},
-		});
-
-		// Adding to history
-		await this.submissionActionService
-			.create({
-				userId,
-				submissionId: submission.id,
-				submissionActionTypeId: SubmissionActionIds["editou"],
-				details,
-			})
-			.then(() => this.updateSearchHash(submission.id));
-
-		fs.copyFileSync(`${tmpPath}${filename}`, path.replace(".tmp", ""));
-
-		return _submission;
 	}
 
 	async findById(id: number): Promise<any> {
@@ -423,51 +431,71 @@ export class SubmissionService {
 		};
 	}
 
-	async updateStatus(id: number, updateStatusDto: UpdateStatusDto) {
-		const { status, userId, details } = updateStatusDto;
-		const statusId = StatusSubmissions[status];
-		const submission = await this.prisma.submission.update({
-			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
-			data: { status: statusId },
-		});
+	async updateStatus(
+		id: number,
+		updateStatusDto: UpdateStatusDto,
+		token: string,
+	) {
+		try {
+			const userId = (decodeToken(token) as any).id;
 
-		// Adding to history
-		await this.submissionActionService.create({
-			userId,
-			submissionId: submission.id,
-			submissionActionTypeId: statusId,
-			details,
-		});
+			const { status, details } = updateStatusDto;
+			const statusId = StatusSubmissions[status];
+			const submission = await this.prisma.submission.update({
+				where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+				data: { status: statusId },
+			});
 
-		return submission;
-	}
-
-	async massUpdateStatus(ids: string, updateStatusDto: UpdateStatusDto) {
-		const { status, userId, details } = updateStatusDto;
-		const statusId = StatusSubmissions[status];
-		const _ids = ids.split(",").map(Number);
-
-		const submissions = await this.prisma.submission.updateMany({
-			where: {
-				id: { in: _ids },
-				status: { not: StatusSubmissions["Aprovado"] },
-			},
-			data: { status: statusId },
-		});
-
-		// Adding to history for each submission
-		_ids.forEach(async (id) => {
+			// Adding to history
 			await this.submissionActionService.create({
 				userId,
-				submissionId: id,
+				submissionId: submission.id,
 				submissionActionTypeId: statusId,
 				details,
 			});
 
-			this.updateSearchHash(id);
-		});
+			return submission;
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
+	}
 
-		return submissions;
+	async massUpdateStatus(
+		ids: string,
+		updateStatusDto: UpdateStatusDto,
+		token: string,
+	) {
+		try {
+			const userId = (decodeToken(token) as any).id;
+
+			const { status, details } = updateStatusDto;
+			const statusId = StatusSubmissions[status];
+			const _ids = ids.split(",").map(Number);
+
+			const submissions = await this.prisma.submission.updateMany({
+				where: {
+					id: { in: _ids },
+					status: { not: StatusSubmissions["Aprovado"] },
+				},
+				data: { status: statusId },
+			});
+
+			// Adding to history for each submission
+			_ids.forEach(async (id) => {
+				await this.submissionActionService.create({
+					userId,
+					submissionId: id,
+					submissionActionTypeId: statusId,
+					details,
+				});
+
+				this.updateSearchHash(id);
+			});
+
+			return submissions;
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
 	}
 
 	async remove(id: number): Promise<Submission> {

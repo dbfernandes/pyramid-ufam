@@ -22,14 +22,7 @@ export default function FormLogin() {
 
   // Inputs and validators
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [password, setPassword] = useState<string>("");
-  const handlePassword = (value) => {
-    setPassword(value);
-  };
 
   // Form login
   const [sent, setSent] = useState<boolean>(false);
@@ -125,7 +118,7 @@ export default function FormLogin() {
           label={"Email"}
           name={"email"}
           value={email}
-          handleValue={handleEmail}
+          handleValue={setEmail}
           validate={validateEmail}
           required={true}
           alert={"Email inválido"}
@@ -138,7 +131,7 @@ export default function FormLogin() {
           label={"Senha"}
           name={"password"}
           value={password}
-          handleValue={handlePassword}
+          handleValue={setPassword}
           required={true}
           displayAlert={sent}
           maxLength={255}
