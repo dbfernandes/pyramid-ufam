@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Dropdown } from "react-bootstrap";
-import Link from "next/link";
 import { useSelector } from "react-redux";
 
 // Shared
@@ -12,8 +10,7 @@ import FormLinkCourse from "components/shared/forms/FormLinkCourse";
 import {
   Wrapper,
   UnstyledButton,
-  UnstyledLink,
-  HoverMenu,
+  DropdownWrapper,
   DropdownMenu,
   DropdownItem,
   Options,
@@ -66,49 +63,47 @@ export default function EnrollmentCard({
     }
 
     return (
-      <Wrapper marked={marked} blurred={blurred}>
+      <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
         <H4>{course.name}</H4>
 
         {isStudent && <p>Matrícula: {course?.enrollment}</p>}
         {children}
         {course.id && editable && (
-          <HoverMenu onMouseLeave={() => setConfirmDeletion(false)}>
-            <Dropdown align="end" onClick={(e) => handleDropdown(e)}>
-              <Options variant="secondary">
-                <i className="bi bi-gear-fill" />
-              </Options>
+          <DropdownWrapper align="end" onClick={(e) => handleDropdown(e)}>
+            <Options variant="secondary">
+              <i className="bi bi-three-dots-vertical" />
+            </Options>
 
-              <DropdownMenu renderOnMount={true}>
-                {isStudent && (
-                  <DropdownItem
-                    onClick={() =>
-                      toggleModalForm(
-                        `Alterar matrícula (${course.name})`,
-                        <FormLinkCourse user={user} course={course} />,
-                        "md"
-                      )
-                    }
-                    accent={"var(--success)"}>
-                    <i className="bi bi-pencil-fill"></i> Alterar matrícula
-                  </DropdownItem>
-                )}
+            <DropdownMenu renderOnMount={true}>
+              {isStudent && (
                 <DropdownItem
-                  onClick={(e) => handleDeletion(e)}
-                  accent={"var(--danger)"}>
-                  {confirmDeletion ? (
-                    <>
-                      <i className="bi bi-exclamation-circle-fill"></i>{" "}
-                      Confirmar
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-trash-fill"></i> Remover
-                    </>
-                  )}
+                  onClick={() =>
+                    toggleModalForm(
+                      `Alterar matrícula (${course.name})`,
+                      <FormLinkCourse user={user} course={course} />,
+                      "md"
+                    )
+                  }
+                  accent={"var(--success)"}>
+                  <i className="bi bi-pencil-fill"></i> Alterar matrícula
                 </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </HoverMenu>
+              )}
+              <DropdownItem
+                onClick={(e) => handleDeletion(e)}
+                accent={"var(--danger)"}>
+                {confirmDeletion ? (
+                  <>
+                    <i className="bi bi-exclamation-circle-fill"></i>{" "}
+                    Confirmar
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-trash-fill"></i> Remover
+                  </>
+                )}
+              </DropdownItem>
+            </DropdownMenu>
+          </DropdownWrapper>
         )}
 
         {marked && (

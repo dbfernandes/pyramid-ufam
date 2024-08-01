@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Dropdown } from "react-bootstrap";
 import Link from "next/link";
 
 // Shared
@@ -10,7 +9,7 @@ import FormEditCourse from "components/shared/forms/FormAddCourse";
 // Custom
 import {
   Wrapper,
-  HoverMenu,
+  DropdownWrapper,
   DropdownMenu,
   DropdownItem,
   Options,
@@ -63,8 +62,8 @@ export default function CourseCard({
     }
 
     return (
-      <Wrapper marked={marked} blurred={blurred}>
-        <div>
+      <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
+        <div style={{ width: "calc(100% - 22px)" }}>
           <H4>{course.name}</H4>
           <span>
             {course.userCount && course.userCount > 0
@@ -79,41 +78,39 @@ export default function CourseCard({
         {children}
 
         {course.id && editable && (
-          <HoverMenu onMouseLeave={() => setConfirmDeletion(false)}>
-            <Dropdown align="end" onClick={(e) => handleDropdown(e)}>
-              <Options variant="secondary">
-                <i className="bi bi-gear-fill" />
-              </Options>
+          <DropdownWrapper align="end" onClick={(e) => handleDropdown(e)}>
+            <Options variant="secondary">
+              <i className="bi bi-three-dots-vertical" />
+            </Options>
 
-              <DropdownMenu renderOnMount={true}>
-                <DropdownItem
-                  onClick={() =>
-                    toggleModalForm(
-                      `Editar curso (${course.name})`,
-                      <FormEditCourse course={course} onChange={onChange} />,
-                      "md"
-                    )
-                  }
-                  accent={"var(--success)"}>
-                  <i className="bi bi-pencil-fill"></i> Editar
-                </DropdownItem>
-                <DropdownItem
-                  onClick={(e) => handleDeletion(e)}
-                  accent={"var(--danger)"}>
-                  {confirmDeletion ? (
-                    <>
-                      <i className="bi bi-exclamation-circle-fill"></i>{" "}
-                      Confirmar
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-trash-fill"></i> Remover
-                    </>
-                  )}
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </HoverMenu>
+            <DropdownMenu renderOnMount={true}>
+              <DropdownItem
+                onClick={() =>
+                  toggleModalForm(
+                    `Editar curso (${course.name})`,
+                    <FormEditCourse course={course} onChange={onChange} />,
+                    "md"
+                  )
+                }
+                accent={"var(--success)"}>
+                <i className="bi bi-pencil-fill"></i> Editar
+              </DropdownItem>
+              <DropdownItem
+                onClick={(e) => handleDeletion(e)}
+                accent={"var(--danger)"}>
+                {confirmDeletion ? (
+                  <>
+                    <i className="bi bi-exclamation-circle-fill"></i>{" "}
+                    Confirmar
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-trash-fill"></i> Remover
+                  </>
+                )}
+              </DropdownItem>
+            </DropdownMenu>
+          </DropdownWrapper>
         )}
 
         {marked && (
