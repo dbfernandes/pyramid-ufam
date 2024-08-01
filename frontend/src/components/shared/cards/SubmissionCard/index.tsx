@@ -142,9 +142,11 @@ export default function SubmissionCard({
               <p>
                 <b>Email:</b> {submission.user.email}
               </p>
-              <p>
-                <b>CPF:</b> {getCpf(submission.user.cpf)}
-              </p>
+              {submission.user?.cpf && (
+                <p>
+                  <b>CPF:</b> {getCpf(submission.user)}
+                </p>
+              )}
               <p>
                 <b>Curso:</b> {submission.user.course}
               </p>
@@ -201,7 +203,7 @@ export default function SubmissionCard({
   function SubmissionStatus({ status }) {
     const statusBars = {
       1: {
-        text: "Submetido",
+        text: "Pendente",
         bars: ["g", "w", "w"],
       },
       2: {

@@ -33,7 +33,6 @@ export default function DashboardStudent({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        console.log(response.data);
         setReport(response.data);
       })
       .catch((error) => handleFetchError(error));

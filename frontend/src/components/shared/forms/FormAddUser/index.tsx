@@ -30,19 +30,8 @@ export default function FormAddUser() {
   const [selectKey, setSelectKey] = useState<number>(0);
 
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [cpf, setCpf] = useState<string>("");
-  const handleCpf = (value) => {
-    setCpf(value);
-  };
 
   // Institutional info
   const [enrollment, setEnrollment] = useState<string>("");
@@ -51,9 +40,6 @@ export default function FormAddUser() {
   };
 
   const [startYear, setStartYear] = useState<string>("");
-  const handleStartYear = (value) => {
-    setStartYear(value);
-  };
   function validateStartYear(value) {
     return value.length === 4 && !isNaN(value) && parseInt(value) > 1909 && parseInt(value) <= new Date().getFullYear();
   }
@@ -95,9 +81,6 @@ export default function FormAddUser() {
   }
 
   const [courseSearch, setCourseSearch] = useState<string>("");
-  const handleCourseSearch = (value) => {
-    setCourseSearch(value);
-  };
 
   useEffect(() => {
     setFetchingCourses(true);
@@ -109,14 +92,7 @@ export default function FormAddUser() {
   }, [courseSearch]);
 
   const [course, setCourse] = useState<any>(null);
-  const handleCourse = (value) => {
-    setCourse(value);
-  };
-
   const [coursesMulti, setCoursesMulti] = useState<number[]>([]);
-  const handleCoursesMulti = (value) => {
-    setCoursesMulti(value);
-  };
 
   // Resetting SelectCustom when user type changes
   useEffect(() => {
@@ -212,7 +188,7 @@ export default function FormAddUser() {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
-        toast.success("Usuário adicionado com sucesso.");
+        toast.success("Usuário(a) adicionado(a) com sucesso. Será enviado um email com instruções de acesso ao sistema para o email cadastrado.");
         setDefaultState();
       })
       .catch((error) => {
@@ -262,7 +238,7 @@ export default function FormAddUser() {
               name={"name"}
               id={"name"}
               value={name}
-              handleValue={handleName}
+              handleValue={setName}
               required={true}
               displayAlert={sent}
               maxLength={255}
@@ -272,7 +248,7 @@ export default function FormAddUser() {
               label={"Email*"}
               name={"email"}
               value={email}
-              handleValue={handleEmail}
+              handleValue={setEmail}
               validate={validateEmail}
               required={true}
               alert={"Email inválido"}
@@ -284,7 +260,7 @@ export default function FormAddUser() {
               label={"CPF"}
               name={"cpf"}
               value={cpf}
-              handleValue={handleCpf}
+              handleValue={setCpf}
               validate={validateCpf}
               alert={"CPF Inválido"}
               displayAlert={sent}
@@ -302,9 +278,9 @@ export default function FormAddUser() {
                   label={"Curso*"}
                   name={"course"}
                   inputValue={courseSearch}
-                  onInputChange={(value) => handleCourseSearch(value)}
+                  onInputChange={(value) => setCourseSearch(value)}
                   value={course}
-                  handleValue={handleCourse}
+                  handleValue={setCourse}
                   options={courses.map((course) => {
                     return {
                       value: course.id,
@@ -334,7 +310,7 @@ export default function FormAddUser() {
                     label={"Ano de início*"}
                     name={"startYear"}
                     value={startYear}
-                    handleValue={handleStartYear}
+                    handleValue={setStartYear}
                     validate={validateStartYear}
                     mask={"9999"}
                     required={true}
@@ -352,9 +328,9 @@ export default function FormAddUser() {
                   label={"Cursos*"}
                   name={"courses"}
                   inputValue={courseSearch}
-                  onInputChange={(value) => handleCourseSearch(value)}
+                  onInputChange={(value) => setCourseSearch(value)}
                   value={coursesMulti}
-                  handleValue={handleCoursesMulti}
+                  handleValue={setCoursesMulti}
                   options={courses.map((course) => {
                     return {
                       value: course.id,

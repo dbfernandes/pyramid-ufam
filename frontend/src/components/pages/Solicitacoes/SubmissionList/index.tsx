@@ -77,11 +77,10 @@ export default function SubmissionList({
       url: `${process.env.api}/submissions/${ids}/status/mass-update`,
       method: "PATCH",
       headers: {
-        "Content-Type": "application",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${getToken()}`,
       },
       data: {
-        userId: user.id,
         status: status,
       },
     };
@@ -89,7 +88,7 @@ export default function SubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success(`Submissões ${getPlural(status)} com sucesso.`);
+        toast.success(`${response.data.count} submissões ${getPlural(status)} com sucesso.`);
         setCheckedIds([]);
         onChange();
       })

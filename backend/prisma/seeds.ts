@@ -50,7 +50,7 @@ async function ActivityGroupsSeeds() {
 async function SubmissionActionTypesSeeds() {
 	await prisma.submissionActionType.createMany({
 		data: [
-			{ name: SubmissionActionTypes.SUBMITED },
+			{ name: SubmissionActionTypes.PENDING },
 			{ name: SubmissionActionTypes.PREAPPROVED },
 			{ name: SubmissionActionTypes.APPROVED },
 			{ name: SubmissionActionTypes.REJECTED },

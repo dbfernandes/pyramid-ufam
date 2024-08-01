@@ -12,6 +12,7 @@ import { UserTypes } from "../../../src/common/enums.enum";
 import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { CourseActivityGroupService } from "../courseActivityGroup/courseActivityGroup.service";
+import { AuthService } from "../auth/auth.service";
 import {
 	StatusSubmissions,
 	UserTypeIds,
@@ -24,7 +25,6 @@ import {
 	getFirstName,
 	sendEmail,
 } from "../utils";
-import { AuthService } from "../auth/auth.service";
 import * as fs from "fs";
 import * as sharp from "sharp";
 
@@ -353,7 +353,7 @@ export class UserService {
 
 		const totalSubmissions = courseSubmissions.length;
 		const pendingSubmissions = courseSubmissions.filter(
-			(submission) => submission.status === StatusSubmissions["Submetido"],
+			(submission) => submission.status === StatusSubmissions["Pendente"],
 		).length;
 		const preApprovedSubmissions = courseSubmissions.filter(
 			(submission) => submission.status === StatusSubmissions["Pré-aprovado"],
@@ -593,23 +593,79 @@ export class UserService {
 		};
 	}
 
-	async remove(id: number): Promise<User> {
-		return await this.prisma.user.update({
-			where: { id },
-			data: { isActive: false },
-		});
+	async restore(id: number, token: string): Promise<User> {
+		try {
+			const userId = (decodeToken(token) as any).id;
+
+			if (userId !== id) {
+				return await this.prisma.user.update({
+					where: { id },
+					data: { isActive: true },
+				});
+			}
+
+			throw new BadRequestException("You can't restore your own account.");
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
 	}
 
-	async massRemove(ids: string): Promise<any> {
-		const _ids = ids.split(",").map(Number);
+	async massRestore(ids: string, token: string): Promise<any> {
+		try {
+			const userId = (decodeToken(token) as any).id;
 
-		const users = this.prisma.user.updateMany({
-			where: {
-				id: { in: _ids },
-			},
-			data: { isActive: false },
-		});
+			const _ids = ids
+				.split(",")
+				.map(Number)
+				.filter((id) => id !== userId);
+			const users = this.prisma.user.updateMany({
+				where: {
+					id: { in: _ids },
+				},
+				data: { isActive: true },
+			});
 
-		return users;
+			return users;
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
+	}
+
+	async remove(id: number, token: string): Promise<User> {
+		try {
+			const userId = (decodeToken(token) as any).id;
+
+			if (userId !== id) {
+				return await this.prisma.user.update({
+					where: { id },
+					data: { isActive: false },
+				});
+			}
+
+			throw new BadRequestException("You can't deactivate your own account.");
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
+	}
+
+	async massRemove(ids: string, token: string): Promise<any> {
+		try {
+			const userId = (decodeToken(token) as any).id;
+
+			const _ids = ids
+				.split(",")
+				.map(Number)
+				.filter((id) => id !== userId);
+			const users = this.prisma.user.updateMany({
+				where: {
+					id: { in: _ids },
+				},
+				data: { isActive: false },
+			});
+
+			return users;
+		} catch {
+			throw new BadRequestException("Invalid token.");
+		}
 	}
 }

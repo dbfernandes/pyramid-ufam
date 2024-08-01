@@ -143,8 +143,22 @@ export function getFirstAndLastName(name: string) {
 export function validateCpf(cpf) {
   if (cpf == null || cpf.length === 0) return true;
 
+  const knownInvalidCpfs = [
+    "11111111111",
+    "22222222222",
+    "33333333333",
+    "44444444444",
+    "55555555555",
+    "66666666666",
+    "77777777777",
+    "88888888888",
+    "99999999999",
+    "00000000000",
+  ];
+
   const numericCpf = cpf.replace(/\D/g, "");
-  if (numericCpf.length !== 11) {
+
+  if (knownInvalidCpfs.includes(numericCpf) || numericCpf.length !== 11) {
     return false;
   }
 
@@ -183,6 +197,21 @@ export function formatCpf(cpf: string) {
     /(\d{3})(\d{3})(\d{3})(\d{2})/,
     "$1.$2.$3-$4"
   );
+}
+
+export function checkPasswordStrength(password: string) {
+  const checks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /.*[!@#$%^&*(),.?":{}|<>].*/.test(password)
+  };
+
+  return {
+    score: Array.from(Object.values(checks)).filter(check => check).length,
+    checks
+  };
 }
 
 export function slugify(text: string) {

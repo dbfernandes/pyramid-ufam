@@ -37,9 +37,6 @@ export default function FormLinkCourse({
   };
 
   const [startYear, setStartYear] = useState<string>("");
-  const handleStartYear = (value) => {
-    setStartYear(value);
-  };
   function validateStartYear(value) {
     return value.length === 4 && !isNaN(value) && parseInt(value) > 1909 && parseInt(value) <= new Date().getFullYear();
   }
@@ -81,9 +78,6 @@ export default function FormLinkCourse({
   }
 
   const [courseSearch, setCourseSearch] = useState<string>("");
-  const handleCourseSearch = (value) => {
-    setCourseSearch(value);
-  };
 
   useEffect(() => {
     setFetchingCourses(true);
@@ -95,9 +89,6 @@ export default function FormLinkCourse({
   }, [courseSearch]);
 
   const [course, setCourse] = useState<any>();
-  const handleCourse = (value) => {
-    setCourse(value);
-  };
 
   // Loading course prop
   useEffect(() => {
@@ -188,9 +179,9 @@ export default function FormLinkCourse({
             label={"Curso*"}
             name={"course"}
             inputValue={courseSearch}
-            onInputChange={(value) => handleCourseSearch(value)}
+            onInputChange={(value) => setCourseSearch(value)}
             value={course}
-            handleValue={handleCourse}
+            handleValue={setCourse}
             defaultInputValue={courseProp?.course?.name}
             defaultValue={{
               value: courseProp?.courseId,
@@ -224,7 +215,7 @@ export default function FormLinkCourse({
             label={"Ano de início*"}
             name={"startYear"}
             value={startYear}
-            handleValue={handleStartYear}
+            handleValue={setStartYear}
             validate={validateStartYear}
             mask={"9999"}
             required={true}

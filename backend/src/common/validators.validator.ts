@@ -47,8 +47,22 @@ export class IsCPF implements ValidatorConstraintInterface {
 	validate(cpf: string) {
 		if (cpf.length == 0) return true;
 
+		const knownInvalidCpfs = [
+			"11111111111",
+			"22222222222",
+			"33333333333",
+			"44444444444",
+			"55555555555",
+			"66666666666",
+			"77777777777",
+			"88888888888",
+			"99999999999",
+			"00000000000",
+		];
+
 		const numericCpf = cpf.replace(/\D/g, "");
-		if (numericCpf.length !== 11) {
+
+		if (knownInvalidCpfs.includes(numericCpf) || numericCpf.length !== 11) {
 			return false;
 		}
 
