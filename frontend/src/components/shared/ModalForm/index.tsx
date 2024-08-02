@@ -24,7 +24,10 @@ export default function toggleModalForm(
   function selfDestroy() {
     setTimeout(() => {
       root.unmount();
-      document.getElementById("modals")!.removeChild(modalContainer);
+      const modals = document.getElementById("modals");
+      if (modalContainer && modals && modals.contains(modalContainer)) {
+        modals.removeChild(modalContainer);
+      }
     }, 100);
   }
 
@@ -58,7 +61,7 @@ function ModalForm({ title, size = "lg", onClose, children }: IModalFormProps) {
   }
 
   return (
-    <CustomModal show={open} onHide={handleClose} size={size}>
+    <CustomModal show={isOpen} onHide={handleClose} size={size}>
       <CustomModal.Header closeButton>
         <CustomModal.Title>
           <H4>{title}</H4>
