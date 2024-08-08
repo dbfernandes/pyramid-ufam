@@ -19,9 +19,10 @@ import {
 
 // Interfaces
 import ICourse from "interfaces/ICourse";
-import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserTypes } from "constants/userTypes.constants";
+import { IRootState } from "redux/store";
+import IUser from "interfaces/IUser";
 
 interface ICourseCard {
   course: ICourse;
@@ -41,7 +42,8 @@ export default function EnrollmentCard({
   marked = false,
   blurred = false,
   children,
-}: ICourseCard) {
+  user,
+}: ICourseCard & {user: IUserLogged}) {
   function handleDropdown(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -49,7 +51,8 @@ export default function EnrollmentCard({
 
   function CardBody({ course, marked, blurred }: ICourseCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-    const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+    //const user = useSelector<IRootState, IUserLogged>(state => state.user);
+
     const isStudent = UserTypes[user.userTypeId] == "Aluno(a)";
 
     function handleDeletion(e) {

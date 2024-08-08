@@ -4,7 +4,7 @@ import { getToken } from "utils";
 
 // Shared
 import toggleModalForm from "components/shared/ModalForm";
-import { AddCourseButton, CourseListComponent } from "./styles";
+import { AddCourseButton, CourseListComponent, ModalForm } from "./styles";
 import FormLinkCourse from "components/shared/forms/FormLinkCourse";
 import EnrollmentCard from "components/shared/cards/EnrollmentCard";
 
@@ -14,6 +14,7 @@ import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
 import { H5 } from "../Titles";
+import IUser from "interfaces/IUser";
 
 interface IEnrollmentListProps {
   user: IUserLogged;
@@ -21,6 +22,8 @@ interface IEnrollmentListProps {
 
 export default function EnrollmentList({ user }: IEnrollmentListProps) {
   const [fetching, setFetching] = useState<boolean>(false);
+
+  const loggedInUser = store.getState().user;
 
   const { dispatch } = store;
   async function fetchRemoveCourse(data) {
@@ -55,36 +58,39 @@ export default function EnrollmentList({ user }: IEnrollmentListProps) {
   }
 
   return (
-    <div style={{ marginTop: 30 }}>
-      <H5 style={{ marginBottom: 25 }}>Cursos vinculados</H5>
-
-      {user.courses.length == 0 &&
-        <p className="title">
-          Você ainda não possui nenhum curso vinculado à sua conta.
-        </p>
-      }
-
-      <CourseListComponent>
-        <AddCourseButton
-          onClick={() =>
-            toggleModalForm(
-              "Vincular curso",
-              <FormLinkCourse user={user} />,
-              "md"
-            )
-          }>
-          <i className="bi bi-plus-lg" />
-          <span>Vincular curso</span>
-        </AddCourseButton>
-
-        {user.courses.map((course) => (
-          <EnrollmentCard
-            key={course.id}
-            course={course}
-            onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
-          />
-        ))}
-      </CourseListComponent>
-    </div>
+    <ModalForm>
+      <div style={{ marginTop: 30 }}>
+          <H5 style={{ marginBottom: 25 }}>Cursos vinculados</H5>
+    
+          {user.courses.length == 0 &&
+            <p className="title">
+              Você ainda não possui nenhum curso vinculado à sua conta.
+            </p>
+          }
+    
+          <CourseListComponent>
+            <AddCourseButton
+              onClick={() =>
+                toggleModalForm(
+                  "Vincular curso",
+                  <FormLinkCourse user={user} />,
+                  "md"
+                )
+              }>
+              <i className="bi bi-plus-lg" />
+              <span>Vincular curso</span>
+            </AddCourseButton>
+    
+            {user.courses.map((course) => (
+              <EnrollmentCard
+                key={course.id}
+                course={course}
+                user={user}
+                onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
+              />
+            ))}
+          </CourseListComponent>
+        </div>
+    </ModalForm>
   );
 }

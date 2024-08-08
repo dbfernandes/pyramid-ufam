@@ -12,10 +12,11 @@ import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection } from "./styles";
+import { CustomForm, FormSection, ModalForm } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+import { store } from "redux/store";
 interface IFormSendPasswordResetLinkProps {
   user: IUserLogged;
 }
@@ -71,12 +72,12 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
   }
 
   return (
-    <CustomForm>
+    <ModalForm>
       <FormSection>
         <H5 style={{ marginBottom: 25 }}>Alterar senha</H5>
 
         <p style={{ marginBottom: "15px", color: "var(--muted)" }}>
-          Caso você deseje alterar sua senha, basta clicar no botão abaixo para receber um link para o formulário de alteração de senha.
+          Caso você deseje alterar a senha, basta clicar no botão abaixo para receber um link para o formulário de alteração de senha.
         </p>
         <p style={{ marginBottom: "35px", color: "var(--muted)" }}>
           O link para o formulário será enviado para o email cadastrado na sua conta e será válido por 1 hora.
@@ -99,6 +100,6 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
           )}
         </>
       </FormSection>
-    </CustomForm>
+    </ModalForm>
   );
 }

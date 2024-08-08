@@ -106,7 +106,8 @@ export class UserController {
 	}
 
 	@Post(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -203,7 +204,8 @@ export class UserController {
 	}
 
 	@Patch(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -216,7 +218,8 @@ export class UserController {
 	}
 
 	@Delete(":id/unenroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)

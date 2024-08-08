@@ -3,7 +3,7 @@ import { Wrapper as EnrollmentCardWrapper, HoverMenu } from "../cards/Enrollment
 
 export const CourseListComponent = styled.div`
 	display: block;
-  width: 50%;
+  width: 100%;
   margin-top: 25px;
 
   ${EnrollmentCardWrapper} {
@@ -16,6 +16,15 @@ export const CourseListComponent = styled.div`
     }
   };
 `;
+
+export const ModalForm = styled.form`
+  width: 80%;
+  background-color: white;
+  border-radius: 8px;
+  margin: auto;
+  padding-bottom: 50px
+`;
+
 
 export const AddCourseButton = styled.button`
   width: 100%;

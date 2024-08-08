@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+import IUser from "interfaces/IUser";
 
 interface IFormComponentProps {
   course?: any;
