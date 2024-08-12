@@ -12,7 +12,7 @@ import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection, ModalForm } from "./styles";
+import { CustomForm, FormSection } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";

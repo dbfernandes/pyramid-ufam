@@ -22,9 +22,12 @@ import { Button } from "components/shared/Button";
 interface IFormUpdateAccountProps {
   user: IUserLogged;
   onChange?: Function;
+  handleCloseModalForm?: Function;
 }
 
-export default function FormUpdateAccount({ user, onChange = () => {} }: IFormUpdateAccountProps) {
+export default function FormUpdateAccount({ user, onChange = () => {}, handleCloseModalForm }: IFormUpdateAccountProps) {
+  const isOwnUser = "logged" in user;
+  
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [cpf, setCpf] = useState<string>("");
@@ -83,6 +86,9 @@ export default function FormUpdateAccount({ user, onChange = () => {} }: IFormUp
       .then((response) => {
         setSuccess(true);
         onChange();
+        if (handleCloseModalForm) {
+          handleCloseModalForm();
+        }
         toast.success("Informações atualizadas com sucesso.");
       })
       .catch((error) => {
@@ -173,9 +179,9 @@ export default function FormUpdateAccount({ user, onChange = () => {} }: IFormUp
   }
 
   return (
-    <ModalForm>
-      <FormSection>
-        <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
+    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
+      <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
+        {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>}
 
         <ProfilePicture>
           <img
@@ -254,7 +260,7 @@ export default function FormUpdateAccount({ user, onChange = () => {} }: IFormUp
           )}
         </>
       </FormSection>
-    </ModalForm>
+    </CustomForm>
     );
   
 }

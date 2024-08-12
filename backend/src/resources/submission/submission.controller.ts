@@ -68,7 +68,7 @@ export class SubmissionController {
 					fileType: "pdf",
 				})
 				.addMaxSizeValidator({
-					maxSize: 5000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,

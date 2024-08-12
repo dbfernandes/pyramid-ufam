@@ -142,7 +142,7 @@ export class UserController {
 					fileType: "pdf",
 				})
 				.addMaxSizeValidator({
-					maxSize: 5000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -182,7 +182,7 @@ export class UserController {
 					fileType: ".(png|jpeg|jpg)",
 				})
 				.addMaxSizeValidator({
-					maxSize: 1000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
