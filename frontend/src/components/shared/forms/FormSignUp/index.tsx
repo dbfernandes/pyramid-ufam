@@ -117,6 +117,7 @@ export default function FormSignUp() {
     if (
       name.length != 0 &&
       validateEmail(email) &&
+      validateCpf(cpf) &&
       validatePassword(password) &&
       validateConfirmPassword(confirmPassword) &&
       course != null &&

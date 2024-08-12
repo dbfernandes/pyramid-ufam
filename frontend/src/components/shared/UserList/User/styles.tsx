@@ -35,35 +35,35 @@ export const Column = styled.div`
 	position: relative;
 	color: ${props => props.color ? props.color : "var(--text-default)"};
 	padding: 15px;
-
+	
 	white-space: nowrap; 
-  overflow: hidden;
-  text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	.text-with-ribbon {
 		display: flex;
-
+		
 		span {
 			white-space: nowrap; 
   		overflow: hidden;
   		text-overflow: ellipsis;
-		}
-	}
-
+		  }
+		  }
+		  
   & > .placeholder {
     color: var(--white-5);
-  }
+	}
 `;
 
 export const CopyToClipboardSpan = styled.span`
   cursor: pointer;
   transition: 0.3s;
-
+  
   &:hover {
     color: var(--primary-color-2);
-  }
-
-  & > i {
+	}
+	
+	& > i {
     margin-left: 5px;
     font-size: 0.75rem;
     vertical-align: text-top;

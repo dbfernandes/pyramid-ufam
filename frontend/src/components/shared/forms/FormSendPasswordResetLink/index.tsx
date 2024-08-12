@@ -16,11 +16,18 @@ import { CustomForm, FormSection } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+import IUser from "interfaces/IUser";
 interface IFormSendPasswordResetLinkProps {
-  user: IUserLogged;
+  user: IUserLogged | IUser;
+  handleCloseModalForm?: Function;
 }
 
-export default function FormSendPasswordResetLink({ user }: IFormSendPasswordResetLinkProps) {
+export default function FormSendPasswordResetLink({
+  user,
+  handleCloseModalForm,
+}: IFormSendPasswordResetLinkProps) {
+  const isOwnUser = "logged" in user;
+
   // Form state
   const [sent, setSent] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -50,6 +57,9 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
+        if (handleCloseModalForm) {
+          handleCloseModalForm();
+        }
         toast.success("Email enviado com sucesso.");
       })
       .catch((error) => {
@@ -70,19 +80,25 @@ export default function FormSendPasswordResetLink({ user }: IFormSendPasswordRes
     setFetching(false);
   }
 
+  const description = [
+    [
+      "Caso você deseje alterar a senha do usuário, basta clicar no botão abaixo para enviar um link para o formulário de alteração de senha.",
+      "O link para o formulário será enviado para o email cadastrado na conta do usuário e será válido por 1 hora."
+    ],
+    [
+      "Caso você deseje alterar sua senha, basta clicar no botão abaixo para receber um link para o formulário de alteração de senha.",
+      "O link para o formulário será enviado para o email cadastrado na sua conta e será válido por 1 hora."
+    ]
+  ]
+
   return (
-    <CustomForm>
-      <FormSection>
-        <H5 style={{ marginBottom: 25 }}>Alterar senha</H5>
+    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
+      <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
+        {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar senha</H5>}
 
-        <p style={{ marginBottom: "15px", color: "var(--muted)" }}>
-          Caso você deseje alterar sua senha, basta clicar no botão abaixo para receber um link para o formulário de alteração de senha.
-        </p>
-        <p style={{ marginBottom: "35px", color: "var(--muted)" }}>
-          O link para o formulário será enviado para o email cadastrado na sua conta e será válido por 1 hora.
-        </p>
+        {description[isOwnUser ? 1 : 0].map((text, index) => (<p key={index}>{text}</p>))}
 
-        <Button style={{ marginTop: 15 }} onClick={(e) => handleSendPasswordResetLink(e)}>
+        <Button style={{ marginTop: 15 }} onClick={(e) => handleSendPasswordResetLink(e)} disabled={fetching}>
           {fetching ? (
             <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (

@@ -106,7 +106,8 @@ export class UserController {
 	}
 
 	@Post(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -141,7 +142,7 @@ export class UserController {
 					fileType: "pdf",
 				})
 				.addMaxSizeValidator({
-					maxSize: 5000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -181,7 +182,7 @@ export class UserController {
 					fileType: ".(png|jpeg|jpg)",
 				})
 				.addMaxSizeValidator({
-					maxSize: 1000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -203,7 +204,8 @@ export class UserController {
 	}
 
 	@Patch(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -216,7 +218,8 @@ export class UserController {
 	}
 
 	@Delete(":id/unenroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
