@@ -88,7 +88,13 @@ export default function SubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success(`${response.data.count} submissões ${getPlural(status)} com sucesso.`);
+        const count = response.data.count;
+        if (count === 0) {
+          toast.info(`Nenhuma submissão foi ${status.toLowerCase().substring(0, status.length - 1).concat("a")}.`);
+        } else {
+          toast.success(`${count} submissões ${getPlural(status)} com sucesso.`);
+        }
+
         setCheckedIds([]);
         onChange();
       })
