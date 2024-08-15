@@ -19,9 +19,11 @@ import {
 
 // Interfaces
 import ICourse from "interfaces/ICourse";
-import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserTypes } from "constants/userTypes.constants";
+import { IRootState } from "redux/store";
+import IUser from "interfaces/IUser";
+import { onChange } from "react-toastify/dist/core/store";
 
 interface ICourseCard {
   course: ICourse;
@@ -31,6 +33,9 @@ interface ICourseCard {
   marked?: boolean;
   blurred?: boolean;
   children?: React.ReactNode;
+  onChange?: Function;
+  handleCloseModalForm?: Function;
+  onEditSucess?: () => void
 }
 
 export default function EnrollmentCard({
@@ -41,7 +46,11 @@ export default function EnrollmentCard({
   marked = false,
   blurred = false,
   children,
-}: ICourseCard) {
+  onChange,
+  handleCloseModalForm,
+  onEditSucess,
+  user,
+}: ICourseCard & {user: IUserLogged}) {
   function handleDropdown(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -49,8 +58,9 @@ export default function EnrollmentCard({
 
   function CardBody({ course, marked, blurred }: ICourseCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-    const user = useSelector<IRootState, IUserLogged>((state) => state.user);
-    const isStudent = UserTypes[user.userTypeId] == "Aluno(a)";
+    //const user = useSelector<IRootState, IUserLogged>(state => state.user);
+
+    const isStudent = UserTypes[user?.userTypeId] == "Aluno(a)";
 
     function handleDeletion(e) {
       e.preventDefault();
@@ -80,7 +90,7 @@ export default function EnrollmentCard({
                   onClick={() =>
                     toggleModalForm(
                       `Alterar matrícula (${course.name})`,
-                      <FormLinkCourse user={user} course={course} />,
+                      <FormLinkCourse user={user} course={course} onChange={onChange} handleCloseModalForm={handleCloseModalForm} onEditSuccess={handleCloseModalForm} />,
                       "md"
                     )
                   }

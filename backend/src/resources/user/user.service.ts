@@ -326,7 +326,7 @@ export class UserService {
 		if (!user) throw new BadRequestException("User not found");
 
 		const submissions = await this.prisma.submission.findMany({
-			where: { userId },
+			where: { userId, isActive: true },
 			include: {
 				Activity: {
 					include: {

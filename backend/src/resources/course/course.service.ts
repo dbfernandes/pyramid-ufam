@@ -83,11 +83,13 @@ export class CourseService {
 			where: {
 				courseId: id,
 				enrollment: { not: null },
+				User: { isActive: true },
 			},
 		});
 
 		const submissions = await this.prisma.submission.findMany({
 			where: {
+				isActive: true,
 				Activity: {
 					CourseActivityGroup: {
 						Course: {

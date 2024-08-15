@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import { formatCpf, getFirstAndLastName } from "utils";
+
+// Shared
 import toggleModalForm from "components/shared/ModalForm";
+import FormUpdateAccount from "components/shared/forms/FormUpdateAccount";
+import EnrollmentList from "components/shared/EnrollmentList";
+import FormSendPasswordResetLink from "components/shared/forms/FormSendPasswordResetLink";
 
 // Custom
 import {
@@ -20,8 +25,7 @@ import Spinner from "components/shared/Spinner";
 
 // Interfaces
 import IUser from "interfaces/IUser";
-import FormAddUser from "components/shared/forms/FormAddUser";
-import FormSendPasswordResetLink from "components/shared/forms/FormSendPasswordResetLink";
+
 interface IUserProps {
   user?: IUser | null;
   courseId?: number | null | undefined;
@@ -208,6 +212,8 @@ export default function User({
   }
   const cpf = getCpf(user);*/
 
+
+
   return (
     header
       ? <Item header={true} student={subRoute === "alunos"}>
@@ -300,24 +306,33 @@ export default function User({
                   </Options>
 
                   <DropdownMenu renderOnMount={true}>
-                    <DropdownItem onClick={() =>
+                    {user && (<DropdownItem onClick={() => 
                       toggleModalForm(
-                        `Editar usuário (${getFirstAndLastName(user?.name)})`,
-                        <FormAddUser user={user} />,
+                        `Editar informações (${getFirstAndLastName(user?.name)})`,
+                        <FormUpdateAccount user={user} onChange={onChange}/>,
                         "lg"
                       )
-                    } accent={"var(--success)"}>
-                      <i className="bi bi-pencil-fill"></i> Editar
-                    </DropdownItem>
-                    <DropdownItem onClick={() =>
+                      } accent={"var(--success)"}>
+                      <i className="bi bi-pencil-fill"></i> Editar informações
+                    </DropdownItem>)}
+                    {user && (<DropdownItem onClick={() => 
+                      toggleModalForm(
+                        `Editar cursos (${getFirstAndLastName(user?.name)})`,
+                        <EnrollmentList user={user} onChange={onChange}/>,
+                        "lg"
+                      )
+                      } accent={"var(--success)"}>
+                      <i className="bi bi-mortarboard-fill"></i> Editar cursos
+                    </DropdownItem>)}
+                    {user && (<DropdownItem onClick={() => 
                       toggleModalForm(
                         `Resetar senha (${getFirstAndLastName(user?.name)})`,
-                        <FormSendPasswordResetLink user={user} />,
-                        "md"
+                        <FormSendPasswordResetLink user={user}/>,
+                        "lg"
                       )
-                    } accent={"var(--success)"}>
+                      } accent={"var(--success)"}>
                       <i className="bi bi-key-fill"></i> Resetar senha
-                    </DropdownItem>
+                    </DropdownItem>)}
 
                     {user?.isActive === true
                       ? (
