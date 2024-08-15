@@ -146,7 +146,7 @@ export default function UserList({
       .then((response) => {
         const count = response.data.count;
         if (count === 0) {
-          toast.info("Nenhuma usuário foi desativado.");
+          toast.info("Nenhum usuário foi desativado.");
         } else {
           toast.success(`${count} usuários desativados com sucesso.`);
         }
@@ -219,7 +219,7 @@ export default function UserList({
       .then((response) => {
         const count = response.data.count;
         if (count === 0) {
-          toast.info("Nenhuma usuário foi reativado.");
+          toast.info("Nenhum usuário foi reativado.");
         } else {
           toast.success(`${count} usuários reativados com sucesso.`);
         }

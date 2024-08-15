@@ -94,7 +94,7 @@ export default function MySubmissionList({
       .then((response) => {
         const count = response.data.count;
         if (count === 0) {
-          toast.info("Nenhuma submissão foi cancelada.");
+          toast.info("Submissões já aprovadas não podem ser alteradas. Nenhuma submissão foi cancelada.");
         } else {
           toast.success(`${count} submissões canceladas com sucesso.`);
         }

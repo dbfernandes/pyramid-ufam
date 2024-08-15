@@ -90,7 +90,7 @@ export default function SubmissionList({
       .then((response) => {
         const count = response.data.count;
         if (count === 0) {
-          toast.info(`Nenhuma submissão foi ${status.toLowerCase().substring(0, status.length - 1).concat("a")}.`);
+          toast.info(`Submissões já aprovadas não podem ser alteradas. Nenhuma submissão foi ${status.toLowerCase().substring(0, status.length - 1).concat("a")}.`);
         } else {
           toast.success(`${count} submissões ${getPlural(status)} com sucesso.`);
         }
