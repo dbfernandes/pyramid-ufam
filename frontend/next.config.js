@@ -12,7 +12,7 @@ module.exports = {
 			}
 		]
 	},*/
-  swcMinify: false,
+	swcMinify: false,
 	reactStrictMode: true,
 	env: {
 		img: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/img`,

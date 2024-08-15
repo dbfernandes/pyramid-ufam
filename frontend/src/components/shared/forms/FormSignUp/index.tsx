@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { login, defaultCourse, authorize } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { validateCpf, validateEmail } from "utils";
+import { checkPasswordStrength, validateCpf, validateEmail } from "utils";
 
 // Shared
 import Form from "components/shared/Form";
@@ -20,35 +20,21 @@ import Spinner from "components/shared/Spinner";
 import { H3 } from "components/shared/Titles";
 import { Logo } from "components/shared/forms/FormLogin/styles";
 import SelectCustom from "components/shared/SelectCustom";
+import PasswordStrength from "components/shared/PasswordStrength";
 
 export default function FormSignUp() {
   const router = useRouter();
 
   // Inputs and validators
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [cpf, setCpf] = useState<string>("");
-  const handleCpf = (value) => {
-    setCpf(value);
-  };
-
   const [password, setPassword] = useState<string>("");
-  const handlePassword = (value) => {
-    setPassword(value);
-  };
-
+  const [showPasswordStrengthDescription, setShowPasswordStrengthDescription] = useState<boolean>(false);
+  function validatePassword(value) {
+    return checkPasswordStrength(value).score >= 4;
+  }
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const handleConfirmPassword = (value) => {
-    setConfirmPassword(value);
-  };
   function validateConfirmPassword(value) {
     return value === password;
   }
@@ -60,9 +46,6 @@ export default function FormSignUp() {
   };
 
   const [startYear, setStartYear] = useState<string>("");
-  const handleStartYear = (value) => {
-    setStartYear(value);
-  };
   function validateStartYear(value) {
     return value.length === 4 && !isNaN(value) && parseInt(value) > 1909 && parseInt(value) <= new Date().getFullYear();
   }
@@ -134,7 +117,8 @@ export default function FormSignUp() {
     if (
       name.length != 0 &&
       validateEmail(email) &&
-      password.length != 0 &&
+      validateCpf(cpf) &&
+      validatePassword(password) &&
       validateConfirmPassword(confirmPassword) &&
       course != null &&
       validateStartYear(startYear) &&
@@ -240,7 +224,7 @@ export default function FormSignUp() {
         label={"Nome completo*"}
         name={"name"}
         value={name}
-        handleValue={handleName}
+        handleValue={setName}
         required={true}
         displayAlert={sent}
         maxLength={255}
@@ -250,7 +234,7 @@ export default function FormSignUp() {
         label={"Email*"}
         name={"email"}
         value={email}
-        handleValue={handleEmail}
+        handleValue={setEmail}
         validate={validateEmail}
         required={true}
         alert={"Email inválido"}
@@ -262,7 +246,7 @@ export default function FormSignUp() {
         label={"CPF"}
         name={"cpf"}
         value={cpf}
-        handleValue={handleCpf}
+        handleValue={setCpf}
         validate={validateCpf}
         alert={"CPF Inválido"}
         displayAlert={sent}
@@ -270,23 +254,31 @@ export default function FormSignUp() {
       />
 
       <MultiField>
-        <TextInput
-          type={"password"}
-          label={"Senha*"}
-          name={"password"}
-          value={password}
-          handleValue={handlePassword}
-          required={true}
-          displayAlert={sent}
-          maxLength={255}
-        />
+        <div>
+          <TextInput
+            type={"password"}
+            label={"Senha*"}
+            name={"password"}
+            value={password}
+            handleValue={setPassword}
+            validate={validatePassword}
+            required={true}
+            alert={"Senha fraca"}
+            displayAlert={sent}
+            maxLength={255}
+
+            onFocus={() => setShowPasswordStrengthDescription(true)}
+            onBlur={() => setShowPasswordStrengthDescription(false)}
+          />
+          <PasswordStrength password={password} showPasswordStrengthDescription={showPasswordStrengthDescription} />
+        </div>
 
         <TextInput
           type={"password"}
           label={"Confirmar senha*"}
           name={"confirmPassword"}
           value={confirmPassword}
-          handleValue={handleConfirmPassword}
+          handleValue={setConfirmPassword}
           validate={validateConfirmPassword}
           required={true}
           alert={"Senhas não conferem"}
@@ -335,7 +327,7 @@ export default function FormSignUp() {
           label={"Ano de início*"}
           name={"startYear"}
           value={startYear}
-          handleValue={handleStartYear}
+          handleValue={setStartYear}
           validate={validateStartYear}
           mask={"9999"}
           required={true}

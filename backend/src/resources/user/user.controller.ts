@@ -106,7 +106,8 @@ export class UserController {
 	}
 
 	@Post(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -141,7 +142,7 @@ export class UserController {
 					fileType: "pdf",
 				})
 				.addMaxSizeValidator({
-					maxSize: 5000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -181,7 +182,7 @@ export class UserController {
 					fileType: ".(png|jpeg|jpg)",
 				})
 				.addMaxSizeValidator({
-					maxSize: 1000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -203,7 +204,8 @@ export class UserController {
 	}
 
 	@Patch(":id/enroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -216,7 +218,8 @@ export class UserController {
 	}
 
 	@Delete(":id/unenroll/:courseId")
-	@UseGuards(JwtAuthGuard, IsOwnerGuard)
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
@@ -230,8 +233,11 @@ export class UserController {
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
-	async remove(@Param("id") id: string) {
-		return await this.userService.remove(+id);
+	async remove(
+		@Param("id") id: string,
+		@Headers("Authorization") token: string,
+	) {
+		return await this.userService.remove(+id, token);
 	}
 
 	@Delete(":ids/mass-remove")
@@ -240,7 +246,36 @@ export class UserController {
 	@UsePipes(
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
-	async massRemove(@Param("ids") ids: string) {
-		return await this.userService.massRemove(ids);
+	async massRemove(
+		@Param("ids") ids: string,
+		@Headers("Authorization") token: string,
+	) {
+		return await this.userService.massRemove(ids, token);
+	}
+
+	@Patch(":id/restore")
+	@UseGuards(JwtAuthGuard, RolesGuard, IsOwnerGuard)
+	@Roles(UserTypes.COORDINATOR)
+	@UsePipes(
+		new ValidationPipe({ transform: true, skipMissingProperties: false }),
+	)
+	async restore(
+		@Param("id") id: string,
+		@Headers("Authorization") token: string,
+	) {
+		return await this.userService.restore(+id, token);
+	}
+
+	@Patch(":ids/mass-restore")
+	@UseGuards(JwtAuthGuard, ExclusiveRolesGuard)
+	@Roles(UserTypes.COORDINATOR)
+	@UsePipes(
+		new ValidationPipe({ transform: true, skipMissingProperties: false }),
+	)
+	async massRestore(
+		@Param("ids") ids: string,
+		@Headers("Authorization") token: string,
+	) {
+		return await this.userService.massRestore(ids, token);
 	}
 }

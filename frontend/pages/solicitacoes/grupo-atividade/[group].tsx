@@ -33,7 +33,6 @@ export default function SolicitacoesGrupoAtividade() {
       router.replace(`${url.split("?")[0]}?page=1&search=&status=1`);
     }
 
-
     setLinks([
       {
         title: "Submissões",
@@ -43,7 +42,7 @@ export default function SolicitacoesGrupoAtividade() {
         route: "/solicitacoes/grupo-atividade",
       },
       {
-        title: "extensao",
+        title: ActivityGroupsNames[activityGroup].title,
       }
     ]);
   }, []);

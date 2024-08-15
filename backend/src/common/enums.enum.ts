@@ -11,7 +11,7 @@ export enum ActivityGroups {
 }
 
 export enum SubmissionActionTypes {
-	SUBMITED = "submeteu",
+	PENDING = "submeteu",
 	PREAPPROVED = "pré-aprovou",
 	APPROVED = "aprovou",
 	REJECTED = "rejeitou",
@@ -20,7 +20,7 @@ export enum SubmissionActionTypes {
 }
 
 export enum Statuses {
-	SUBMITED = "Pendente",
+	PENDING = "Pendente",
 	PREAPPROVED = "Pré-aprovado",
 	APPROVED = "Aprovado",
 	REJECTED = "Rejeitado",

@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
-import { formatCpf } from "utils";
+import { formatCpf, getFirstAndLastName } from "utils";
+
+// Shared
+import toggleModalForm from "components/shared/ModalForm";
+import FormUpdateAccount from "components/shared/forms/FormUpdateAccount";
+import EnrollmentList from "components/shared/EnrollmentList";
+import FormSendPasswordResetLink from "components/shared/forms/FormSendPasswordResetLink";
 
 // Custom
 import {
@@ -19,6 +25,7 @@ import Spinner from "components/shared/Spinner";
 
 // Interfaces
 import IUser from "interfaces/IUser";
+
 interface IUserProps {
   user?: IUser | null;
   courseId?: number | null | undefined;
@@ -28,10 +35,14 @@ interface IUserProps {
 
   fetchingDelete?: boolean;
   onDelete?: Function;
+  fetchingRestore?: boolean;
+  onRestore?: Function;
   onChange?: Function;
 
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
+
+  disableMenu?: boolean;
 }
 
 export default function User({
@@ -43,10 +54,15 @@ export default function User({
 
   fetchingDelete = false,
   onDelete = () => { },
+  fetchingRestore = false,
+  onRestore = () => { },
   onChange = () => { },
 
   checkedIds = [],
   setCheckedIds = () => { },
+
+  disableMenu = false,
+
   ...props
 }: IUserProps) {
   function handleDropdown(e) {
@@ -54,13 +70,21 @@ export default function User({
     e.stopPropagation();
   }
 
-  const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
-  function handleDeletion(e) {
+  const [confirmDanger, setConfirmDanger] = useState<boolean>(false);
+  function handleDelete(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!confirmDeletion) setConfirmDeletion(!confirmDeletion);
+    if (!confirmDanger) setConfirmDanger(!confirmDanger);
     else onDelete();
+  }
+
+  function handleRestore(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!confirmDanger) setConfirmDanger(!confirmDanger);
+    else onRestore();
   }
 
   function handleCheck(e) {
@@ -170,7 +194,7 @@ export default function User({
       <>
         <Column><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
         <Column><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
-        <Column><CustomProgressBar current={workloadCount["Extensao"].totalWorkload} max={workloadCount["Extensao"].maxWorkload} /></Column>
+        <Column><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
       </>
     )
   }
@@ -183,10 +207,12 @@ export default function User({
   }
   const enrollment = getEnrollment(user);
 
-  function getCpf(user) {
+  /*function getCpf(user) {
     return user?.cpf ? formatCpf(user?.cpf) : "-"
   }
-  const cpf = getCpf(user);
+  const cpf = getCpf(user);*/
+
+
 
   return (
     header
@@ -210,7 +236,6 @@ export default function User({
           : <>
             <Column color={"var(--muted)"}>Email</Column>
             <Column color={"var(--muted)"}>Curso(s)</Column>
-            {/*<Column color={"var(--muted)"}>CPF</Column>*/}
           </>
         }
         <Column color={"var(--muted)"}>Status</Column>
@@ -266,12 +291,6 @@ export default function User({
                     </span>
                   </OverlayTrigger>
                 </Column>
-
-                {/*<Column>
-                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{cpf}</Tooltip>}>
-                      <span>{cpf}</span>
-                    </OverlayTrigger>
-                  </Column>*/}
               </>
             }
 
@@ -279,29 +298,63 @@ export default function User({
               <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
             </Column>
 
-            {user?.isActive === true &&
-              <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDeletion(false)}>
-                <Options variant="secondary">
-                  <i className="bi bi-three-dots-vertical" />
-                </Options>
+            {user && !disableMenu
+              ? (
+                <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDanger(false)}>
+                  <Options variant="secondary">
+                    <i className="bi bi-three-dots-vertical" />
+                  </Options>
 
-                <DropdownMenu renderOnMount={true}>
-                  <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
-                    <i className="bi bi-pencil-fill"></i> Editar
-                  </DropdownItem>
-                  <DropdownItem onClick={() => /*setShowModalEdit(true)*/ { }} accent={"var(--success)"}>
-                    <i className="bi bi-key-fill"></i> Resetar senha
-                  </DropdownItem>
-                  <DropdownItem onClick={(e) => handleDeletion(e)} accent={"var(--danger)"}>
-                    {confirmDeletion
-                      ? fetchingDelete ? <Spinner size={"21px"} color={"var(--danger)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
-                      : <><i className="bi bi-trash-fill"></i> Desativar</>
+                  <DropdownMenu renderOnMount={true}>
+                    {user && (<DropdownItem onClick={() => 
+                      toggleModalForm(
+                        `Editar informações (${getFirstAndLastName(user?.name)})`,
+                        <FormUpdateAccount user={user} onChange={onChange}/>,
+                        "lg"
+                      )
+                      } accent={"var(--success)"}>
+                      <i className="bi bi-pencil-fill"></i> Editar informações
+                    </DropdownItem>)}
+                    {user && (<DropdownItem onClick={() => 
+                      toggleModalForm(
+                        `Editar cursos (${getFirstAndLastName(user?.name)})`,
+                        <EnrollmentList user={user} onChange={onChange}/>,
+                        "lg"
+                      )
+                      } accent={"var(--success)"}>
+                      <i className="bi bi-mortarboard-fill"></i> Editar cursos
+                    </DropdownItem>)}
+                    {user && (<DropdownItem onClick={() => 
+                      toggleModalForm(
+                        `Resetar senha (${getFirstAndLastName(user?.name)})`,
+                        <FormSendPasswordResetLink user={user}/>,
+                        "lg"
+                      )
+                      } accent={"var(--success)"}>
+                      <i className="bi bi-key-fill"></i> Resetar senha
+                    </DropdownItem>)}
+
+                    {user?.isActive === true
+                      ? (
+                        <DropdownItem onClick={(e) => handleDelete(e)} accent={"var(--danger)"}>
+                          {confirmDanger
+                            ? fetchingDelete ? <Spinner size={"21px"} color={"var(--danger)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                            : <><i className="bi bi-trash-fill"></i> Desativar</>
+                          }
+                        </DropdownItem>
+                      ) : (
+                        <DropdownItem onClick={(e) => handleRestore(e)} accent={"var(--warning)"}>
+                          {confirmDanger
+                            ? fetchingRestore ? <Spinner size={"21px"} color={"var(--warning)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                            : <><i className="bi bi-exclamation-triangle-fill"></i> Reativar</>
+                          }
+                        </DropdownItem>
+                      )
                     }
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            }
-          </Item >
+                  </DropdownMenu>
+                </Dropdown>
+              ) : <div />}
+          </Item>
         )
   );
 }

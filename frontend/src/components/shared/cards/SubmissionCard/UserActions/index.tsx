@@ -27,19 +27,28 @@ import { UserTypes } from "constants/userTypes.constants";
 interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
-
   onChange?: Function;
 }
 
 export default function UserActions({
   submission,
   user,
-
   onChange = () => { }
 }: IUserActionsProps) {
   // History
   const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
   const [history, setHistory] = useState<any[]>([]);
+
+
+  const [details, setDetails] = useState<string>("");
+
+  // Form state
+  const [sent, setSent] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+
   async function fetchHistory() {
     setFetchingHistory(true);
 
@@ -120,33 +129,38 @@ export default function UserActions({
     );
   }
 
-  // Delete
-  async function fetchDelete() {
-    const options = {
-      url: `${process.env.api}/submissions/${submission.id}`,
-      method: "DELETE",
+  async function fetchUpdateStatusAndDelete() {
+    setFetching(true);
+  
+    const updateStatusOptions = {
+      url: `${process.env.api}/submissions/${submission.id}/status`,
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${getToken()}`,
       },
+      data: {
+        status: 5, // Status "Cancelado"
+      },
     };
-
-    await axios
-      .request(options as AxiosRequestConfig)
-      .then((response) => {
-        onChange();
-        toast.success("Submissão cancelada com sucesso.");
-      })
-      .catch((error) => {
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          500: error?.response?.data?.message,
-        };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
-      });
+  
+    try {
+      // Atualiza o status para "Cancelado"
+      await axios.request(updateStatusOptions as AxiosRequestConfig);
+      toast.success("Status atualizado para Cancelado com sucesso.");
+      onChange(); // Atualiza a interface após a mudança de status
+  
+    } catch (error) {
+      const errorMessages = {
+        0: "Oops, tivemos um erro. Tente novamente.",
+      };
+  
+      toast.error(errorMessages[0]);
+    } finally {
+      setFetching(false);
+    }
   }
+  
 
   return (
     <ButtonGroup>
@@ -160,7 +174,7 @@ export default function UserActions({
         <i className="bi bi-clock-history" /> Histórico
       </InfoButton>
 
-      {[1, 2].includes(submission.status) && (
+      {[1, 2, 4].includes(submission.status) && (
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
@@ -172,13 +186,13 @@ export default function UserActions({
         </EditButton>
       )}
 
-      {(user?.userTypeId == 1 && [1, 2].includes(submission.status)) && (
+      {(user?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
         <>
           <DangerButtonAlt
             onClick={() =>
               toggleModalForm(
                 "Rejeitar submissão",
-                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Rejeitado"} />,
+                <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Rejeitado"} />,
                 "md"
               )
             }>
@@ -189,7 +203,7 @@ export default function UserActions({
             onClick={() =>
               toggleModalForm(
                 "Aprovar submissão",
-                <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Aprovado"} />,
+                <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Aprovado"} />,
                 "md"
               )
             }>
@@ -202,18 +216,18 @@ export default function UserActions({
           onClick={() =>
             toggleModalForm(
               "Pré-aprovar submissão",
-              <FormUpdateStatusSubmission submission={submission} user={user} onChange={onChange} status={"Pré-aprovado"} />,
+              <FormUpdateStatusSubmission submission={submission} onChange={onChange} status={"Pré-aprovado"} />,
               "md"
             )
           }>
           <i className="bi bi-check2-all" /> Pré-aprovar
         </AcceptButton>
       )}
-      {(user?.userTypeId == 3 && [1, 2].includes(submission.status)) && (
+      {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
         <DangerButtonAlt
           onClick={() =>
             confirm(
-              () => fetchDelete(),
+              () => fetchUpdateStatusAndDelete(),
               "Tem certeza que deseja cancelar a submissão?",
               "Cancelar",
               ""

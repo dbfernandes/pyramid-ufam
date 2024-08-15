@@ -73,7 +73,7 @@ export default function DashboardAdmin({
           icon="file-earmark-medical"
           accent="var(--success)"
           title="submissões aprovadas"
-          value={report?.preApprovedSubmissions}
+          value={report?.approvedSubmissions}
           callToAction="Visualizar"
           link="/solicitacoes?page=1&search=&status=3"
         />

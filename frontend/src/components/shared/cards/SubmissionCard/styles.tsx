@@ -243,3 +243,16 @@ export const DangerButtonAlt = styled(ButtonAlt)`
 		border-color: var(--danger-hover);
 	}
 `;
+
+export const WarningButtonAlt = styled(ButtonAlt)`
+	width: fit-content;
+  padding: 8px 26px;
+  margin-left: 10px;
+
+  color: var(--warning-hover);
+
+	&:hover {
+    color: var(--warning);
+		border-color: var(--warning);
+	}
+`;

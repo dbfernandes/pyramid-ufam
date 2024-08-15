@@ -16,11 +16,6 @@ export class UpdateSubmissionDto {
 	@Transform((value) => parseInt(value.value))
 	workload: number;
 
-	@IsInt()
-	@IsNotEmpty()
-	@Transform((value) => parseInt(value.value))
-	userId?: number;
-
 	@IsString()
 	@IsOptional()
 	details?: string;

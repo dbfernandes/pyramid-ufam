@@ -14,6 +14,7 @@ import {
 	HttpStatus,
 	ParseFilePipeBuilder,
 	Res,
+	Headers,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -67,18 +68,20 @@ export class SubmissionController {
 					fileType: "pdf",
 				})
 				.addMaxSizeValidator({
-					maxSize: 5000 * 1024,
+					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
 				.build({
 					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
 				}),
 		)
 		file: Express.Multer.File,
+		@Headers("Authorization") token: string,
 	) {
 		return await this.submissionService.update(
 			+id,
 			updateSubmissionDto,
 			file.filename,
+			token,
 		);
 	}
 
@@ -90,11 +93,15 @@ export class SubmissionController {
 		new ValidationPipe({ transform: true, skipMissingProperties: false }),
 	)
 	async updateStatus(
-		@Req() req: Request,
 		@Param("id") id: string,
 		@Body() updateStatusDto: UpdateStatusDto,
+		@Headers("Authorization") token: string,
 	) {
-		return await this.submissionService.updateStatus(+id, updateStatusDto);
+		return await this.submissionService.updateStatus(
+			+id,
+			updateStatusDto,
+			token,
+		);
 	}
 
 	@Delete(":id")
@@ -115,8 +122,13 @@ export class SubmissionController {
 	async massUpdate(
 		@Param("ids") ids: string,
 		@Body() updateStatusDto: UpdateStatusDto,
+		@Headers("Authorization") token: string,
 	) {
-		return await this.submissionService.massUpdateStatus(ids, updateStatusDto);
+		return await this.submissionService.massUpdateStatus(
+			ids,
+			updateStatusDto,
+			token,
+		);
 	}
 
 	@Delete(":ids/mass-remove")

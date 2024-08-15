@@ -34,22 +34,11 @@ export default function FormUpdateSubmission({
 }: IFormComponentProps) {
   // Inputs and validators
   const [details, setDetails] = useState<string>("");
-  const handleDetails = (value) => {
-    setDetails(value);
-  };
-
   const [activeGroup, setActiveGroup] = useState<any | null>(null);
   const [activity, setActivity] = useState<IActivity | null>(null);
   const [file, setFile] = useState(null);
   const [description, setDescription] = useState<string>("");
-  const handleDescription = (value) => {
-    setDescription(value);
-  };
-
   const [workload, setWorkload] = useState<number>(1);
-  const handleWorkload = (value) => {
-    setWorkload(value);
-  };
 
   const handleFileSetFromUrl = async (url) => {
     try {
@@ -103,7 +92,6 @@ export default function FormUpdateSubmission({
     data.append("description", description);
     data.append("workload", String(workload));
 
-    data.append("userId", String(user.id));
     data.append("details", details);
 
     const config: AxiosRequestConfig = {
@@ -150,7 +138,7 @@ export default function FormUpdateSubmission({
           label={"Observações"}
           name={"details"}
           value={details}
-          handleValue={handleDetails}
+          handleValue={setDetails}
           displayAlert={sent}
           maxLength={255}
         />
@@ -169,13 +157,13 @@ export default function FormUpdateSubmission({
       {activity != null && (
         <>
           <ParagraphTitle id="filedrop">
-            Envie aqui o arquivo <b>(em PDF)</b> do seu certificado*
+            Envie aqui o arquivo <b>(em PDF)</b> do seu certificado* (Max.: 10MB)
           </ParagraphTitle>
           <FileDrop
             file={file}
             setFile={setFile}
             required={true}
-            maxSize={5000 * 1024}
+            maxSize={parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024}
             allowedTypes={["application/pdf"]}
             displayAlert={sent}
           />
@@ -188,7 +176,7 @@ export default function FormUpdateSubmission({
             label={`Descrição*`}
             description={"description"}
             value={description}
-            handleValue={handleDescription}
+            handleValue={setDescription}
             required={true}
             displayAlert={sent}
             maxLength={255}
@@ -200,7 +188,7 @@ export default function FormUpdateSubmission({
           <RangeWrapper>
             <RangeInput
               value={workload}
-              handleValue={handleWorkload}
+              handleValue={setWorkload}
               min={1}
               max={activity.maxWorkload}
               disabled={activity == null}

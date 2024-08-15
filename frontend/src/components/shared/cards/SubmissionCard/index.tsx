@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios, { AxiosRequestConfig } from "axios";
-import { StatusSubmissions } from "constants/statusSubmissions.constants";
 import { formatCpf, getFilename } from "utils";
+import { toast } from "react-toastify";
 
 // Shared
 import { H6 } from "components/shared/Titles";
-import { toast } from "react-toastify";
 import UserActions from "./UserActions";
 
 // Custom
@@ -28,8 +27,6 @@ import {
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
-import { IRootState } from "redux/store";
-
 interface ISubmissionCardProps {
   submission?: any;
   loading?: boolean;
@@ -142,9 +139,11 @@ export default function SubmissionCard({
               <p>
                 <b>Email:</b> {submission.user.email}
               </p>
-              <p>
-                <b>CPF:</b> {getCpf(submission.user.cpf)}
-              </p>
+              {submission.user?.cpf && (
+                <p>
+                  <b>CPF:</b> {getCpf(submission.user)}
+                </p>
+              )}
               <p>
                 <b>Curso:</b> {submission.user.course}
               </p>
@@ -201,7 +200,7 @@ export default function SubmissionCard({
   function SubmissionStatus({ status }) {
     const statusBars = {
       1: {
-        text: "Submetido",
+        text: "Pendente",
         bars: ["g", "w", "w"],
       },
       2: {

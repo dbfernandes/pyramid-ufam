@@ -84,7 +84,7 @@ export default function MySubmissionList({
       url: `${process.env.api}/submissions/${ids}/mass-remove`,
       method: "DELETE",
       headers: {
-        "Content-Type": "application",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${getToken()}`,
       }
     };
@@ -92,7 +92,13 @@ export default function MySubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success("Submissões canceladas com sucesso.");
+        const count = response.data.count;
+        if (count === 0) {
+          toast.info("Nenhuma submissão foi cancelada.");
+        } else {
+          toast.success(`${count} submissões canceladas com sucesso.`);
+        }
+
         setCheckedIds([]);
         onChange();
       })

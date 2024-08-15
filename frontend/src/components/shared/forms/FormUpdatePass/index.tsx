@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "redux/slicer/user";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { getFirstName } from "utils";
+import { checkPasswordStrength, getFirstName } from "utils";
 
 // Shared
 import Form from "components/shared/Form";
@@ -13,6 +13,7 @@ import TextInput from "components/shared/TextInput";
 import { Button } from "components/shared/Button";
 import Spinner from "components/shared/Spinner";
 import TextAlert from "components/shared/TextAlert";
+import PasswordStrength from "components/shared/PasswordStrength";
 
 // Interface
 interface IFormUpdatePassProps {
@@ -24,14 +25,11 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
 
   // Inputs and validators
   const [password, setPassword] = useState<string>("");
-  const handlePassword = value => {
-    setPassword(value);
+  const [showPasswordStrengthDescription, setShowPasswordStrengthDescription] = useState<boolean>(false);
+  function validatePassword(value) {
+    return checkPasswordStrength(value).score >= 4;
   }
-
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const handleConfirmPassword = value => {
-    setConfirmPassword(value);
-  }
   function validateConfirmPassword(value) {
     return value === password;
   }
@@ -46,8 +44,8 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
     e.preventDefault();
     setSent(true);
 
-    if (password.length != 0
-      && validateConfirmPassword(confirmPassword)) {
+    if (validatePassword(password) &&
+      validateConfirmPassword(confirmPassword)) {
       fetchUpdatePass();
     }
   }
@@ -105,23 +103,29 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
           </p>
         </>}
 
-        <TextInput
-          type={"password"}
-          label={"Senha*"}
-          name={"password"}
-          value={password}
-          handleValue={handlePassword}
-          required={true}
-          displayAlert={sent}
-          maxLength={255}
-        />
+        <div style={{ width: "100%" }}>
+          <TextInput
+            type={"password"}
+            label={"Senha*"}
+            name={"password"}
+            value={password}
+            handleValue={setPassword}
+            required={true}
+            displayAlert={sent}
+            maxLength={255}
+
+            onFocus={() => setShowPasswordStrengthDescription(true)}
+            onBlur={() => setShowPasswordStrengthDescription(false)}
+          />
+          <PasswordStrength password={password} showPasswordStrengthDescription={showPasswordStrengthDescription} />
+        </div>
 
         <TextInput
           type={"password"}
           label={"Confirmar senha*"}
           name={"confirmPassword"}
           value={confirmPassword}
-          handleValue={handleConfirmPassword}
+          handleValue={setConfirmPassword}
           validate={validateConfirmPassword}
           required={true}
           alert={"Senhas não conferem"}

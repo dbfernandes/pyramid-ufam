@@ -53,14 +53,7 @@ export default function FormAddSubmission({
   }, [file]);
 
   const [description, setDescription] = useState<string>("");
-  const handleDescription = (value) => {
-    setDescription(value);
-  };
-
   const [workload, setWorkload] = useState<number>(1);
-  const handleWorkload = (value) => {
-    setWorkload(value);
-  };
 
   // Form state
   const [sent, setSent] = useState<boolean>(false);
@@ -135,13 +128,13 @@ export default function FormAddSubmission({
       {activity != null && (
         <>
           <ParagraphTitle id="filedrop">
-            Envie aqui o arquivo <b>(em PDF)</b> do seu certificado*
+            Envie aqui o arquivo <b>(em PDF)</b> do seu certificado* (Max.: 10MB)
           </ParagraphTitle>
           <FileDrop
             file={file}
             setFile={setFile}
             required={true}
-            maxSize={5000 * 1024}
+            maxSize={parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024}
             allowedTypes={["application/pdf"]}
             displayAlert={sent}
           />
@@ -154,7 +147,7 @@ export default function FormAddSubmission({
             label={`Descrição*`}
             description={"description"}
             value={description}
-            handleValue={handleDescription}
+            handleValue={setDescription}
             required={true}
             displayAlert={sent}
             maxLength={255}
@@ -166,7 +159,7 @@ export default function FormAddSubmission({
           <RangeWrapper>
             <RangeInput
               value={workload}
-              handleValue={handleWorkload}
+              handleValue={setWorkload}
               min={1}
               max={activity.maxWorkload}
               disabled={activity == null}

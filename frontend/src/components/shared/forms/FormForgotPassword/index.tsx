@@ -17,9 +17,6 @@ export default function FormForgotPassword() {
 
   // Inputs and validators
   const [email, setEmail] = useState<string>("");
-  const handleEmail = value => {
-    setEmail(value);
-  }
 
   // Form login
   const [sent, setSent] = useState<boolean>(false);
@@ -89,7 +86,7 @@ export default function FormForgotPassword() {
           label={"Email"}
           name={"email"}
           value={email}
-          handleValue={handleEmail}
+          handleValue={setEmail}
           validate={validateEmail}
           required={true}
           alert={"Email inválido"}

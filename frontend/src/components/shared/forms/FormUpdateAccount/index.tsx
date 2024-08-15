@@ -7,38 +7,32 @@ import { login, setProfileImage } from "redux/slicer/user";
 
 // Shared
 import { H5 } from "components/shared/Titles";
-import {
-  FormAlert
-} from "components/shared/Form/styles";
+import { FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection, ProfilePicture } from "./styles";
+import { CustomForm, FormSection, ModalForm, ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
 import { Button } from "components/shared/Button";
+
 interface IFormUpdateAccountProps {
   user: IUserLogged;
+  onChange?: Function;
+  handleCloseModalForm?: Function;
 }
 
-export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
+export default function FormUpdateAccount({ user, onChange = () => {}, handleCloseModalForm }: IFormUpdateAccountProps) {
+  const isOwnUser = "logged" in user;
+  
   const [name, setName] = useState<string>("");
-  const handleName = (value) => {
-    setName(value);
-  };
-
   const [email, setEmail] = useState<string>("");
-  const handleEmail = (value) => {
-    setEmail(value);
-  };
-
   const [cpf, setCpf] = useState<string>("");
-  const handleCpf = (value) => {
-    setCpf(value);
-  };
+
+  const loggedInUser = store.getState().user;
 
   // Loading user prop
   useEffect(() => {
@@ -82,7 +76,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${getToken()}`
+        Authorization: `Bearer ${getToken()}`,
       },
       data: data,
     };
@@ -91,13 +85,11 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       .request(options as AxiosRequestConfig)
       .then((response) => {
         setSuccess(true);
+        onChange();
+        if (handleCloseModalForm) {
+          handleCloseModalForm();
+        }
         toast.success("Informações atualizadas com sucesso.");
-        dispatch(login({
-          ...user,
-          name: response.data.name,
-          email: response.data.email,
-          cpf: response.data.cpf
-        }));
       })
       .catch((error) => {
         const badRequestMessages = {
@@ -116,7 +108,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
         setError(
           code in errorMessages ? errorMessages[code] : errorMessages[0]
         );
-
+        
         setSuccess(false);
       });
 
@@ -161,20 +153,22 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
       method: "PUT",
       headers: {
         "Content-Type": "multipart/form-data",
-        "Authorization": `Bearer ${getToken()}`
+        Authorization: `Bearer ${getToken()}`,
       },
-      data: data
+      data: data,
     };
 
-    await axios.request(options as AxiosRequestConfig).then(
-      (response) => {
+    await axios
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
         dispatch(setProfileImage(response.data.profileImage));
 
         toast.success("Imagem atualizada com sucesso.");
-      }).catch((error) => {
+      })
+      .catch((error) => {
         const errorMessages = {
           0: "Oops, tivemos um erro. Tente novamente.",
-          400: error?.response?.data?.message
+          400: error?.response?.data?.message,
         };
 
         const code = error?.response?.status ? error.response.status : 500;
@@ -185,15 +179,16 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
   }
 
   return (
-    <CustomForm>
-      <FormSection>
-        <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>
+    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
+      <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
+        {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>}
 
         <ProfilePicture>
           <img
-            src={user?.profileImage && user?.profileImage.length > 0
-              ? user?.profileImage
-              : `${process.env.img}/user.png`
+            src={
+              user?.profileImage && user?.profileImage.length > 0
+                ? user?.profileImage
+                : `${process.env.img}/user.png`
             }
             alt={user?.name}
             onError={({ currentTarget }) => {
@@ -219,7 +214,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           name={"name"}
           id={"name"}
           value={name}
-          handleValue={handleName}
+          handleValue={setName}
           required={true}
           displayAlert={sent}
           maxLength={255}
@@ -229,7 +224,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           label={"Email*"}
           name={"email"}
           value={email}
-          handleValue={handleEmail}
+          handleValue={setEmail}
           validate={validateEmail}
           required={true}
           alert={"Email inválido"}
@@ -241,7 +236,7 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
           label={"CPF"}
           name={"cpf"}
           value={cpf}
-          handleValue={handleCpf}
+          handleValue={setCpf}
           validate={validateCpf}
           alert={"CPF Inválido"}
           displayAlert={sent}
@@ -266,5 +261,6 @@ export default function FormUpdateAccount({ user }: IFormUpdateAccountProps) {
         </>
       </FormSection>
     </CustomForm>
-  );
+    );
+  
 }

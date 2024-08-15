@@ -83,11 +83,13 @@ export class CourseService {
 			where: {
 				courseId: id,
 				enrollment: { not: null },
+				User: { isActive: true },
 			},
 		});
 
 		const submissions = await this.prisma.submission.findMany({
 			where: {
+				isActive: true,
 				Activity: {
 					CourseActivityGroup: {
 						Course: {
@@ -104,7 +106,7 @@ export class CourseService {
 
 		const totalSubmissions = submissions.length;
 		const pendingSubmissions = submissions.filter(
-			(submission) => submission.status === StatusSubmissions["Submetido"],
+			(submission) => submission.status === StatusSubmissions["Pendente"],
 		).length;
 		const preApprovedSubmissions = submissions.filter(
 			(submission) => submission.status === StatusSubmissions["Pré-aprovado"],

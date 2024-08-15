@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Dropdown } from "react-bootstrap";
 import Link from "next/link";
 
 // Shared
@@ -12,7 +11,7 @@ import {
   Wrapper,
   UnstyledButton,
   UnstyledLink,
-  HoverMenu,
+  DropdownWrapper,
   DropdownMenu,
   DropdownItem,
   Options,
@@ -79,8 +78,8 @@ export default function ActivityCard({
     }
 
     return (
-      <Wrapper marked={marked} blurred={blurred}>
-        <div>
+      <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
+        <div style={{ width: "calc(100% - 22px)" }}>
           <H4>{activity.name in GroupIcons && <i className={`bi bi-${GroupIcons[activity.name]}`} />}{activity.name}</H4>
           {activity.maxWorkload && <span>{activity.maxWorkload}h</span>}
         </div>
@@ -92,42 +91,40 @@ export default function ActivityCard({
         {children}
 
         {activity.id && editable && (
-          <HoverMenu onMouseLeave={() => setConfirmDeletion(false)}>
-            <Dropdown align="end" onClick={(e) => handleDropdown(e)}>
-              <Options variant="secondary">
-                <i className="bi bi-gear-fill" />
-              </Options>
+          <DropdownWrapper align="end" onClick={(e) => handleDropdown(e)}>
+            <Options variant="secondary">
+              <i className="bi bi-three-dots-vertical" />
+            </Options>
 
-              <DropdownMenu renderOnMount={true}>
-                {groupSlug &&
-                  <DropdownItem
-                    onClick={() =>
-                      toggleModalForm(
-                        `Editar curso (${activity.name})`,
-                        <FormAddActivity user={user} activity={activity} groupSlug={groupSlug} onChange={onChange} />,
-                        "md"
-                      )
-                    }
-                    accent={"var(--success)"}>
-                    <i className="bi bi-pencil-fill"></i> Editar
-                  </DropdownItem>}
+            <DropdownMenu renderOnMount={true}>
+              {groupSlug &&
                 <DropdownItem
-                  onClick={(e) => handleDeletion(e)}
-                  accent={"var(--danger)"}>
-                  {confirmDeletion ? (
-                    <>
-                      <i className="bi bi-exclamation-circle-fill"></i>{" "}
-                      Confirmar
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-trash-fill"></i> Remover
-                    </>
-                  )}
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </HoverMenu>
+                  onClick={() =>
+                    toggleModalForm(
+                      `Editar curso (${activity.name})`,
+                      <FormAddActivity user={user} activity={activity} groupSlug={groupSlug} onChange={onChange} />,
+                      "md"
+                    )
+                  }
+                  accent={"var(--success)"}>
+                  <i className="bi bi-pencil-fill"></i> Editar
+                </DropdownItem>}
+              <DropdownItem
+                onClick={(e) => handleDeletion(e)}
+                accent={"var(--danger)"}>
+                {confirmDeletion ? (
+                  <>
+                    <i className="bi bi-exclamation-circle-fill"></i>{" "}
+                    Confirmar
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-trash-fill"></i> Remover
+                  </>
+                )}
+              </DropdownItem>
+            </DropdownMenu>
+          </DropdownWrapper>
         )}
 
         {marked && (

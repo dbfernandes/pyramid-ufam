@@ -92,29 +92,6 @@ export const Marker = styled.div`
 	}
 `;
 
-export const HoverMenu = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  padding: 15px;
-
-  display: flex;
-  justify-content: flex-end !important;
-  align-items: flex-start !important;
-
-  background-color: rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  border-radius: 5px;
-
-  transition: 0.3s;
-
-  &:hover {
-    opacity: 1;
-  }
-`
-
 export const UnstyledButton = styled.button`
   width: 100%;
   padding: 0;
@@ -128,6 +105,11 @@ export const UnstyledLink = styled.a`
   
 `;
 
+export const DropdownWrapper = styled(Dropdown)`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+`;
 export const DropdownMenu = styled(Dropdown.Menu)`
 	z-index: 10;
 
@@ -166,8 +148,6 @@ export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
 `;
 
 export const Options = styled(Dropdown.Toggle)`
-  height: 2.5rem;
-  width: 2.5rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -176,31 +156,18 @@ export const Options = styled(Dropdown.Toggle)`
 	margin-right: -10px;
 	padding: 0;
 
-  font-size: 1.75rem;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  font-size: 1.5rem;
 	background-color: transparent !important;
-	color: var(--white-1);
+	color: var(--muted);
 	border: none !important;
 	outline: none !important;
 
 	transition: 0.3s;
 
-  /* Spin animation */
-  animation: spin 3s linear infinite;
-  @keyframes spin { 
-    100% { 
-        -webkit-transform: rotate(360deg); 
-        transform:rotate(360deg); 
-    } 
-  }
-
 	&:hover, &:focus {
+    color: var(--primary-color);
     box-shadow: none !important;
-    text-shadow: 0 0 6px rgba(0, 0, 0, 1);
 	}
-  &:focus, &[aria-expanded=true] {
-    animation: none;
-  }
 	&:after {
 		display: none;
 	}

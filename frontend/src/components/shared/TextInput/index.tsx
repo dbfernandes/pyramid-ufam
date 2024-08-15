@@ -17,6 +17,8 @@ interface ITextInputProps {
   alert?: string;
   obligatoryAlert?: string;
   displayAlert?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
   children?: React.ReactNode;
   [x: string]: any;
 };
@@ -36,6 +38,8 @@ export default function TextInput({
   alert = "",
   obligatoryAlert = "Obrigatório",
   displayAlert = !!(alert.length != 0 || required),
+  onFocus = () => { },
+  onBlur = () => { },
   children,
   ...props
 }: ITextInputProps) {
@@ -89,8 +93,14 @@ export default function TextInput({
               type={type}
               value={value}
               onChange={(e) => handleAndValidate(e)}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
+              onFocus={() => {
+                setFocused(true);
+                onFocus();
+              }}
+              onBlur={() => {
+                setFocused(false);
+                onBlur();
+              }}
               {...props} />
           ) : (
             <InputMask
