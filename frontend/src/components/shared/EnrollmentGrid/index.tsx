@@ -79,9 +79,8 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
             course={course}
             onClick={() => {
               dispatch(defaultCourse({ ...course, enrollment: course.enrollment }));
-            }}
-            onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
-          />
+            } }
+            onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })} user={undefined}          />
         ))}
       </CourseGridComponent>
     </div>

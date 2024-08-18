@@ -7,17 +7,15 @@ import {
 import { CallToAction } from "../Tile/styles";
 import Link from "next/link";
 
-// Interfaces
 interface INumberTileProps {
   icon?: string;
   accent?: string;
   title: string;
   value: string;
-
   callToAction?: string;
   callToActionIcon?: string;
   link?: string;
-  onClick?: Function;
+  onClick?: () => void;
 }
 
 export default function NumberTile({
@@ -25,11 +23,10 @@ export default function NumberTile({
   accent = "var(--primary-color)",
   title,
   value,
-
   callToAction,
   callToActionIcon,
   link,
-  onClick = () => { }
+  onClick = () => {}
 }: INumberTileProps) {
   return (
     <CustomTileWrapper accent={accent}>
@@ -39,13 +36,13 @@ export default function NumberTile({
           <i className={`bi bi-${icon}`} />
         </IconWrapper>
 
-        <Number>{value}</Number>
+        <Number accent={accent}>{value}</Number>
         <Title>{title}</Title>
       </div>
 
-      {callToAction
-        ? link
-          ? <Link href={link}>
+      {callToAction && (
+        link ? (
+          <Link href={link}>
             <a>
               <CallToAction>
                 <i className={`bi bi-box-arrow-up-right`} />
@@ -53,12 +50,13 @@ export default function NumberTile({
               </CallToAction>
             </a>
           </Link>
-          : <CallToAction onClick={onClick}>
+        ) : (
+          <CallToAction onClick={onClick}>
             {callToActionIcon && <i className={`bi bi-${callToActionIcon}`} />}
             {callToAction}
           </CallToAction>
-        : null
-      }
+        )
+      )}
     </CustomTileWrapper>
   );
 }
