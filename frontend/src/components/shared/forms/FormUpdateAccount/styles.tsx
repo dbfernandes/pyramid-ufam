@@ -14,7 +14,7 @@ export const FormSection = styled.div`
   margin-top: 30px;
 
   @media (max-width: 768px) {
-    margin-top: 0px;
+    margin-top: -30px;
   }
 `;
 

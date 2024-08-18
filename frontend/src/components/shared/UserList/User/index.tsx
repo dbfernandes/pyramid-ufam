@@ -133,15 +133,36 @@ export default function User({
     }
   }
 
+  
   const [collapsed, setCollapsed] = useState<boolean>(false);
   function CollapseDetails({ user, onChange }) {
     function getCpf(user) {
       return user?.cpf ? formatCpf(user?.cpf) : "-"
     }
+    
+    function getTotalWorkload(user) {
+      const ensino = user?.workloadCount?.["Ensino"]?.totalWorkload || 0;
+      const pesquisa = user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0;
+      const extensao = user?.workloadCount?.["Extensão"]?.totalWorkload || 0;
+      
+      return ensino + pesquisa + extensao;
+    }
+  
+    function getRemainingWorkload(user) {
+      const totalWorkload = getTotalWorkload(user);
+      const maxWorkload = Math.max(
+        user?.workloadCount?.["Ensino"]?.maxWorkload || 0,
+        user?.workloadCount?.["Pesquisa"]?.maxWorkload || 0,
+        user?.workloadCount?.["Extensão"]?.maxWorkload || 0
+      );
+      return maxWorkload - totalWorkload;
+    }
+
+    const remainingWorkload = getRemainingWorkload(user); 
 
     function CustomProgressBar({ current, max }) {
       const progress = (current / max) * 100;
-  
+      
       return (
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
           <ProgressBar
@@ -164,8 +185,13 @@ export default function User({
         <div className="grid">
         {(user) && (
             <Info>
-              <H6>Aluno</H6>
-
+              <H6>
+                {user.userTypeId === 1
+                  ? "Coordenador"
+                  : user.userTypeId === 2
+                  ? "Secretário"
+                  : "Aluno"}
+              </H6>
               <p>
                 <b>Nome:</b> {user.name}
               </p>
@@ -192,15 +218,19 @@ export default function User({
               <p>
                 <b>Status:</b> {user?.isActive === true ? "Ativo" : "Inativo"}
               </p>
-            </Info>
-
-          )}
-            <Info>
-              <H6>Informações do curso</H6>
-
               <p>
-                <b>Matrícula deste curso:</b> {enrollment}
+                {user?.userTypeId == 3 && (
+                  <p>
+                    <b>Matrícula deste curso:</b> {enrollment}
+                  </p>
+                )
+                }
               </p>
+            </Info>
+          )}
+            {user?.userTypeId == 3 && (<Info>
+              <H6>Resumo de carga horária</H6>
+
               <p>
                 <b>Horas (Ensino):</b> <CustomProgressBar current={user?.workloadCount?.["Ensino"]?.totalWorkload || 0} max={user?.workloadCount?.["Ensino"]?.maxWorkload || 0} />
               </p>
@@ -210,7 +240,15 @@ export default function User({
               <p>
                 <b>Horas (Extensão):</b> <CustomProgressBar current={user?.workloadCount?.["Extensão"]?.totalWorkload || 0} max={user?.workloadCount?.["Extensão"]?.maxWorkload || 0} />
               </p>
-            </Info>
+              <p>
+                <b>Total de horas realizadas:</b> {getTotalWorkload(user)}h
+              </p>
+              <p>
+                {remainingWorkload <= 0 
+                  ? "O aluno já cumpriu todas as horas necessárias."
+                  : `Faltam ${remainingWorkload}h para completar a carga horária.`}
+              </p>
+            </Info>)}
         </div>
         
       </CollapseDetailsStyled>

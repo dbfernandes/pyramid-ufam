@@ -62,7 +62,6 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 	  }`
 	}
 	
-	width: 100%;
   ${({ blurred }) => blurred && "filter: opacity(50%);"}
 `;
 
@@ -93,7 +92,7 @@ export const UnstyledButton = styled.button`
   outline: none;
   border: none;
   background: transparent;
-  `;
+`;
   
   export const UnstyledLink = styled.a`
 `;

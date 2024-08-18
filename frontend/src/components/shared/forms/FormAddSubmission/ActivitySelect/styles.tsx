@@ -24,6 +24,8 @@ export const CardGroup = styled.div`
   @media (max-width: 768px) {
     overflow-y: auto;
     overflow-x: auto;
+    padding-left: 10px;
+    padding-right: 10px;
   }
   
   @media (min-width: 769px) {

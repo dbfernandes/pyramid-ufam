@@ -8,6 +8,7 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 	
 	margin-bottom: 50px;
 
+
 	${({ centerAlign, maxWidth }) => centerAlign && `
 		min-height: 100vh;
 		align-items: center;
@@ -44,6 +45,8 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 				}
 			}
 	}`
+
+	
   }
 	${({ centerAlign }) => !centerAlign &&
     `& > div { width: 100%; }`

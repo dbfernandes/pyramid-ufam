@@ -40,12 +40,12 @@ export const Item = styled.div`
     grid-template-columns: 60px 1fr 1fr 0fr 0fr 1fr 45px;
   }
   
-  @media (max-width: 642px) {
+  @media (max-width: 537px) {
     grid-template-columns: 60px 1fr 0fr 0fr 0fr 1fr 45px;
   }
 
   @media (max-width: 434px) {
-    grid-template-columns: 40px 0fr 0fr 0fr 0fr 1fr 45px;
+    grid-template-columns: 40px 2fr 0fr 0fr 0fr 2fr 45px;
   }
 
   @media (max-width: 338px) {
@@ -274,6 +274,16 @@ export const ButtonGroup = styled.div`
   align-items: flex-start;
 
   margin-top: 15px;
+
+  @media (max-width: 635px) {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  @media (max-width: 379px) {
+    display: flex;
+    
+  } 
 `;
 
 export const AcceptButton = styled(Button)`
@@ -348,10 +358,9 @@ export const InfoButton = styled(ButtonAlt)`
   }
 `;
 
-export const DangerButtonAlt = styled(ButtonAlt)`
+export const DangerButtonMult = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
-  margin-left: 10px;
   color: var(--danger);
 
   &:hover {
@@ -360,8 +369,45 @@ export const DangerButtonAlt = styled(ButtonAlt)`
   }
 
   @media (max-width: 567px) {
-    span {
+    span{
       display: none;
+    }
+    gap: 0;
+  }
+
+  @media (max-width: 466px) {
+    width: 80%;
+    padding: 4px 12px;
+  }
+
+  @media (max-width: 353px) {
+    width: 60%;
+    padding: 2px 6px;
+  }
+`;
+
+export const DangerButtonAlt = styled(ButtonAlt)`
+  width: fit-content;
+  padding: 8px 26px;
+  margin-left: 10px;
+  color: var(--danger);
+  .cancelar {
+    margin-left: 10px;
+  }
+
+  &:hover {
+    color: var(--danger-hover);
+    border-color: var(--danger-hover);
+  }
+
+  @media (max-width: 567px) {
+    span {
+      .cancelar {
+        display: none;
+      }
+      .icone {
+        margin-left: 0px;
+      }
     }
   }
 

@@ -27,6 +27,8 @@ export const CustomSidenav = styled(SidenavWrapper)`
 `;
 
 export const CustomLinkWrapper = styled(SidenavLinkWrapper)`
+  width: 90%;
+
   &:last-child {
     padding: 10px;
   }
@@ -35,6 +37,11 @@ export const CustomLinkWrapper = styled(SidenavLinkWrapper)`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    div {
+      width: 100%;
+      margin-top: 5px;
+    }
   }
 `;
 

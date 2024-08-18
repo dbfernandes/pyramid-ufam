@@ -14,7 +14,8 @@ import {
   AcceptButton,
   DangerButtonAlt,
   InfoButton,
-  EditButton
+  EditButton,
+  DangerButtonMult
 } from "../styles";
 
 // Custom
@@ -114,11 +115,13 @@ export default function UserActions({
                     }}
                   />
                   <p>
-                    <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
-                    <span style={{ color: colors[item.action] }}>{item.action}</span> a submissão em {parseDateAndTime(item.createdAt)}
+                    <span className="user-name">{getFirstAndLastName(item.user.name)}</span>
+                    <span className="user-role">{UserTypes[item.user.userTypeId]}</span>
+                    <span className="action" style={{ color: colors[item.action] }}>{item.action}</span>
+                    <span className="time"> a submissão em {parseDateAndTime(item.createdAt)}</span>
                   </p>
                 </div>
-
+  
                 {item.details && <p><span>Obs.:</span> {item.details}</p>}
               </HistoryItem>
             ))}
@@ -237,8 +240,10 @@ export default function UserActions({
               ""
             )
           }>
-          <i className="bi bi-x-lg" />
-          <span className="button-text">Cancelar</span>
+          <span className="icone">
+            <i className="bi bi-x-lg" />
+            <span className="button-text cancelar">Cancelar</span>
+          </span>
         </DangerButtonAlt>
       )}
     </ButtonGroup >

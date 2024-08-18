@@ -15,6 +15,7 @@ import {
   ButtonGroup,
   AcceptButton,
   DangerButtonAlt,
+  DangerButtonMult,
 } from "components/shared/cards/SubmissionCard/styles";
 
 import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
@@ -119,12 +120,12 @@ export default function SubmissionList({
         {checkedIds.length > 0 && (
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
             {user.userTypeId == 1 && <>
-              <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")}>
+              <DangerButtonMult onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")}>
                 {fetchingMassUpdate
                   ? <Spinner size={"20px"} color={"var(--danger)"} />
                   : <><i className="bi bi-x-lg" /> Rejeitar selecionados</>
                 }
-              </DangerButtonAlt>
+              </DangerButtonMult>
               <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Aprovado")}>
                 {fetchingMassUpdate
                   ? <Spinner size={"20px"} color={"var(--danger)"} />

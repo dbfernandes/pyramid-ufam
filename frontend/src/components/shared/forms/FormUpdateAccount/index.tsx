@@ -13,7 +13,7 @@ import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection, ModalForm, ProfilePicture } from "./styles";
+import { CustomForm, FormSection, ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -48,6 +48,10 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
   const [fetching, setFetching] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  function cleanCpf(cpf) {
+    return cpf.replace(/[.-]/g, '');
+  }
+
   function handleUpdateUser(e) {
     e.preventDefault();
     setSent(true);
@@ -62,8 +66,13 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         email
       };
 
-      if (cpf.trim().length > 0 && validateCpf(cpf)) data = { ...data, cpf };
+      const cleanedCpf = cpf.trim().length > 0 ? cleanCpf(cpf) : '';
 
+      if (cleanedCpf.length > 0 && validateCpf(cleanedCpf)) {
+        data = { ...data, cpf: cleanedCpf };
+      }
+
+      console.log(cpf)
       fetchUpdateUser(data);
     }
   }
