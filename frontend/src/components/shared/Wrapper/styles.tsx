@@ -8,6 +8,7 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 	
 	margin-bottom: 50px;
 
+
 	${({ centerAlign, maxWidth }) => centerAlign && `
 		min-height: 100vh;
 		align-items: center;
@@ -44,6 +45,8 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 				}
 			}
 	}`
+
+	
   }
 	${({ centerAlign }) => !centerAlign &&
     `& > div { width: 100%; }`
@@ -51,7 +54,7 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 `;
 
 export const DefaultWrapper = styled.div`
-  width: 100%;
+  	width: 100%;
 	padding: 25px 25px;
 
 	background-color: var(--white-1);

@@ -10,17 +10,26 @@ export const CourseListComponent = styled.div`
     width: 100%;
     margin-bottom: 15px;
     padding: 10px;
-
+    
     & > ${HoverMenu} {
       padding: 10px 15px;
-    }
-  };
-`;
+      }
+    };
+      `;
+
 
 export const CustomForm = styled.form`
+  && { 
   max-width: 50%;
-`;
 
+  
+  @media (max-width: 768px) {
+    max-width: 90%;
+    margin: 0 auto;
+    margin-top: -60px;
+  }
+}
+`;
 
 export const AddCourseButton = styled.button`
   width: 100%;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import { formatCpf, getFilename } from "utils";
 import { toast } from "react-toastify";
 
@@ -15,18 +15,19 @@ import {
   Column,
   CustomFormCheck,
   CheckboxPreventClick,
-
   SubmissionStatusStyled,
   ColoredBar,
-
   CollapseDetailsStyled,
   Info,
   FileInfo,
   ItemWrapper,
+  ToggleButton,
+  HideOnSmallScreen
 } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+
 interface ISubmissionCardProps {
   submission?: any;
   loading?: boolean;
@@ -34,7 +35,6 @@ interface ISubmissionCardProps {
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   user?: IUserLogged;
-
   onChange?: Function;
 }
 
@@ -45,9 +45,7 @@ export default function SubmissionCard({
   checkedIds = [],
   setCheckedIds = () => { },
   user,
-
   onChange = () => { },
-
   ...props
 }: ISubmissionCardProps) {
   function handleCheck(e) {
@@ -251,13 +249,13 @@ export default function SubmissionCard({
         onClick={(e) => handleCheck(e)}
       />
       {user?.userTypeId === 3
-        ? <Column color={"var(--muted)"}>Descrição</Column>
-        : <Column color={"var(--muted)"}>Aluno</Column>
+        ? <HideOnSmallScreen><Column color={"var(--muted)"}>Descrição</Column></HideOnSmallScreen>
+        : <HideOnSmallScreen><Column color={"var(--muted)"}>Aluno</Column></HideOnSmallScreen>
       }
-      <Column color={"var(--muted)"}>Grupo de atividade</Column>
-      <Column color={"var(--muted)"}>Tipo de atividade</Column>
-      <Column color={"var(--muted)"}>Horas solicitadas</Column>
-      <Column color={"var(--muted)"}>Status</Column>
+      <HideOnSmallScreen><Column color={"var(--muted)"}>Grupo de atividade</Column></HideOnSmallScreen>
+      <HideOnSmallScreen><Column color={"var(--muted)"}>Tipo de atividade</Column></HideOnSmallScreen>
+      <HideOnSmallScreen><Column color={"var(--muted)"}>Horas solicitadas</Column></HideOnSmallScreen>
+      <HideOnSmallScreen><Column color={"var(--muted)"}>Status</Column></HideOnSmallScreen>
       <div></div>
     </Item>
   ) : loading ? (
@@ -302,29 +300,40 @@ export default function SubmissionCard({
         />
 
         {user?.userTypeId == 3
-          ? <Column>
+          ? 
+          <HideOnSmallScreen>
+          <Column>
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.description}</Tooltip>}>
               <span>{submission?.description}</span>
             </OverlayTrigger>
           </Column>
-          : <Column>
+          </HideOnSmallScreen>
+          :
+          <HideOnSmallScreen>
+          <Column>
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.user?.name}</Tooltip>}>
               <>{submission?.user?.name}</>
             </OverlayTrigger>
           </Column>
+          </HideOnSmallScreen>
+          
         }
 
-        <Column>
-          <i
-            className={`bi bi-${activityGroupsIcons[submission?.activity.activityGroup.name.toLowerCase().slice(0, 3)]}`}
-          />
-          {submission?.activity.activityGroup.name}
-        </Column>
+        <HideOnSmallScreen>
+          <Column>
+            <i
+              className={`bi bi-${activityGroupsIcons[submission?.activity.activityGroup.name.toLowerCase().slice(0, 3)]}`}
+            />
+            {submission?.activity.activityGroup.name}
+          </Column>
+        </HideOnSmallScreen>
+        
 
+        <HideOnSmallScreen>
         <Column>
           <OverlayTrigger
             placement="bottom"
@@ -332,14 +341,19 @@ export default function SubmissionCard({
             <span>{submission?.activity.name}</span>
           </OverlayTrigger>
         </Column>
+        </HideOnSmallScreen>
 
+        <HideOnSmallScreen>
         <Column>{submission?.workload}h</Column>
+        </HideOnSmallScreen>
 
         <Column>
           <SubmissionStatus status={submission?.status} />
         </Column>
 
-        <i className={`text-center bi bi-${collapsed ? "chevron-up" : "chevron-down"}`} />
+        <ToggleButton expanded={collapsed}>
+          <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
+        </ToggleButton>
       </Item>
       <Collapse in={collapsed}>
         <div>

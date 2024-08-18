@@ -10,7 +10,8 @@ import { Disclaimer, Filter } from "components/shared/UserList/styles";
 import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
   ButtonGroup,
-  DangerButtonAlt
+  DangerButtonAlt,
+  DangerButtonMult
 } from "components/shared/cards/SubmissionCard/styles";
 
 // Custom
@@ -122,13 +123,13 @@ export default function MySubmissionList({
 
         {checkedIds?.length > 0 &&
           <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
-              {fetchingMassCancel
-                ? <Spinner size={"20px"} color={"var(--danger)"} />
-                : <><i className="bi bi-x-lg" /> Cancelar selecionados</>
-              }
-            </DangerButtonAlt>
-          </ButtonGroup>
+          <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
+            {fetchingMassCancel
+              ? <Spinner size={"20px"} color={"var(--danger)"} />
+              : <span className="icone"><i className="bi bi-x-lg" /><span className="cancelar">Cancelar selecionados</span></span>
+            }
+          </DangerButtonAlt>
+        </ButtonGroup>
         }
       </HeaderWrapper>
 

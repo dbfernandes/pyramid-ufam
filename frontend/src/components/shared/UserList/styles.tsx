@@ -5,6 +5,7 @@ export const HeaderWrapper = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	flex-wrap: wrap;
 
 	& > h3 {
 		width: fit-content;
@@ -21,7 +22,8 @@ export const AddUserButton = styled(Button)`
 	}
 `;
 
-export const AddUserLink = styled(AddUserButton)``;
+export const AddUserLink = styled(AddUserButton)`
+`;
 
 export const ListStyled = styled.div`
 	display: block;

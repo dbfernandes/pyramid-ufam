@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 
 // Shared
 import { H3 } from "components/shared/Titles";
-import { ButtonGroup, DangerButtonAlt, InfoButton, WarningButtonAlt } from "components/shared/cards/SubmissionCard/styles";
+import { ButtonGroup, DangerButtonAlt, DangerButtonMult, InfoButton, WarningButtonAlt } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
@@ -247,12 +247,12 @@ export default function UserList({
 
         {checkedIds?.length > 0
           ? (<ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
+            <DangerButtonMult onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
               {fetchingMassDelete
                 ? <Spinner size={"20px"} color={"var(--danger)"} />
                 : <><i className="bi bi-x-lg" /> Desativar selecionados</>
               }
-            </DangerButtonAlt>
+            </DangerButtonMult>
 
             <InfoButton onClick={() => fetchMassRestore(checkedIds.join(","))} disabled={fetchingMassRestore}>
               {fetchingMassRestore

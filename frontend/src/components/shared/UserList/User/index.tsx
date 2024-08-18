@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
+import { Collapse, Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import { formatCpf, getFirstAndLastName } from "utils";
 
 // Shared
@@ -25,6 +25,9 @@ import Spinner from "components/shared/Spinner";
 
 // Interfaces
 import IUser from "interfaces/IUser";
+import { CollapseDetailsStyled, FileInfo, HideOnSmallScreen, Info, ToggleButton } from "components/shared/cards/SubmissionCard/styles";
+import { H6 } from "components/shared/Titles";
+import UserActions from "components/shared/cards/SubmissionCard/UserActions";
 
 interface IUserProps {
   user?: IUser | null;
@@ -130,6 +133,128 @@ export default function User({
     }
   }
 
+  
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  function CollapseDetails({ user, onChange }) {
+    function getCpf(user) {
+      return user?.cpf ? formatCpf(user?.cpf) : "-"
+    }
+    
+    function getTotalWorkload(user) {
+      const ensino = user?.workloadCount?.["Ensino"]?.totalWorkload || 0;
+      const pesquisa = user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0;
+      const extensao = user?.workloadCount?.["Extensão"]?.totalWorkload || 0;
+      
+      return ensino + pesquisa + extensao;
+    }
+  
+    function getRemainingWorkload(user) {
+      const totalWorkload = getTotalWorkload(user);
+      const maxWorkload = Math.max(
+        user?.workloadCount?.["Ensino"]?.maxWorkload || 0,
+        user?.workloadCount?.["Pesquisa"]?.maxWorkload || 0,
+        user?.workloadCount?.["Extensão"]?.maxWorkload || 0
+      );
+      return maxWorkload - totalWorkload;
+    }
+
+    const remainingWorkload = getRemainingWorkload(user); 
+
+    function CustomProgressBar({ current, max }) {
+      const progress = (current / max) * 100;
+      
+      return (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
+          <ProgressBar
+            animated
+            now={current === 0 ? 100 : progress}
+            label={current === 0 ? `0/0` : `${current}/${max}`}
+            variant={current === 0 ? "secondary" : "success"}
+            style={{
+              borderRadius: "8px",
+              height: "15px",
+              backgroundColor: "#F1F1F1",
+            }}
+          />
+        </OverlayTrigger>
+      );
+    }
+
+    return (
+      <CollapseDetailsStyled>
+        <div className="grid">
+        {(user) && (
+            <Info>
+              <H6>
+                {user.userTypeId === 1
+                  ? "Coordenador"
+                  : user.userTypeId === 2
+                  ? "Secretário"
+                  : "Aluno"}
+              </H6>
+              <p>
+                <b>Nome:</b> {user.name}
+              </p>
+              <p>
+                <b>Email:</b> {user.email}
+              </p>
+              {user?.cpf && (
+                <p>
+                  <b>CPF:</b> {getCpf(user)}
+                </p>
+              )}
+              <p>
+                <b>Curso(s):</b> {user?.courses && user?.courses.length > 0 
+                  ? (
+                    <div className="text-with-ribbon">
+                      {user.courses.map((course, index) => (
+                        <><span key={index}>{course.name}</span><br /></>
+                      ))}
+                    </div>
+                  )
+                  : "-"
+                }
+              </p>
+              <p>
+                <b>Status:</b> {user?.isActive === true ? "Ativo" : "Inativo"}
+              </p>
+              <p>
+                {user?.userTypeId == 3 && (
+                  <p>
+                    <b>Matrícula deste curso:</b> {enrollment}
+                  </p>
+                )
+                }
+              </p>
+            </Info>
+          )}
+            {user?.userTypeId == 3 && (<Info>
+              <H6>Resumo de carga horária</H6>
+
+              <p>
+                <b>Horas (Ensino):</b> <CustomProgressBar current={user?.workloadCount?.["Ensino"]?.totalWorkload || 0} max={user?.workloadCount?.["Ensino"]?.maxWorkload || 0} />
+              </p>
+              <p>
+                <b>Horas (Pesquisa):</b> <CustomProgressBar current={user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0} max={user?.workloadCount?.["Pesquisa"]?.maxWorkload || 0} />
+              </p>
+              <p>
+                <b>Horas (Extensão):</b> <CustomProgressBar current={user?.workloadCount?.["Extensão"]?.totalWorkload || 0} max={user?.workloadCount?.["Extensão"]?.maxWorkload || 0} />
+              </p>
+              <p>
+                <b>Total de horas realizadas:</b> {getTotalWorkload(user)}h
+              </p>
+              <p>
+                {remainingWorkload <= 0 
+                  ? "O aluno já cumpriu todas as horas necessárias."
+                  : `Faltam ${remainingWorkload}h para completar a carga horária.`}
+              </p>
+            </Info>)}
+        </div>
+        
+      </CollapseDetailsStyled>
+    );
+  }
+
   // Courses column
   function CoursesColumnTooltip({ courses }) {
     return (
@@ -225,20 +350,20 @@ export default function User({
           label={""}
           onClick={(e) => handleCheck(e)}
         />
-        <Column color={"var(--muted)"}>Nome</Column>
+        <HideOnSmallScreen><Column color={"var(--muted)"}>Nome</Column></HideOnSmallScreen>
         {subRoute == "alunos"
           ? <>
-            <Column color={"var(--muted)"}>Matrícula</Column>
-            <Column color={"var(--muted)"}>Horas (Ensino)</Column>
-            <Column color={"var(--muted)"}>Horas (Pesquisa)</Column>
-            <Column color={"var(--muted)"}>Horas (Extensão)</Column>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Matrícula</Column></HideOnSmallScreen>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Horas (Ensino)</Column></HideOnSmallScreen>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Horas (Pesquisa)</Column></HideOnSmallScreen>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Horas (Extensão)</Column></HideOnSmallScreen>
           </>
           : <>
-            <Column color={"var(--muted)"}>Email</Column>
-            <Column color={"var(--muted)"}>Curso(s)</Column>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Email</Column></HideOnSmallScreen>
+            <HideOnSmallScreen><Column color={"var(--muted)"}>Curso(s)</Column></HideOnSmallScreen>
           </>
         }
-        <Column color={"var(--muted)"}>Status</Column>
+        <HideOnSmallScreen><Column color={"var(--muted)"}>Status</Column></HideOnSmallScreen>
       </Item>
       : loading
         ? <Item student={subRoute === "alunos"}>
@@ -247,6 +372,7 @@ export default function User({
           <div></div>
         </Item >
         : (//<Link href={`/usuarios/${subRoute}/${user?.id}`} passHref><a>
+          <>
           <Item student={subRoute === "alunos"}>
             <CustomFormCheck
               inline
@@ -256,26 +382,36 @@ export default function User({
               onClick={(e) => handleCheck(e)}
             />
 
-            <Column>
-              <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
-                <span>{user?.name}</span>
-              </OverlayTrigger>
-            </Column>
+            <HideOnSmallScreen>
+              <Column>
+                <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
+                  <span>{user?.name}</span>
+                </OverlayTrigger>
+              </Column>
+            </HideOnSmallScreen>
+
 
             {subRoute == "alunos"
               ? <>
+            <HideOnSmallScreen>
                 <Column>
                   <CopyToClipboard text={enrollment} />
                 </Column>
+            </HideOnSmallScreen>
+
                 <WorkloadProgressBars workloadCount={user?.workloadCount} />
               </>
               : <>
+            <HideOnSmallScreen>
                 <Column>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
                     <span>{user?.email}</span>
                   </OverlayTrigger>
                 </Column>
+            </HideOnSmallScreen>
+              
 
+              <HideOnSmallScreen>
                 <Column>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
                     <span>
@@ -291,12 +427,15 @@ export default function User({
                     </span>
                   </OverlayTrigger>
                 </Column>
+              </HideOnSmallScreen>
+
               </>
             }
-
-            <Column>
-              <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
-            </Column>
+            <HideOnSmallScreen>
+              <Column>
+                <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
+              </Column>
+            </HideOnSmallScreen>
 
             {user && !disableMenu
               ? (
@@ -354,7 +493,21 @@ export default function User({
                   </DropdownMenu>
                 </Dropdown>
               ) : <div />}
+
+            <ToggleButton 
+              expanded={collapsed}
+              onClick={() => setCollapsed(!collapsed)} // Adicionar a lógica para alternar o estado
+            >
+              <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
+            </ToggleButton>
           </Item>
+
+        <Collapse in={collapsed}>
+          <div>
+            <CollapseDetails user={user} onChange={onChange} />
+          </div>
+        </Collapse>
+        </>
         )
   );
 }

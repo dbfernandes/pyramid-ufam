@@ -22,3 +22,15 @@ export const Wrapper = styled.div`
 		}
 	}
 `;
+
+export const Container = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 15px;
+	width: 100%;
+
+	@media (max-width: 768px) {
+		margin-bottom: 10px;
+	}
+`

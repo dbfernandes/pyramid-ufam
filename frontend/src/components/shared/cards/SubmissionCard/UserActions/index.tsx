@@ -14,7 +14,8 @@ import {
   AcceptButton,
   DangerButtonAlt,
   InfoButton,
-  EditButton
+  EditButton,
+  DangerButtonMult
 } from "../styles";
 
 // Custom
@@ -24,6 +25,7 @@ import { History, HistoryItem } from "./styles";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserRole } from "components/shared/Header/UserInfo/styles";
 import { UserTypes } from "constants/userTypes.constants";
+
 interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
@@ -39,7 +41,6 @@ export default function UserActions({
   const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
   const [history, setHistory] = useState<any[]>([]);
 
-
   const [details, setDetails] = useState<string>("");
 
   // Form state
@@ -47,7 +48,6 @@ export default function UserActions({
   const [success, setSuccess] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
 
   async function fetchHistory() {
     setFetchingHistory(true);
@@ -115,11 +115,13 @@ export default function UserActions({
                     }}
                   />
                   <p>
-                    <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
-                    <span style={{ color: colors[item.action] }}>{item.action}</span> a submissão em {parseDateAndTime(item.createdAt)}
+                    <span className="user-name">{getFirstAndLastName(item.user.name)}</span>
+                    <span className="user-role">{UserTypes[item.user.userTypeId]}</span>
+                    <span className="action" style={{ color: colors[item.action] }}>{item.action}</span>
+                    <span className="time"> a submissão em {parseDateAndTime(item.createdAt)}</span>
                   </p>
                 </div>
-
+  
                 {item.details && <p><span>Obs.:</span> {item.details}</p>}
               </HistoryItem>
             ))}
@@ -171,7 +173,8 @@ export default function UserActions({
           "lg"
         )
       }>
-        <i className="bi bi-clock-history" /> Histórico
+        <i className="bi bi-clock-history" />
+        <span className="button-text">Histórico</span>
       </InfoButton>
 
       {[1, 2, 4].includes(submission.status) && (
@@ -182,7 +185,8 @@ export default function UserActions({
             "lg"
           )
         }>
-          <i className="bi bi-pencil" /> Editar
+          <i className="bi bi-pencil" />
+          <span className="button-text">Editar</span>
         </EditButton>
       )}
 
@@ -196,7 +200,8 @@ export default function UserActions({
                 "md"
               )
             }>
-            <i className="bi bi-x-lg" /> Rejeitar
+            <i className="bi bi-x-lg" />
+            <span className="button-text">Rejeitar</span>
           </DangerButtonAlt>
 
           <AcceptButton
@@ -207,7 +212,8 @@ export default function UserActions({
                 "md"
               )
             }>
-            <i className="bi bi-check2-all" /> Aprovar
+            <i className="bi bi-check2-all" />
+            <span className="button-text">Aprovar</span>
           </AcceptButton>
         </>
       )}
@@ -220,7 +226,8 @@ export default function UserActions({
               "md"
             )
           }>
-          <i className="bi bi-check2-all" /> Pré-aprovar
+          <i className="bi bi-check2-all" />
+          <span className="button-text">Pré-aprovar</span>
         </AcceptButton>
       )}
       {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
@@ -233,7 +240,10 @@ export default function UserActions({
               ""
             )
           }>
-          <i className="bi bi-x-lg" /> Cancelar
+          <span className="icone">
+            <i className="bi bi-x-lg" />
+            <span className="button-text cancelar">Cancelar</span>
+          </span>
         </DangerButtonAlt>
       )}
     </ButtonGroup >
