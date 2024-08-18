@@ -18,11 +18,9 @@ interface IEnrollmentListProps {
   handleCloseModalForm?: Function;
 }
 
-export default function EnrollmentList({ user, onChange = () => {}, handleCloseModalForm }: IEnrollmentListProps) {
+export default function EnrollmentList({ user, onChange = () => { }, handleCloseModalForm }: IEnrollmentListProps) {
   const isOwnUser = "logged" in user;
   const [fetching, setFetching] = useState<boolean>(false);
-
-  const loggedInUser = store.getState().user;
   const { dispatch } = store;
 
   async function fetchRemoveCourse(data) {
@@ -37,52 +35,52 @@ export default function EnrollmentList({ user, onChange = () => {}, handleCloseM
       },
     };
     await axios
-    .request(options as AxiosRequestConfig)
-    .then((response) => {
-      dispatch(setCourses(response.data));
-      onChange();
-      if (handleCloseModalForm) {
-        handleCloseModalForm();
-      }
-      
-      toast.success("Curso desvinculado com sucesso.");
-    })
-    .catch((error) => {
-      const errorMessages = {
-        0: "Oops, tivemos um erro. Tente novamente.",
-        400: "Curso não associado ao usuário.",
-        500: error?.response?.data?.message,
-      };
+      .request(options as AxiosRequestConfig)
+      .then((response) => {
+        dispatch(setCourses(response.data));
+        onChange();
+        if (handleCloseModalForm) {
+          handleCloseModalForm();
+        }
 
-      const code = error?.response?.status ? error.response.status : 500;
-      toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
-      setFetching(false);
-    });
+        toast.success("Curso desvinculado com sucesso.");
+      })
+      .catch((error) => {
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          400: "Curso não associado ao usuário.",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
+        setFetching(false);
+      });
   }
 
   return (
     <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
-      <div style={{ marginTop: 30 }}>
+      <div style={{ marginTop: isOwnUser ? 30 : 0 }}>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Cursos vinculados</H5>}
-        
+
         {user.courses.length === 0 &&
           <p className="title">
             Você ainda não possui nenhum curso vinculado à sua conta.
           </p>
         }
 
-        <CourseListComponent>
+        <CourseListComponent style={!isOwnUser ? { marginTop: 0 } : {}}>
           <AddCourseButton
             onClick={(e) => {
               e.preventDefault();
               toggleModalForm(
                 "Vincular curso",
-                <FormLinkCourse user={user} onChange={onChange} handleCloseModalForm={handleCloseModalForm} 
-                onEditSuccess={() => {
-                  if (handleCloseModalForm) {
-                    handleCloseModalForm();
-                  }
-                }}/>,
+                <FormLinkCourse user={user} onChange={onChange} handleCloseModalForm={handleCloseModalForm}
+                  onEditSuccess={() => {
+                    if (handleCloseModalForm) {
+                      handleCloseModalForm();
+                    }
+                  }} />,
                 "md"
               );
             }}>

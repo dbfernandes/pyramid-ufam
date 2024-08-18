@@ -5,7 +5,6 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 	display: flex;
   
 	margin-top: 15px;
-	
 	margin-bottom: 50px;
 
 
@@ -46,15 +45,19 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 			}
 	}`
 
-	
+
   }
 	${({ centerAlign }) => !centerAlign &&
     `& > div { width: 100%; }`
   }
+
+  @media (max-width: 575px) {
+    margin-top: 7.5px;
+  }
 `;
 
 export const DefaultWrapper = styled.div`
-  	width: 100%;
+  width: 100%;
 	padding: 25px 25px;
 
 	background-color: var(--white-1);

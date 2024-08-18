@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import {
 	IsString,
 	IsEmail,
@@ -5,7 +6,10 @@ import {
 	IsOptional,
 	IsInt,
 	IsDateString,
+	Allow,
+	Validate,
 } from "class-validator";
+import { IsCPF } from "src/common/validators.validator";
 
 export class UpdateUserDto {
 	@IsOptional()
@@ -18,6 +22,9 @@ export class UpdateUserDto {
 
 	@IsOptional()
 	@IsString()
+	@Allow()
+	@Validate(IsCPF)
+	@Transform((value) => value.value.replace(/\D/g, ""))
 	cpf?: string;
 
 	@IsOptional()

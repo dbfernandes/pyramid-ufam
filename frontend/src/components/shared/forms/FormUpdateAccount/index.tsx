@@ -18,21 +18,22 @@ import { CustomForm, FormSection, ProfilePicture } from "./styles";
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
 import { Button } from "components/shared/Button";
+import IUser from "interfaces/IUser";
 
 interface IFormUpdateAccountProps {
-  user: IUserLogged;
+  user: IUserLogged | IUser;
   onChange?: Function;
   handleCloseModalForm?: Function;
 }
 
-export default function FormUpdateAccount({ user, onChange = () => {}, handleCloseModalForm }: IFormUpdateAccountProps) {
-  const isOwnUser = "logged" in user;
-  
+export default function FormUpdateAccount({ user, onChange = () => { }, handleCloseModalForm }: IFormUpdateAccountProps) {
+  console.log(user);
+  const isOwnUser = "logged" in user && user.logged === true;
+  console.log(isOwnUser);
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [cpf, setCpf] = useState<string>("");
-
-  const loggedInUser = store.getState().user;
 
   // Loading user prop
   useEffect(() => {
@@ -72,7 +73,6 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         data = { ...data, cpf: cleanedCpf };
       }
 
-      console.log(cpf)
       fetchUpdateUser(data);
     }
   }
@@ -93,6 +93,9 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
+        if (isOwnUser) {
+          store.dispatch(login(response.data));
+        }
         setSuccess(true);
         onChange();
         if (handleCloseModalForm) {
@@ -117,7 +120,7 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         setError(
           code in errorMessages ? errorMessages[code] : errorMessages[0]
         );
-        
+
         setSuccess(false);
       });
 
@@ -270,6 +273,6 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         </>
       </FormSection>
     </CustomForm>
-    );
-  
+  );
+
 }

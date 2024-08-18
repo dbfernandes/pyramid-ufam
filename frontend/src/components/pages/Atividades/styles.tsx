@@ -1,27 +1,5 @@
 import styled from "styled-components";
 
-export const CardGroup = styled.div<{ grid: string }>`
-	margin-top: 25px;
-	display: grid;
-	grid-template-columns: ${({ grid }) => grid ? grid : "repeat(4, 1fr)"};
-
-	grid-gap: 25px;
-	width: 60%;
-
-  	@media (max-width: 768px) {
-  	  grid-template-columns: repeat(3, 1fr);
-	  width: 100%;
-  	}
-
-  	@media (max-width: 600px) {
-  	  grid-template-columns: repeat(2, 1fr);
-  	}
-
-  	@media (max-width: 400px) {
-  	  grid-template-columns: 1fr;
-  	}
-`;
-
 export const AddActivityButton = styled.button`
 	position: relative;
 	padding: 20px;

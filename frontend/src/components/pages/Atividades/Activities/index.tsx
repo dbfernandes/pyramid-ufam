@@ -2,24 +2,23 @@ import { getToken, slugify } from "utils";
 import { GroupIcons } from "constants/groupIcons.constants.";
 import { useSelector } from "react-redux";
 import axios, { AxiosRequestConfig } from "axios";
+import { useMediaQuery } from "react-responsive";
+import { toast } from "react-toastify";
 
 // Shared
+import AddResourceButton from "components/shared/AddResourceButton";
+import CardGroup from "components/shared/CardGroup";
 import { H3 } from "components/shared/Titles";
 import toggleModalForm from "components/shared/ModalForm";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
-import { AddUserButton, HeaderWrapper } from "components/shared/UserList/styles";
+import { HeaderWrapper } from "components/shared/UserList/styles";
 import { Disclaimer } from "components/shared/UserList/styles";
 import ActivityCard from "components/shared/cards/ActivityCard";
-import { toast } from "react-toastify";
 import FormAddActivity from "components/shared/forms/FormAddActivity";
-
-// Custom
-import { CardGroup } from "../styles";
 
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-// import IActivity from "interfaces/IActivity";
 
 interface IActivitiesProps {
   activities: any[];
@@ -30,6 +29,7 @@ interface IActivitiesProps {
 
 export default function Activities({ activities, title, groupSlug, onChange = () => { } }: IActivitiesProps) {
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const isMobile = useMediaQuery({ maxWidth: 575 });
 
   async function fetchDelete(id) {
     const options = {
@@ -58,24 +58,31 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       });
   }
 
+  function AddActivityButton() {
+    return (
+      <AddResourceButton onClick={() =>
+        toggleModalForm(
+          `Adicionar atividade (${title})`,
+          <FormAddActivity user={user} groupSlug={groupSlug} onChange={onChange} />,
+          "md"
+        )}>
+        <i className={`bi bi-${GroupIcons[title]}`}>
+          <i className="bi bi-plus" />
+        </i>
+        Adicionar atividade de {title.toLowerCase()}
+      </AddResourceButton>
+    );
+  }
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
-        {title === "Extensão" ? <H3>Atividades de extensão</H3> : <H3>Atividades de {title.toLowerCase()}</H3>}
+        <H3>Atividades de {title.toLowerCase()}</H3>
 
-
-        <AddUserButton onClick={() =>
-          toggleModalForm(
-            `Adicionar atividade (${title})`,
-            <FormAddActivity user={user} groupSlug={groupSlug} onChange={onChange} />,
-            "md"
-          )}>
-          <i className={`bi bi-${GroupIcons[title]}`}>
-            <i className="bi bi-plus" />
-          </i>
-          Adicionar atividade
-        </AddUserButton>
+        {!isMobile && <AddActivityButton />}
       </HeaderWrapper>
+
+      {isMobile && <AddActivityButton />}
 
       {activities?.length > 0 ?
         (<CardGroup>

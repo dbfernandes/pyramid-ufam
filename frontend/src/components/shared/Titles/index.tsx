@@ -3,12 +3,13 @@ import styled, { css } from "styled-components";
 const Title = css<{ center: boolean }>`
 	color: var(--text-default);
 	font-weight: bold;
+  margin-bottom: 0;
 
 	${({ center }) => center &&
-		"display: flex;" +
-		"align-items: center;" +
-		"flex-direction: column;"
-	}
+    "display: flex;" +
+    "align-items: center;" +
+    "flex-direction: column;"
+  }
 
 	i {
 		color: var(--black-3);

@@ -96,6 +96,12 @@ body > div#__next {
 	padding: 15px;
 }
 
+@media (max-width: 575px) {
+	.mobile {
+		padding: 7.5px;
+	}
+}
+
 .no-menu {
 	padding: 0;
 }

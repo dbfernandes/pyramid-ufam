@@ -60,7 +60,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
     &:hover {
       border-color: var(--primary-color-2);
 	  }`
-	}
+  }
 	
   ${({ blurred }) => blurred && "filter: opacity(50%);"}
 `;
@@ -93,8 +93,8 @@ export const UnstyledButton = styled.button`
   border: none;
   background: transparent;
 `;
-  
-  export const UnstyledLink = styled.a`
+
+export const UnstyledLink = styled.a`
 `;
 
 export const DropdownWrapper = styled(Dropdown)`
@@ -115,7 +115,7 @@ export const DropdownMenu = styled(Dropdown.Menu)`
   border-radius: 5px;
 `;
 
-export const DropdownItem = styled(Dropdown.Item)<{ accent?: string }>`
+export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
   padding: 7.5px 15px;
   font-size: 0.875rem;
   color: var(--text-default) !important;
@@ -134,10 +134,6 @@ export const DropdownItem = styled(Dropdown.Item)<{ accent?: string }>`
     i {
       color: ${({ accent }) => accent ? accent : "var(--primary-color)"};
     }
-  }
-
-  @media (max-width: 1024px) {
-    padding: 10px 20px;
   }
 `;
 
