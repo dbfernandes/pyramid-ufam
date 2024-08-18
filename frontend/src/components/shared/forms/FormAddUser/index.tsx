@@ -21,7 +21,13 @@ import { toast } from "react-toastify";
 import { CustomForm, FormSection } from "./styles";
 import UserTypeSelect from "./UserTypeSelect";
 
-export default function FormAddUser() {
+// Interfaces
+import IUser from "interfaces/IUser";
+export default function FormAddUser({
+  user: userProp
+}: {
+  user: IUser;
+}) {
   const userTypeSlugs = ["", "coordenador", "secretario", "aluno"];
   const router = useRouter();
 

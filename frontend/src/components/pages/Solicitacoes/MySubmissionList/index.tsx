@@ -92,7 +92,13 @@ export default function MySubmissionList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success(`${response.data.count} submissões canceladas com sucesso.`);
+        const count = response.data.count;
+        if (count === 0) {
+          toast.info("Nenhuma submissão foi cancelada.");
+        } else {
+          toast.success(`${count} submissões canceladas com sucesso.`);
+        }
+
         setCheckedIds([]);
         onChange();
       })

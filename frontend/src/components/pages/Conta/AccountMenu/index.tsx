@@ -15,8 +15,9 @@ import {
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
 import FormSendPasswordResetLink from "components/shared/forms/FormSendPasswordResetLink";
+import IUser from "interfaces/IUser";
 interface IAccountMenuProps {
-  user: IUserLogged;
+  user: IUser;
 }
 
 export default function AccountMenu({ user }: IAccountMenuProps) {

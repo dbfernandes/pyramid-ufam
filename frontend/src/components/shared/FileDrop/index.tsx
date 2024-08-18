@@ -36,7 +36,7 @@ export default function FileDrop({
 
       return false;
     } else if (maxSize != -1 && file.size > maxSize) {
-      setAlert("Somente arquivos até 5 mb são permitidos");
+      setAlert("Somente arquivos até 10 mb são permitidos");
       setForceDisplayAlert(true);
 
       return false;

@@ -144,7 +144,13 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success(`${response.data.count} usuários desativados com sucesso.`);
+        const count = response.data.count;
+        if (count === 0) {
+          toast.info("Nenhuma usuário foi desativado.");
+        } else {
+          toast.success(`${count} usuários desativados com sucesso.`);
+        }
+
         setCheckedIds([]);
         onChange();
       })
@@ -211,7 +217,13 @@ export default function UserList({
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
-        toast.success(`${response.data.count} usuários reativados com sucesso.`);
+        const count = response.data.count;
+        if (count === 0) {
+          toast.info("Nenhuma usuário foi reativado.");
+        } else {
+          toast.success(`${count} usuários reativados com sucesso.`);
+        }
+
         setCheckedIds([]);
         onChange();
       })

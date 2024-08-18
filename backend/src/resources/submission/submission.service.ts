@@ -106,6 +106,10 @@ export class SubmissionService {
 		const rootPath = `./public/files/submissions/`;
 		const path = `${rootPath}${filename}`;
 
+		if (!fs.existsSync(rootPath)) {
+			fs.mkdirSync(rootPath, { recursive: true });
+		}
+
 		const { activityId, workload, description } = createSubmissionDto;
 
 		const submission = await this.prisma.submission.create({

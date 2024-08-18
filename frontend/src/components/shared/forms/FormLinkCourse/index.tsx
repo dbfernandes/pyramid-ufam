@@ -15,17 +15,22 @@ import { toast } from "react-toastify";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+import IUser from "interfaces/IUser";
 
 interface IFormComponentProps {
   course?: any;
-  user: IUserLogged;
+  user: IUserLogged | IUser;
+  onChange?: Function;
   handleCloseModalForm?: Function;
+  onEditSuccess?: Function;
 }
 
 export default function FormLinkCourse({
   course: courseProp = null,
   user,
+  onChange = () => {},
   handleCloseModalForm,
+  onEditSuccess = () => {},
 }: IFormComponentProps) {
   const operation = courseProp == null ? "Vincular" : "Editar";
   const isStudent = user.userTypeId === 3;
@@ -56,25 +61,22 @@ export default function FormLinkCourse({
       },
     };
 
-    await axios
-      .request(options as AxiosRequestConfig)
-      .then((response) => {
-        const __courses = response.data.courses.filter((course1) => {
-          return !user.courses.some((course2) => course1.id === course2.id);
-        });
-        _setCourses(__courses);
-      })
-      .catch((error) => {
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          500: error?.response?.data?.message,
-        };
-
-        const code = error?.response?.status ? error.response.status : 500;
-        toast.error(code in errorMessages ? errorMessages[code] : errorMessages[0]);
+    try {
+      const response = await axios.request(options as AxiosRequestConfig);
+      onChange();
+      const __courses = response.data.courses.filter((course1) => {
+        return !user.courses.some((course2) => course1.id === course2.id);
       });
+      _setCourses(__courses);
+    } catch (error) {
+      const errorMessages = {
+        0: "Oops, tivemos um erro. Tente novamente.",
+      };
 
-    setFetchingCourses(false);
+      toast.error(errorMessages[0]);
+    } finally {
+      setFetchingCourses(false);
+    }
   }
 
   const [courseSearch, setCourseSearch] = useState<string>("");
@@ -109,24 +111,25 @@ export default function FormLinkCourse({
   const [error, setError] = useState<string>("");
 
   // Add or Edit
-  function handleAddCourse(e) {
+  const handleAddCourse = async (e) => {
     e.preventDefault();
     setSent(true);
+
     if (course !== null) {
       let data: any = {
         userId: user.id,
         courseId: course?.value ? course?.value : course
       };
 
-      if (isStudent && (enrollment.length != 0 && validateStartYear(startYear))) {
+      if (isStudent && (enrollment.length !== 0 && validateStartYear(startYear))) {
         data = { ...data, enrollment, startYear };
       }
 
-      if ((isStudent && (enrollment.length != 0 && validateStartYear(startYear))) || (!isStudent && course !== null)) {
-        fetchAddCourse(data, operation === "Editar");
+      if ((isStudent && (enrollment.length !== 0 && validateStartYear(startYear))) || (!isStudent && course !== null)) {
+        await fetchAddCourse(data, operation === "Editar");
       }
     }
-  }
+  };
 
   const { dispatch } = store;
   async function fetchAddCourse(data, isEdit = false) {
@@ -145,30 +148,32 @@ export default function FormLinkCourse({
       },
     };
 
-    await axios
-      .request(options as AxiosRequestConfig)
-      .then((response) => {
-        setSuccess(true);
-        if (handleCloseModalForm) {
-          handleCloseModalForm();
-        }
-        dispatch(setCourses(response.data));
-        toast.success(isEdit ? "Matrícula alterada com sucesso." : "Curso vinculado com sucesso.");
-      })
-      .catch((error) => {
-        const errorMessages = {
-          0: "Oops, tivemos um erro. Tente novamente.",
-          400: "Curso já associado ao usuário.",
-          500: error?.response?.data?.message,
-        };
+    try {
+      const response = await axios.request(options as AxiosRequestConfig);
+      setSuccess(true);
+      dispatch(setCourses(response.data));
+      onChange();
+      toast.success(isEdit ? "Matrícula alterada com sucesso." : "Curso vinculado com sucesso.");
 
-        const code = error?.response?.status ? error.response.status : 500;
-        setError(
-          code in errorMessages ? errorMessages[code] : errorMessages[0]
-        );
-        setSuccess(false);
-        setFetching(false);
-      });
+      if (handleCloseModalForm) {
+        handleCloseModalForm(); // Close the child modal
+      }
+      if (onEditSuccess) {
+        onEditSuccess(); // Close the parent modal if the callback is provided
+      }
+    } catch (error) {
+      const errorMessages = {
+        0: "Oops, tivemos um erro. Tente novamente.",
+        400: "Curso já associado ao usuário.",
+      };
+
+      setError(
+        errorMessages[0]
+      );
+      setSuccess(false);
+    } finally {
+      setFetching(false);
+    }
   }
 
   return (
@@ -200,39 +205,39 @@ export default function FormLinkCourse({
           />
         )}
 
-        {isStudent && (<MultiField>
-          <TextInput
-            label={"Matrícula*"}
-            name={"enrollment"}
-            value={enrollment}
-            handleValue={handleEnrollment}
-            mask={"999999999"}
-            required={true}
-            displayAlert={sent}
-          />
+        {isStudent && (
+          <MultiField>
+            <TextInput
+              label={"Matrícula*"}
+              name={"enrollment"}
+              value={enrollment}
+              handleValue={handleEnrollment}
+              mask={"999999999"}
+              required={true}
+              displayAlert={sent}
+            />
 
-          <TextInput
-            label={"Ano de início*"}
-            name={"startYear"}
-            value={startYear}
-            handleValue={setStartYear}
-            validate={validateStartYear}
-            mask={"9999"}
-            required={true}
-            alert={"Ano inválido"}
-            displayAlert={sent}
-          />
-        </MultiField>)}
+            <TextInput
+              label={"Ano de início*"}
+              name={"startYear"}
+              value={startYear}
+              handleValue={setStartYear}
+              validate={validateStartYear}
+              mask={"9999"}
+              required={true}
+              alert={"Ano inválido"}
+              displayAlert={sent}
+            />
+          </MultiField>
+        )}
       </div>
 
       <div style={{ width: "100%" }}>
-        <>
-          {sent && !success && error.length != 0 && (
-            <FormAlert>{error}</FormAlert>
-          )}
-        </>
+        {sent && !success && error.length !== 0 && (
+          <FormAlert>{error}</FormAlert>
+        )}
 
-        <Button style={{ marginTop: 15 }} onClick={(e) => handleAddCourse(e)}>
+        <Button style={{ marginTop: 15 }} onClick={handleAddCourse}>
           {fetching ? (
             <Spinner size={"20px"} color={"var(--black-1)"} />
           ) : (

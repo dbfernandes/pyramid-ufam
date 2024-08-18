@@ -32,6 +32,7 @@ async function bootstrap() {
 		"/files/profile-images",
 		express.static("public/files/profile-images"),
 	);
+
 	app.use("/files/submissions", express.static("public/files/submissions"));
 	createSwaggerDocument(app);
 

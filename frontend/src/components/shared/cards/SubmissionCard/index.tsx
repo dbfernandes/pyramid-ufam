@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios, { AxiosRequestConfig } from "axios";
-import { StatusSubmissions } from "constants/statusSubmissions.constants";
 import { formatCpf, getFilename } from "utils";
+import { toast } from "react-toastify";
 
 // Shared
 import { H6 } from "components/shared/Titles";
-import { toast } from "react-toastify";
 import UserActions from "./UserActions";
 
 // Custom
@@ -28,8 +27,6 @@ import {
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
-import { IRootState } from "redux/store";
-
 interface ISubmissionCardProps {
   submission?: any;
   loading?: boolean;
