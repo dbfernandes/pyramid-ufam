@@ -12,8 +12,9 @@ export const Item = styled.div<{ student: boolean }>`
   padding-right: 15px;
   border: 1px solid transparent;
 
-  grid-template-columns: 60px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr 60px" : "1fr 1fr 1fr 1fr 45px 60px"};
   column-gap: 10px;
+  grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};  
+
 
   ${props => !props.header
     ? `background-color: var(--white-1);
@@ -33,17 +34,17 @@ export const Item = styled.div<{ student: boolean }>`
   `}
 
   @media (max-width: 768px) {
-    grid-template-columns: 60px ${({ student }) => student ? "1fr 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};
+    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"}; 
+    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) 45px 60px" : "1fr 45px 60px"};  
   }
 `;
-
 
 export const Column = styled.div`
   position: relative;
   color: ${props => props.color ? props.color : "var(--text-default)"};
-  white-space: nowrap; 
   padding: 15px;
   
+  white-space: nowrap; 
   overflow: hidden;
   text-overflow: ellipsis;
 
