@@ -195,7 +195,7 @@ export default function User({
             </Info>
 
           )}
-            <Info>
+            { user?.userTypeId == 3 && (<Info>
               <H6>Informações do curso</H6>
 
               <p>
@@ -210,7 +210,7 @@ export default function User({
               <p>
                 <b>Horas (Extensão):</b> <CustomProgressBar current={user?.workloadCount?.["Extensão"]?.totalWorkload || 0} max={user?.workloadCount?.["Extensão"]?.maxWorkload || 0} />
               </p>
-            </Info>
+            </Info>)}
         </div>
         
       </CollapseDetailsStyled>
@@ -456,7 +456,7 @@ export default function User({
 
             <ToggleButton 
               expanded={collapsed}
-              onClick={() => setCollapsed(!collapsed)} // Adicionar a lógica para alternar o estado
+              onClick={() => setCollapsed(!collapsed)}
             >
               <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
             </ToggleButton>

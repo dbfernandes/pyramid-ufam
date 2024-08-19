@@ -33,7 +33,7 @@ export const Item = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 60px 1fr 1fr 45px;
+    grid-template-columns: 60px 2fr 1fr 45px;
   }
 `;
 

@@ -34,8 +34,7 @@ export const Item = styled.div<{ student: boolean }>`
   `}
 
   @media (max-width: 768px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"}; 
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) 45px 60px" : "1fr 45px 60px"};  
+    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 2fr) 45px 60px" : "minmax(0, 2fr) 45px 60px"};  
   }
 `;
 
