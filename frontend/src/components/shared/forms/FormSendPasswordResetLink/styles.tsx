@@ -10,14 +10,8 @@ export const CustomForm = styled.form`
 `;
 
 export const FormSection = styled.div`
-  margin-top: 30px;
-
   p {
     margin-bottom: 15px;
     color: var(--muted);
-  }
-
-  @media (max-width: 768px) {
-    margin-top: -30px;
   }
 `;

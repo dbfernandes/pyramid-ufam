@@ -32,45 +32,16 @@ export const Item = styled.div`
     transition: 0.3s;
   }
 
-  @media (max-width: 879px) {
-    grid-template-columns: 60px 1fr 1fr 1fr 0fr 1fr 45px;
-  }
-
-  @media (max-width: 734px) {
-    grid-template-columns: 60px 1fr 1fr 0fr 0fr 1fr 45px;
-  }
-  
-  @media (max-width: 537px) {
-    grid-template-columns: 60px 1fr 0fr 0fr 0fr 1fr 45px;
-  }
-
-  @media (max-width: 434px) {
-    grid-template-columns: 40px 2fr 0fr 0fr 0fr 2fr 45px;
-  }
-
-  @media (max-width: 338px) {
-    grid-template-columns: 15px 0fr 0fr 0fr 0fr 1fr 45px;
-  }
-
-  @media (max-width: 268px) {
-    grid-template-columns: 5px 0fr 0fr 0fr 0fr 1fr 45px;
+  @media (max-width: 768px) {
+    grid-template-columns: 60px 1fr 1fr 45px;
   }
 `;
 
 
 export const HideOnSmallScreen = styled.div`
-
-	color: ${props => props.color ? props.color : "var(--text-default)"};
-
-	white-space: nowrap; 
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-	i {
-		vertical-align: top;
-		font-size: 0.875rem;
-		margin-right: 10px;
-	}
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 // Wrapper para o select e a seta
@@ -269,71 +240,43 @@ export const FileInfo = styled(Info)`
 
 export const ButtonGroup = styled.div`
   width: 100%;
-  display: flex;
+  display: grid;
   justify-content: flex-end;
   align-items: flex-start;
-
+  grid-template-columns: repeat(4, 0fr);
+  gap: 10px;
+  grid-wrap: wrap;
+  
   margin-top: 15px;
-
-  @media (max-width: 635px) {
+  
+  @media (max-width: 768px) { 
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     padding-top: 15px;
-    padding-bottom: 15px;
+    gap: 10px;
   }
-
-  @media (max-width: 379px) {
-    display: flex;
-    
-  } 
 `;
 
 export const AcceptButton = styled(Button)`
   width: fit-content;
   padding: 8px 26px;
-  margin-left: 10px;
 
-  @media (max-width: 517px) {
-    span {
-      display: none;
-    }
-  }
-
-  @media (max-width: 466px) {
-    width: 80%;
-    padding: 4px 12px;
-  }
-
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 export const EditButton = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
-  margin-left: 10px;
 
-  @media (max-width: 608px) {
-    span {
-      display: none;
-    }
-  }
-
-  @media (max-width: 466px) {
-    padding: 4px 12px;
-    width: 90%;
-  }
-
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 export const InfoButton = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
-  margin-left: 10px;
   color: var(--success);
 
   &:hover {
@@ -341,20 +284,8 @@ export const InfoButton = styled(ButtonAlt)`
     border-color: var(--success-hover);
   }
 
-  @media (max-width: 667px) {
-    span {
-      display: none;
-    }
-  }
-
-  @media (max-width: 466px) {
-    width: 80%;
-    padding: 4px 12px;
-  }
-
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -368,28 +299,14 @@ export const DangerButtonMult = styled(ButtonAlt)`
     border-color: var(--danger-hover);
   }
 
-  @media (max-width: 567px) {
-    span{
-      display: none;
-    }
-    gap: 0;
-  }
-
-  @media (max-width: 466px) {
-    width: 80%;
-    padding: 4px 12px;
-  }
-
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
 export const DangerButtonAlt = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
-  margin-left: 10px;
   color: var(--danger);
   .cancelar {
     margin-left: 10px;
@@ -400,25 +317,8 @@ export const DangerButtonAlt = styled(ButtonAlt)`
     border-color: var(--danger-hover);
   }
 
-  @media (max-width: 567px) {
-    span {
-      .cancelar {
-        display: none;
-      }
-      .icone {
-        margin-left: 0px;
-      }
-    }
-  }
-
-  @media (max-width: 466px) {
-    width: 80%;
-    padding: 4px 12px;
-  }
-
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -433,19 +333,7 @@ export const WarningButtonAlt = styled(ButtonAlt)`
     border-color: var(--warning);
   }
 
-  @media (max-width: 480px) {
-    span {
-      display: none;
-    }
-  }
-
-  @media (max-width: 466px) {
-    width: 80%;
-    padding: 4px 12px;
-  }
-    
-  @media (max-width: 353px) {
-    width: 60%;
-    padding: 2px 6px;
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;

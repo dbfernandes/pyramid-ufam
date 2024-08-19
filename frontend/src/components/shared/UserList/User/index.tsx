@@ -350,7 +350,7 @@ export default function User({
           label={""}
           onClick={(e) => handleCheck(e)}
         />
-        <HideOnSmallScreen><Column color={"var(--muted)"}>Nome</Column></HideOnSmallScreen>
+        <Column color={"var(--muted)"}>Nome</Column>
         {subRoute == "alunos"
           ? <>
             <HideOnSmallScreen><Column color={"var(--muted)"}>Matrícula</Column></HideOnSmallScreen>
@@ -382,13 +382,11 @@ export default function User({
               onClick={(e) => handleCheck(e)}
             />
 
-            <HideOnSmallScreen>
               <Column>
                 <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
                   <span>{user?.name}</span>
                 </OverlayTrigger>
               </Column>
-            </HideOnSmallScreen>
 
 
             {subRoute == "alunos"
@@ -399,7 +397,9 @@ export default function User({
                 </Column>
             </HideOnSmallScreen>
 
-                <WorkloadProgressBars workloadCount={user?.workloadCount} />
+            <HideOnSmallScreen>
+              <WorkloadProgressBars workloadCount={user?.workloadCount} />
+            </HideOnSmallScreen>
               </>
               : <>
             <HideOnSmallScreen>

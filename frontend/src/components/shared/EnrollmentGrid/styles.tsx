@@ -9,12 +9,8 @@ export const CourseGridComponent = styled.div`
   	  grid-template-columns: repeat(3, 1fr);
   	}
 
-  	@media (max-width: 600px) {
+  	@media (max-width: 575px) {
   	  grid-template-columns: repeat(2, 1fr);
-  	}
-
-  	@media (max-width: 400px) {
-  	  grid-template-columns: 1fr;
   	}
 `;
 

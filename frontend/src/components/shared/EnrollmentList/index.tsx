@@ -59,8 +59,8 @@ export default function EnrollmentList({ user, onChange = () => { }, handleClose
   }
 
   return (
-    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
-      <div style={{ marginTop: isOwnUser ? 30 : 0 }}>
+    <CustomForm>
+      <div>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Cursos vinculados</H5>}
 
         {user.courses.length === 0 &&

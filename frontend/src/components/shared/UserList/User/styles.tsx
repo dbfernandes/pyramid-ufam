@@ -12,7 +12,7 @@ export const Item = styled.div<{ student: boolean }>`
   padding-right: 15px;
   border: 1px solid transparent;
 
-  grid-template-columns: 60px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr 1fr 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};
+  grid-template-columns: 60px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr 60px" : "1fr 1fr 1fr 1fr 45px 60px"};
   column-gap: 10px;
 
   ${props => !props.header
@@ -32,29 +32,18 @@ export const Item = styled.div<{ student: boolean }>`
     }
   `}
 
-  @media (max-width: 879px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 1fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};  
-  }
-  
-  @media (max-width: 642px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 1fr) 45px 60px" : "1fr 0fr 1fr 1fr 45px 60px"};  
-  }
-
-  @media (max-width: 560px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 2fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 1fr) 45px 60px" : "1fr 0fr 0fr 1fr 45px 60px"};  
-  }
-
-  @media (max-width: 543px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) minmax(0, 0fr) 30px 20px" : "1fr 0fr 0fr 1fr 30px 20px"};  
+  @media (max-width: 768px) {
+    grid-template-columns: 60px ${({ student }) => student ? "1fr 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};
   }
 `;
+
 
 export const Column = styled.div`
   position: relative;
   color: ${props => props.color ? props.color : "var(--text-default)"};
+  white-space: nowrap; 
   padding: 15px;
   
-  white-space: nowrap; 
   overflow: hidden;
   text-overflow: ellipsis;
 

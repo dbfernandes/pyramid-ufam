@@ -249,13 +249,13 @@ export default function SubmissionCard({
         onClick={(e) => handleCheck(e)}
       />
       {user?.userTypeId === 3
-        ? <HideOnSmallScreen><Column color={"var(--muted)"}>Descrição</Column></HideOnSmallScreen>
-        : <HideOnSmallScreen><Column color={"var(--muted)"}>Aluno</Column></HideOnSmallScreen>
+        ? <Column color={"var(--muted)"}>Descrição</Column>
+        : <Column color={"var(--muted)"}>Aluno</Column>
       }
       <HideOnSmallScreen><Column color={"var(--muted)"}>Grupo de atividade</Column></HideOnSmallScreen>
       <HideOnSmallScreen><Column color={"var(--muted)"}>Tipo de atividade</Column></HideOnSmallScreen>
       <HideOnSmallScreen><Column color={"var(--muted)"}>Horas solicitadas</Column></HideOnSmallScreen>
-      <HideOnSmallScreen><Column color={"var(--muted)"}>Status</Column></HideOnSmallScreen>
+      <Column color={"var(--muted)"}>Status</Column>
       <div></div>
     </Item>
   ) : loading ? (
@@ -301,7 +301,6 @@ export default function SubmissionCard({
 
         {user?.userTypeId == 3
           ? 
-          <HideOnSmallScreen>
           <Column>
             <OverlayTrigger
               placement="bottom"
@@ -309,9 +308,7 @@ export default function SubmissionCard({
               <span>{submission?.description}</span>
             </OverlayTrigger>
           </Column>
-          </HideOnSmallScreen>
           :
-          <HideOnSmallScreen>
           <Column>
             <OverlayTrigger
               placement="bottom"
@@ -319,7 +316,6 @@ export default function SubmissionCard({
               <>{submission?.user?.name}</>
             </OverlayTrigger>
           </Column>
-          </HideOnSmallScreen>
           
         }
 

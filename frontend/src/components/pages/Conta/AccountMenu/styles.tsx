@@ -20,9 +20,11 @@ export const CustomSidenav = styled(SidenavWrapper)`
   box-shadow: none;
 
   @media (max-width: 768px) {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 575px) {
+    margin-bottom: 0px;
   }
 `;
 
@@ -34,43 +36,47 @@ export const CustomLinkWrapper = styled(SidenavLinkWrapper)`
   }
 
   @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
+    width: 100%;
+    
     div {
-      width: 100%;
-      margin-top: 5px;
+      display: grid;
+      grid-template-columns: 1fr;
     }
   }
 `;
 
-export const CustomSidenavButton = styled(SidenavButtonStyled) <{ active: boolean }>`
+export const CustomSidenavButton = styled(SidenavButtonStyled)<{ active: boolean }>`
   position: relative;
   margin-left: 5px;
-
+  display: flex;
+  margin-bottom: 10px;
+  
   ${({ active }) => active && `
-    color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
     background: var(--primary-color-background) !important;
-
+    
     &:before {
       position: absolute;
       top: 0;
       left: -15px;
-
+      
       height: 43px;
       width: 5px;
       border-radius: 0 5px 5px 0;
       background-color: var(--primary-color);
       content: "";
-    }
-  `}
-
+      }
+    `}
+      
   @media (max-width: 768px) {
-    margin-bottom: 10px; /* Adiciona espaço entre os botões */
-    width: 100%; /* Ajusta a largura dos botões em telas pequenas */
-    text-align: center; /* Centraliza o texto */
-
+    margin-left: 0;
+    width: 100%;
     
+    &:before {
+      display: none;
+    }
+    background-color: ${({ active }) => active ? 'var(--primary-color-background)' : 'inherit'};
   }
 `;
+
+

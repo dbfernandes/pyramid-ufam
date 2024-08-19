@@ -113,7 +113,6 @@ export const DropdownWrapper = styled(Dropdown)`
 export const DropdownMenu = styled(Dropdown.Menu)`
 	z-index: 10;
 
-	padding: 10px 0;
 
 	background-color: var(--white-1);
 	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
