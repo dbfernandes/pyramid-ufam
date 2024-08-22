@@ -5,6 +5,7 @@ import axios, { AxiosRequestConfig } from "axios";
 // Shared
 import { H5 } from "components/shared/Titles";
 import {
+  CustomForm,
   FormAlert
 } from "components/shared/Form/styles";
 import { Button } from "components/shared/Button";
@@ -12,7 +13,7 @@ import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection } from "./styles";
+import { FormSection } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -26,7 +27,7 @@ export default function FormSendPasswordResetLink({
   user,
   handleCloseModalForm,
 }: IFormSendPasswordResetLinkProps) {
-  const isOwnUser = "logged" in user;
+  const isOwnUser = "logged" in user && user.logged === true;
 
   // Form state
   const [sent, setSent] = useState<boolean>(false);
@@ -92,7 +93,7 @@ export default function FormSendPasswordResetLink({
   ]
 
   return (
-    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
+    <CustomForm isOwnUser={isOwnUser}>
       <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar senha</H5>}
 

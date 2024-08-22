@@ -21,7 +21,7 @@ export const Item = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 45px;
-  column-gap: 15px;
+  column-grid-gap: 15px;
   align-items: center;
   margin-top: 5px;
   padding: 0;
@@ -99,6 +99,9 @@ export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
     grid-template-columns: 3fr 3fr 3fr;
     grid-gap: 30px;
 
+    @media (max-width: 1200px) {
+      grid-gap: 15px;
+    }
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
     }
@@ -242,17 +245,17 @@ export const ButtonGroup = styled.div`
   width: 100%;
   display: grid;
   justify-content: flex-end;
+  justify-items: end !important;
   align-items: flex-start;
   grid-template-columns: repeat(4, 0fr);
-  gap: 10px;
-  grid-wrap: wrap;
+  grid-gap: 10px;
   
   margin-top: 15px;
   
   @media (max-width: 768px) { 
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     padding-top: 15px;
-    gap: 10px;
+    grid-gap: 10px;
   }
 `;
 

@@ -21,6 +21,9 @@ export const CardGroup = styled.div`
 	justify-items: center;
 	margin-bottom: 20px;
 
+  @media (max-width: 1200px) {
+		grid-gap: 15px;
+	}
 	@media (max-width: 768px) {
 		display: flex;
 		flex-wrap: wrap;	

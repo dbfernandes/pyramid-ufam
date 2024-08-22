@@ -27,7 +27,7 @@ export const Container = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	gap: 15px;
+	grid-gap: 15px;
 	width: 100%;
 
 	@media (max-width: 768px) {

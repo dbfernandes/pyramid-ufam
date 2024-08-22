@@ -8,6 +8,7 @@ const CardGroup = styled.div<{ grid: string }>`
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
   }
 
   @media (max-width: 575px) {

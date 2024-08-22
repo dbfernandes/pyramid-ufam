@@ -34,7 +34,7 @@ export const PasswordStrengthDescription = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  grid-gap: 5px;
 
   padding: 15px 15px 5px;
   border-radius: 5px;

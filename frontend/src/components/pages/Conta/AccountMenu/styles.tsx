@@ -10,42 +10,46 @@ export const AccountMenuWrapper = styled.div`
   grid-template-columns: 1fr 3fr;
   grid-gap: 30px;
 
+  @media (max-width: 1200px) {
+    grid-template-columns: 2fr 3fr;
+  }
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr 2fr;
+  }
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    grid-gap: 0;
   }
 `;
 
 export const CustomSidenav = styled(SidenavWrapper)`
   width: 100%;
   box-shadow: none;
+  margin: 0;
 
   @media (max-width: 768px) {
-    margin-bottom: 10px;
-  }
-
-  @media (max-width: 575px) {
-    margin-bottom: 0px;
+    padding: 10px 0 15px;
   }
 `;
 
 export const CustomLinkWrapper = styled(SidenavLinkWrapper)`
-  width: 90%;
-
   &:last-child {
     padding: 10px;
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    
     div {
       display: grid;
       grid-template-columns: 1fr;
     }
+
+    &:last-child {
+      padding: 0;
+    }
   }
 `;
 
-export const CustomSidenavButton = styled(SidenavButtonStyled)<{ active: boolean }>`
+export const CustomSidenavButton = styled(SidenavButtonStyled) <{ active: boolean }>`
   position: relative;
   margin-left: 5px;
   display: flex;

@@ -1,17 +1,23 @@
 import { useState } from "react";
-import { setCourses } from "redux/slicer/user";
-import { getToken } from "utils";
-import toggleModalForm from "components/shared/ModalForm";
-import { AddCourseButton, CourseListComponent, CustomForm } from "./styles";
-import FormLinkCourse from "components/shared/forms/FormLinkCourse";
-import EnrollmentCard from "components/shared/cards/EnrollmentCard";
-import { store } from "redux/store";
-import IUserLogged from "interfaces/IUserLogged";
 import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
-import { H5 } from "../Titles";
-import IUser from "interfaces/IUser";
+import { setCourses } from "redux/slicer/user";
+import { store } from "redux/store";
+import { getToken } from "utils";
 
+// Shared
+import { H5 } from "../Titles";
+import toggleModalForm from "components/shared/ModalForm";
+import { CustomForm } from "../Form/styles";
+import FormLinkCourse from "components/shared/forms/FormLinkCourse";
+import EnrollmentCard from "components/shared/cards/EnrollmentCard";
+
+// Custom
+import { AddCourseButton, CourseListComponent } from "./styles";
+
+// Interfaces
+import IUser from "interfaces/IUser";
+import IUserLogged from "interfaces/IUserLogged";
 interface IEnrollmentListProps {
   user: IUserLogged | IUser;
   onChange?: Function;
@@ -19,7 +25,7 @@ interface IEnrollmentListProps {
 }
 
 export default function EnrollmentList({ user, onChange = () => { }, handleCloseModalForm }: IEnrollmentListProps) {
-  const isOwnUser = "logged" in user;
+  const isOwnUser = "logged" in user && user.logged === true;
   const [fetching, setFetching] = useState<boolean>(false);
   const { dispatch } = store;
 
@@ -59,7 +65,7 @@ export default function EnrollmentList({ user, onChange = () => { }, handleClose
   }
 
   return (
-    <CustomForm>
+    <CustomForm isOwnUser={isOwnUser}>
       <div>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Cursos vinculados</H5>}
 
@@ -96,11 +102,6 @@ export default function EnrollmentList({ user, onChange = () => { }, handleClose
               onChange={onChange}
               onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
               handleCloseModalForm={handleCloseModalForm}
-              onEditSucess={() => {
-                if (handleCloseModalForm) {
-                  handleCloseModalForm();
-                }
-              }}
             />
           ))}
         </CourseListComponent>

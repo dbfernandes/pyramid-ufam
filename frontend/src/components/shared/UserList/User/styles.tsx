@@ -4,7 +4,7 @@ import { Dropdown, FormCheck, ProgressBar } from "react-bootstrap";
 export const Item = styled.div<{ student: boolean }>`
   width: 100%;
   display: grid;
-  column-gap: 15px;
+  column-grid-gap: 15px;
   align-items: center;
 
   margin-bottom: 15px;
@@ -12,7 +12,7 @@ export const Item = styled.div<{ student: boolean }>`
   padding-right: 15px;
   border: 1px solid transparent;
 
-  column-gap: 10px;
+  column-grid-gap: 10px;
   grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};  
 
 

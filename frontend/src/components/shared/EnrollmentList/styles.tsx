@@ -13,19 +13,6 @@ export const CourseListComponent = styled.div`
   }
 `;
 
-
-export const CustomForm = styled.form`
-  && { 
-  max-width: 50%;
-
-  
-  @media (max-width: 768px) {
-    max-width: 90%;
-    margin: 0 auto;
-  }
-}
-`;
-
 export const AddCourseButton = styled.button`
   width: 100%;
   height: 40px;

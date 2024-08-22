@@ -29,7 +29,7 @@ export const Filter = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 15px;
+  grid-gap: 15px;
 
   margin-top: 15px;
 `;

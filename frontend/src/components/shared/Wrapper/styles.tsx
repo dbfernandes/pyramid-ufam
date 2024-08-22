@@ -15,6 +15,10 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 		overflow: hidden;
 		padding: 0 15px;
 		margin: 0;
+
+    @media only screen and (max-width: 575px) {
+			padding: 0 10px;
+		}
 		
 		& > div {
 			width: 100%;
@@ -44,7 +48,6 @@ export const WrapperStyled = styled.div<{ centerAlign?: boolean, maxWidth?: numb
 				}
 			}
 	}`
-
 
   }
 	${({ centerAlign }) => !centerAlign &&

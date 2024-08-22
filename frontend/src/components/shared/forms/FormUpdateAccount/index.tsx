@@ -7,13 +7,13 @@ import { login, setProfileImage } from "redux/slicer/user";
 
 // Shared
 import { H5 } from "components/shared/Titles";
-import { FormAlert } from "components/shared/Form/styles";
+import { CustomForm, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection, ProfilePicture } from "./styles";
+import { ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
@@ -27,9 +27,7 @@ interface IFormUpdateAccountProps {
 }
 
 export default function FormUpdateAccount({ user, onChange = () => { }, handleCloseModalForm }: IFormUpdateAccountProps) {
-  console.log(user);
   const isOwnUser = "logged" in user && user.logged === true;
-  console.log(isOwnUser);
 
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -191,8 +189,8 @@ export default function FormUpdateAccount({ user, onChange = () => { }, handleCl
   }
 
   return (
-    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
-      <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
+    <CustomForm isOwnUser={isOwnUser}>
+      <div>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>}
 
         <ProfilePicture>
@@ -271,7 +269,7 @@ export default function FormUpdateAccount({ user, onChange = () => { }, handleCl
             <FormAlert>{error}</FormAlert>
           )}
         </>
-      </FormSection>
+      </div>
     </CustomForm>
   );
 

@@ -20,7 +20,6 @@ export default function PasswordStrength({ password, showPasswordStrengthDescrip
   const [strength, setStrength] = useState<any>(null);
   useEffect(() => {
     const _strength = checkPasswordStrength(password);
-    console.log(_strength);
     setStrength(_strength);
   }, [password]);
 

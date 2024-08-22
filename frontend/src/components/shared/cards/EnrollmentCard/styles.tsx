@@ -104,7 +104,7 @@ export const DropdownWrapper = styled(Dropdown)`
 
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  grid-gap: 10px;
 `;
 
 export const DropdownMenu = styled(Dropdown.Menu)`

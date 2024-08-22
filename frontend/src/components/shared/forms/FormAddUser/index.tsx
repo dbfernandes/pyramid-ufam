@@ -5,6 +5,7 @@ import { getToken, validateCpf, validateEmail, slugify } from "utils";
 
 // Shared
 import {
+  CustomForm,
   FormAlert,
   MultiField,
   SectionTitle,
@@ -18,7 +19,7 @@ import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection } from "./styles";
+import { FormSection } from "./styles";
 import UserTypeSelect from "./UserTypeSelect";
 
 export default function FormAddUser() {
