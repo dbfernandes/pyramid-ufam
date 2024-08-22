@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 
 // Shared
 import { H3 } from "components/shared/Titles";
-import { ButtonGroup, DangerButtonAlt, DangerButtonMult, InfoButton, WarningButtonAlt } from "components/shared/cards/SubmissionCard/styles";
+import { ButtonGroupTop, DangerButtonAlt, InfoButton } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import SearchBar from "components/shared/SearchBar";
@@ -246,13 +246,13 @@ export default function UserList({
         <H3>{title}</H3>
 
         {checkedIds?.length > 0
-          ? (<ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonMult onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
+          ? (<ButtonGroupTop style={{ margin: 0, width: "fit-content" }}>
+            <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
               {fetchingMassDelete
                 ? <Spinner size={"20px"} color={"var(--danger)"} />
                 : <><i className="bi bi-x-lg" /> Desativar selecionados</>
               }
-            </DangerButtonMult>
+            </DangerButtonAlt>
 
             <InfoButton onClick={() => fetchMassRestore(checkedIds.join(","))} disabled={fetchingMassRestore}>
               {fetchingMassRestore
@@ -260,7 +260,7 @@ export default function UserList({
                 : <><i className="bi bi-exclamation-lg" /> Reativar selecionados</>
               }
             </InfoButton>
-          </ButtonGroup>) : (
+          </ButtonGroupTop>) : (
             <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
               <AddUserLink>
                 <i className={`bi bi-${subRoutes[subRoute].icon}`}>

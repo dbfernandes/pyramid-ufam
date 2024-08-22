@@ -140,6 +140,10 @@ a:hover {
 }
 
 /*---------------------- REACT TOASTIFY ----------------------*/
+.Toastify__toast {
+	margin: 10px;
+}
+
 .Toastify__toast-body {
 	color: var(--text-default);
 }

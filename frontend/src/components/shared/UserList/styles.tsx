@@ -13,6 +13,7 @@ export const HeaderWrapper = styled.div`
 `;
 
 export const AddUserLink = styled(AddResourceButton)`
+  padding: 8px 26px;
 `;
 
 export const ListStyled = styled.div`

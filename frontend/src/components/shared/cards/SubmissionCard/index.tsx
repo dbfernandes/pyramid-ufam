@@ -22,7 +22,6 @@ import {
   FileInfo,
   ItemWrapper,
   ToggleButton,
-  HideOnSmallScreen
 } from "./styles";
 
 // Interfaces
@@ -252,28 +251,28 @@ export default function SubmissionCard({
         ? <Column color={"var(--muted)"}>Descrição</Column>
         : <Column color={"var(--muted)"}>Aluno</Column>
       }
-      <HideOnSmallScreen><Column color={"var(--muted)"}>Grupo de atividade</Column></HideOnSmallScreen>
-      <HideOnSmallScreen><Column color={"var(--muted)"}>Tipo de atividade</Column></HideOnSmallScreen>
-      <HideOnSmallScreen><Column color={"var(--muted)"}>Horas solicitadas</Column></HideOnSmallScreen>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>
       <Column color={"var(--muted)"}>Status</Column>
       <div></div>
     </Item>
   ) : loading ? (
     <Item>
       <div></div>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
       <div></div>
@@ -300,7 +299,7 @@ export default function SubmissionCard({
         />
 
         {user?.userTypeId == 3
-          ? 
+          ?
           <Column>
             <OverlayTrigger
               placement="bottom"
@@ -316,32 +315,24 @@ export default function SubmissionCard({
               <>{submission?.user?.name}</>
             </OverlayTrigger>
           </Column>
-          
         }
 
-        <HideOnSmallScreen>
-          <Column>
-            <i
-              className={`bi bi-${activityGroupsIcons[submission?.activity.activityGroup.name.toLowerCase().slice(0, 3)]}`}
-            />
-            {submission?.activity.activityGroup.name}
-          </Column>
-        </HideOnSmallScreen>
-        
+        <Column hideOnMobile={true}>
+          <i
+            className={`bi bi-${activityGroupsIcons[submission?.activity.activityGroup.name.toLowerCase().slice(0, 3)]}`}
+          />
+          {submission?.activity.activityGroup.name}
+        </Column>
 
-        <HideOnSmallScreen>
-        <Column>
+        <Column hideOnMobile={true}>
           <OverlayTrigger
             placement="bottom"
             overlay={<Tooltip>{submission?.activity.name}</Tooltip>}>
             <span>{submission?.activity.name}</span>
           </OverlayTrigger>
         </Column>
-        </HideOnSmallScreen>
 
-        <HideOnSmallScreen>
-        <Column>{submission?.workload}h</Column>
-        </HideOnSmallScreen>
+        <Column hideOnMobile={true}>{submission?.workload}h</Column>
 
         <Column>
           <SubmissionStatus status={submission?.status} />

@@ -3,7 +3,7 @@ import { getToken, slugify } from "utils";
 
 // Custom
 import ActivityCard from "components/shared/cards/ActivityCard";
-import { CardGroup } from "../styles";
+import CardGroup from "components/shared/CardGroup";
 import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";

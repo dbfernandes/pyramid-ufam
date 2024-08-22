@@ -1,47 +1,50 @@
 import styled from "styled-components";
 import { Dropdown, FormCheck, ProgressBar } from "react-bootstrap";
 
-export const Item = styled.div<{ student: boolean }>`
+export const ItemWrapper = styled.div`
+  margin-bottom: 15px;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
+  border: 1px solid transparent;
+  border-radius: 5px;
+
+  transition: 0.3s;
+
+  &:hover {
+		border-color: rgba(0, 0, 0, 0.2);
+	}
+`;
+
+export const Item = styled.div<{ header?: boolean, student: boolean }>`
   width: 100%;
   display: grid;
-  column-grid-gap: 15px;
+  grid-template-columns: 45px 30px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr" : "3fr 3fr 3fr"} 60px 30px 30px;
+	column-gap: 15px;
   align-items: center;
 
-  margin-bottom: 15px;
+  margin-top: 5px;
   padding: 0;
   padding-right: 15px;
   border: 1px solid transparent;
 
-  column-grid-gap: 10px;
-  grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 45px 60px" : "1fr 1fr 1fr 1fr 45px 60px"};  
-
-
-  ${props => !props.header
-    ? `background-color: var(--white-1);
-      box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);`
-    : "margin: 0; margin-bottom: -5px;"}
-  border-radius: 5px;
-  transition: 0.3s;
+  ${({ header }) => !header && "margin: 0;"}
 
   .id, .name {
     transition: 0.3s;
   }
 
-  ${props => !props.header && `
-    &:hover {
-      border-color: rgba(0, 0, 0, 0.2);
-    }
-  `}
-
   @media (max-width: 768px) {
-    grid-template-columns: 60px ${({ student }) => student ? "minmax(0, 2fr) 45px 60px" : "minmax(0, 2fr) 45px 60px"};  
+    grid-template-columns: 45px 40px minmax(0, 2fr) 60px 30px 30px;
+    column-gap: 5px;
+    padding-right: 5px;
+  }
+  @media (max-width: 575px) {
+    grid-template-columns: 35px 40px minmax(0, 2fr) 60px 30px 30px;
   }
 `;
 
-export const Column = styled.div`
-  position: relative;
-  color: ${props => props.color ? props.color : "var(--text-default)"};
-  padding: 15px;
+export const Column = styled.div<{ hideOnMobile?: boolean, color?: string }>`
+  color: ${({ color }) => color ? color : "var(--text-default)"};
+  padding: 0;
   
   white-space: nowrap; 
   overflow: hidden;
@@ -60,6 +63,18 @@ export const Column = styled.div`
   & > .placeholder {
     color: var(--white-5);
   }
+
+  @media (max-width: 768px) {
+    ${({ hideOnMobile }) => hideOnMobile && "display: none;"}
+  }
+`;
+
+export const UserProfilePicture = styled.img<{ big?: boolean }>`
+  width: ${({ big }) => big ? "100px" : "30px"};
+  height: ${({ big }) => big ? "100px" : "30px"};
+  border-radius: 50%;
+
+  margin-bottom: ${({ big }) => big ? "15px" : "0"};
 `;
 
 export const CopyToClipboardSpan = styled.span`

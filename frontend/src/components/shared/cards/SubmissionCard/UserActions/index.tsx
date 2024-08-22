@@ -10,12 +10,11 @@ import { toast } from "react-toastify";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
 import FormUpdateSubmission from "components/shared/forms/FormAddSubmission/FormUpdateSubmission";
 import {
-  ButtonGroup,
   AcceptButton,
   DangerButtonAlt,
   InfoButton,
   EditButton,
-  DangerButtonMult
+  ButtonGroupBottom
 } from "../styles";
 
 // Custom
@@ -121,7 +120,7 @@ export default function UserActions({
                     <span className="time"> a submissão em {parseDateAndTime(item.createdAt)}</span>
                   </p>
                 </div>
-  
+
                 {item.details && <p><span>Obs.:</span> {item.details}</p>}
               </HistoryItem>
             ))}
@@ -133,7 +132,7 @@ export default function UserActions({
 
   async function fetchUpdateStatusAndDelete() {
     setFetching(true);
-  
+
     const updateStatusOptions = {
       url: `${process.env.api}/submissions/${submission.id}/status`,
       method: "PATCH",
@@ -145,27 +144,27 @@ export default function UserActions({
         status: 5, // Status "Cancelado"
       },
     };
-  
+
     try {
       // Atualiza o status para "Cancelado"
       await axios.request(updateStatusOptions as AxiosRequestConfig);
       toast.success("Status atualizado para Cancelado com sucesso.");
       onChange(); // Atualiza a interface após a mudança de status
-  
+
     } catch (error) {
       const errorMessages = {
         0: "Oops, tivemos um erro. Tente novamente.",
       };
-  
+
       toast.error(errorMessages[0]);
     } finally {
       setFetching(false);
     }
   }
-  
+
 
   return (
-    <ButtonGroup>
+    <ButtonGroupBottom>
       <InfoButton onClick={() =>
         toggleModalForm(
           "Histórico da submissão",
@@ -174,7 +173,7 @@ export default function UserActions({
         )
       }>
         <i className="bi bi-clock-history" />
-        <span className="button-text">Histórico</span>
+        <span>Histórico</span>
       </InfoButton>
 
       {[1, 2, 4].includes(submission.status) && (
@@ -186,7 +185,7 @@ export default function UserActions({
           )
         }>
           <i className="bi bi-pencil" />
-          <span className="button-text">Editar</span>
+          <span>Editar</span>
         </EditButton>
       )}
 
@@ -201,7 +200,7 @@ export default function UserActions({
               )
             }>
             <i className="bi bi-x-lg" />
-            <span className="button-text">Rejeitar</span>
+            <span>Rejeitar</span>
           </DangerButtonAlt>
 
           <AcceptButton
@@ -213,7 +212,7 @@ export default function UserActions({
               )
             }>
             <i className="bi bi-check2-all" />
-            <span className="button-text">Aprovar</span>
+            <span>Aprovar</span>
           </AcceptButton>
         </>
       )}
@@ -227,7 +226,7 @@ export default function UserActions({
             )
           }>
           <i className="bi bi-check2-all" />
-          <span className="button-text">Pré-aprovar</span>
+          <span>Pré-aprovar</span>
         </AcceptButton>
       )}
       {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
@@ -240,12 +239,10 @@ export default function UserActions({
               ""
             )
           }>
-          <span className="icone">
-            <i className="bi bi-x-lg" />
-            <span className="button-text cancelar">Cancelar</span>
-          </span>
+          <i className="bi bi-x-lg" />
+          <span>Cancelar</span>
         </DangerButtonAlt>
       )}
-    </ButtonGroup >
+    </ButtonGroupBottom >
   );
 }

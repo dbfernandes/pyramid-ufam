@@ -51,7 +51,17 @@ export default function DashboardStudent({
 
   return (
     fetchingReport
-      ? <Spinner />
+      ? <>
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
+      </>
       : <>
         <NumberTile
           icon="file-earmark-check"

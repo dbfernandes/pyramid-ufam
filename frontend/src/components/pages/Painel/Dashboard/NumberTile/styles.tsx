@@ -22,7 +22,7 @@ export const IconWrapper = styled.div`
     opacity: 0.1;
   }
 
-  & > i {
+  & > i, .spinner {
     position: absolute;
     font-size: 1.25rem;
     opacity: 1;
@@ -33,6 +33,11 @@ export const Title = styled.h6`
   margin-top: 10px !important;
   font-size: 1.125rem;
   color: var(--muted);
+
+  .placeholder {
+    height: 1.125rem;
+    margin: 0;
+  }
 `;
 
 export const Number = styled.p`
@@ -43,6 +48,11 @@ export const Number = styled.p`
   font-size: 2rem;
   color: ${({ accent }) => accent} !important;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+
+  .placeholder {
+    height: 2rem;
+    margin: 0;
+  }
 `;
 
 export const CustomTileWrapper = styled(TileWrapper) <{ accent?: string }>`

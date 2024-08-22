@@ -17,41 +17,30 @@ export const ItemWrapper = styled.div`
 `;
 
 // Item com rolagem horizontal em telas pequenas
-export const Item = styled.div`
+export const Item = styled.div<{ header?: boolean }>`
   width: 100%;
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 45px;
-  column-grid-gap: 15px;
+  grid-template-columns: 45px 1fr 1fr 1fr 1fr 1fr 30px;
+  column-gap: 15px;
   align-items: center;
+
   margin-top: 5px;
   padding: 0;
+  padding-right: 15px;
 
-  ${props => !props.header && "margin: 0; margin-bottom: -5px;"}
+  ${({ header }) => !header && "margin: 0;"}
 
   .id, .name {
     transition: 0.3s;
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 60px 2fr 1fr 45px;
+    grid-template-columns: 45px minmax(0, 2fr) 1fr 30px;
+    column-gap: 5px;
+    padding-right: 5px;
   }
-`;
-
-
-export const HideOnSmallScreen = styled.div`
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-// Wrapper para o select e a seta
-export const ToggleWrapper = styled.div`
-  display: none;
-
-  @media (max-width: 768px) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  @media (max-width: 575px) {
+    grid-template-columns: 35px minmax(0, 2fr) 1fr 30px;
   }
 `;
 
@@ -73,9 +62,9 @@ export const ToggleButton = styled.button`
   }
 `;
 
-export const Column = styled.div`
-	color: ${props => props.color ? props.color : "var(--text-default)"};
-	padding: 15px;
+export const Column = styled.div<{ hideOnMobile?: boolean, color?: string }>`
+  color: ${({ color }) => color ? color : "var(--text-default)"};
+	padding: 0;
 
 	white-space: nowrap; 
   overflow: hidden;
@@ -87,12 +76,19 @@ export const Column = styled.div`
 		margin-right: 10px;
 	}
 
+  @media (max-width: 768px) {
+    ${({ hideOnMobile }) => hideOnMobile && "display: none;"}
+  }
 `;
 
 export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
   background-color: var(--white-1);
   padding: 10px 20px 15px;
   border-radius: 0 0 5px 5px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 
   & > .grid {
     display: grid;
@@ -241,11 +237,20 @@ export const FileInfo = styled(Info)`
   }
 `;
 
-export const ButtonGroup = styled.div`
+export const ButtonGroupTop = styled.div`
+  width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-start;
+  gap: 10px;
+
+	margin-top: 15px;
+`;
+
+export const ButtonGroupBottom = styled.div`
   width: 100%;
   display: grid;
   justify-content: flex-end;
-  justify-items: end !important;
   align-items: flex-start;
   grid-template-columns: repeat(4, 0fr);
   grid-gap: 10px;
@@ -256,6 +261,10 @@ export const ButtonGroup = styled.div`
     grid-template-columns: repeat(2, 1fr);
     padding-top: 15px;
     grid-gap: 10px;
+
+    & > button {
+      padding: 8px !important;
+    }
   }
 `;
 
@@ -292,28 +301,10 @@ export const InfoButton = styled(ButtonAlt)`
   }
 `;
 
-export const DangerButtonMult = styled(ButtonAlt)`
-  width: fit-content;
-  padding: 8px 26px;
-  color: var(--danger);
-
-  &:hover {
-    color: var(--danger-hover);
-    border-color: var(--danger-hover);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
 export const DangerButtonAlt = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
   color: var(--danger);
-  .cancelar {
-    margin-left: 10px;
-  }
 
   &:hover {
     color: var(--danger-hover);
