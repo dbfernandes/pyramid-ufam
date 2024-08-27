@@ -2,6 +2,7 @@ version: '3.8'
 services:
   nginx:
     image: nginx:latest
+    restart: always
     env_file:
       - .env
     volumes:
@@ -16,6 +17,7 @@ services:
 
   frontend:
     container_name: pyramid_front
+    restart: always
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -39,6 +41,7 @@ services:
 
   backend:
     container_name: pyramid_back
+    restart: always
     env_file:
       - .env
     build: ./backend
@@ -52,6 +55,7 @@ services:
 
   db:
     container_name: pyramid_db
+    restart: always
     image: mysql:latest
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
