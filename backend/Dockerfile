@@ -10,8 +10,11 @@ RUN npm install -g @nestjs/cli
 
 RUN npm install -g bcrypt
 
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 COPY . .
 
 EXPOSE ${BACKEND_PORT}
 
-CMD ["npm", "run", "start:prod"]
+CMD ["/wait-for-it.sh", "db:3306", "--", "npm", "run", "start:prod"]
