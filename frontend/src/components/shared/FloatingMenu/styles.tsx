@@ -17,7 +17,7 @@ export const Wrapper = styled.div`
   & > div {
     display: flex;
     align-items: center;
-    gap: 50px;
+    grid-gap: 50px;
   }
 `;
 
@@ -53,7 +53,7 @@ export const CollapseCustom = styled(Collapse)`
   div {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    grid-gap: 10px;
   }
 `;
 

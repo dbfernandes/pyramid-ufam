@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Wrapper as EnrollmentCardWrapper, HoverMenu } from "../cards/EnrollmentCard/styles";
+import { Wrapper as EnrollmentCardWrapper } from "../cards/EnrollmentCard/styles";
 
 export const CourseListComponent = styled.div`
 	display: block;
@@ -10,17 +10,8 @@ export const CourseListComponent = styled.div`
     width: 100%;
     margin-bottom: 15px;
     padding: 10px;
-
-    & > ${HoverMenu} {
-      padding: 10px 15px;
-    }
-  };
+  }
 `;
-
-export const CustomForm = styled.form`
-  max-width: 50%;
-`;
-
 
 export const AddCourseButton = styled.button`
   width: 100%;

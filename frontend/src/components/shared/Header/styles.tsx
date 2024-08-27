@@ -46,7 +46,10 @@ export const HeaderMobile = styled.div`
   & > div {
     display: flex;
     align-items: center;
-  
+  }
+
+  @media (max-width: 575px) {
+    margin-bottom: 7.5px;
   }
 `;
 

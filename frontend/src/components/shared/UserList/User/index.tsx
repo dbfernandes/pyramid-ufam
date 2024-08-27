@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
+import { Collapse, Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import { formatCpf, getFirstAndLastName } from "utils";
 
 // Shared
@@ -7,9 +7,12 @@ import toggleModalForm from "components/shared/ModalForm";
 import FormUpdateAccount from "components/shared/forms/FormUpdateAccount";
 import EnrollmentList from "components/shared/EnrollmentList";
 import FormSendPasswordResetLink from "components/shared/forms/FormSendPasswordResetLink";
+import { CollapseDetailsStyled, Info, ToggleButton } from "components/shared/cards/SubmissionCard/styles";
+import { H6 } from "components/shared/Titles";
 
 // Custom
 import {
+  ItemWrapper,
   Item,
   Column,
   Ribbon,
@@ -20,6 +23,7 @@ import {
   CheckboxPreventClick,
   UserStatus,
   CopyToClipboardSpan,
+  UserProfilePicture,
 } from "./styles";
 import Spinner from "components/shared/Spinner";
 
@@ -130,6 +134,110 @@ export default function User({
     }
   }
 
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  function CollapseDetails({ user, onChange }) {
+    function getCpf(user) {
+      return user?.cpf ? formatCpf(user?.cpf) : "-"
+    }
+
+    function CustomProgressBar({ current, max }) {
+      const progress = (current / max) * 100;
+
+      return (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
+          <ProgressBar
+            animated
+            now={current === 0 ? 100 : progress}
+            label={current === 0 ? `0/0` : `${current}/${max}`}
+            variant={current === 0 ? "secondary" : "success"}
+            style={{
+              borderRadius: "8px",
+              height: "15px",
+              backgroundColor: "#F1F1F1",
+            }}
+          />
+        </OverlayTrigger>
+      );
+    }
+
+    return (
+      <CollapseDetailsStyled>
+        <div className="grid">
+          {(user) && (
+            <Info>
+              <H6>Aluno</H6>
+
+              <UserProfilePicture
+                big={true}
+                src={user?.profileImage && user?.profileImage.length > 0
+                  ? user?.profileImage
+                  : `${process.env.img}/user.png`
+                }
+                alt={user?.name}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = `${process.env.img}/user.png`;
+                }}
+              />
+              <p>
+                <b>Nome:</b> {user.name}
+              </p>
+              <p>
+                <b>Email:</b> {user.email}
+              </p>
+              {user?.cpf && (
+                <p>
+                  <b>CPF:</b> {getCpf(user)}
+                </p>
+              )}
+              <p>
+                <b>Curso(s):</b> {user?.courses && user?.courses.length > 0
+                  ? (
+                    <div className="text-with-ribbon">
+                      {user.courses.map((course, index) => (
+                        <><span key={index}>{course.name}</span><br /></>
+                      ))}
+                    </div>
+                  )
+                  : "-"
+                }
+              </p>
+              <p>
+                <b>Status:</b> <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
+              </p>
+            </Info>
+
+          )}
+          {user?.userTypeId == 3 && (<Info>
+            <H6>Informações do curso</H6>
+
+            <p>
+              <b>Matrícula deste curso:</b> {enrollment}
+            </p>
+            <p>
+              <b>Horas (Ensino):</b>
+              <div className="py-2">
+                <CustomProgressBar current={user?.workloadCount?.["Ensino"]?.totalWorkload || 0} max={user?.workloadCount?.["Ensino"]?.maxWorkload || 0} />
+              </div>
+            </p>
+            <p>
+              <b>Horas (Pesquisa):</b>
+              <div className="py-2">
+                <CustomProgressBar current={user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0} max={user?.workloadCount?.["Pesquisa"]?.maxWorkload || 0} />
+              </div>
+            </p>
+            <p>
+              <b>Horas (Extensão):</b>
+              <div className="pt-2">
+                <CustomProgressBar current={user?.workloadCount?.["Extensão"]?.totalWorkload || 0} max={user?.workloadCount?.["Extensão"]?.maxWorkload || 0} />
+              </div>
+            </p>
+          </Info>)}
+        </div>
+
+      </CollapseDetailsStyled>
+    );
+  }
+
   // Courses column
   function CoursesColumnTooltip({ courses }) {
     return (
@@ -144,7 +252,10 @@ export default function User({
     const [copied, setCopied] = useState(false);
     const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    function copyToClipboard() {
+    function copyToClipboard(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
       navigator.clipboard.writeText(text).then(() => {
         setCopied(true);
         timeout.current = setTimeout(() => setCopied(false), 2000);
@@ -192,9 +303,9 @@ export default function User({
   function WorkloadProgressBars({ workloadCount }) {
     return (
       <>
-        <Column><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
-        <Column><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
-        <Column><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
+        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
+        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
+        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
       </>
     )
   }
@@ -216,145 +327,185 @@ export default function User({
 
   return (
     header
-      ? <Item header={true} student={subRoute === "alunos"}>
-        <CustomFormCheck
-          id="check-all"
-          inline
-          name="users"
-          value={"all"}
-          label={""}
-          onClick={(e) => handleCheck(e)}
-        />
-        <Column color={"var(--muted)"}>Nome</Column>
-        {subRoute == "alunos"
-          ? <>
-            <Column color={"var(--muted)"}>Matrícula</Column>
-            <Column color={"var(--muted)"}>Horas (Ensino)</Column>
-            <Column color={"var(--muted)"}>Horas (Pesquisa)</Column>
-            <Column color={"var(--muted)"}>Horas (Extensão)</Column>
-          </>
-          : <>
-            <Column color={"var(--muted)"}>Email</Column>
-            <Column color={"var(--muted)"}>Curso(s)</Column>
-          </>
-        }
-        <Column color={"var(--muted)"}>Status</Column>
-      </Item>
-      : loading
-        ? <Item student={subRoute === "alunos"}>
-          <div></div>
-          {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) => <Column key={i} className={"placeholder-wave"}><span className={"placeholder col-md-8 col-12"}></span></Column>)}
-          <div></div>
-        </Item >
-        : (//<Link href={`/usuarios/${subRoute}/${user?.id}`} passHref><a>
+      ? (
+        <Item header={true} student={subRoute === "alunos"}>
+          <CustomFormCheck
+            id="check-all"
+            inline
+            name="users"
+            value={"all"}
+            label={""}
+            onClick={(e) => handleCheck(e)}
+          />
+          <div />
+          <Column color={"var(--muted)"}>Nome</Column>
+          {subRoute == "alunos"
+            ? <>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Matrícula</Column>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Ensino)</Column>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Pesquisa)</Column>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Extensão)</Column>
+            </>
+            : <>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Email</Column>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Curso(s)</Column>
+            </>
+          }
+          <Column color={"var(--muted)"}>Status</Column>
+        </Item>
+      ) : loading
+        ? (
           <Item student={subRoute === "alunos"}>
-            <CustomFormCheck
-              inline
-              name="users"
-              value={user?.id.toString()}
-              label={<CheckboxPreventClick onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />}
-              onClick={(e) => handleCheck(e)}
-            />
+            <div />
+            {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) => <Column key={i} className={"placeholder-glow"}><span className={"placeholder col-md-8 col-12"}></span></Column>)}
+            <div />
+            <div />
+          </Item >
+        ) : (
+          <ItemWrapper>
+            <Item
+              student={subRoute === "alunos"}
+              onClick={() => setCollapsed(!collapsed)}
+              aria-expanded={collapsed}
+              collapsed={collapsed}>
+              <CustomFormCheck
+                inline
+                name="users"
+                value={user?.id.toString()}
+                label={
+                  <CheckboxPreventClick
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  />
+                }
+                onClick={(e) => handleCheck(e)}
+              />
 
-            <Column>
-              <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
-                <span>{user?.name}</span>
-              </OverlayTrigger>
-            </Column>
+              <UserProfilePicture
+                src={
+                  user?.profileImage && user?.profileImage.length > 0
+                    ? user?.profileImage
+                    : `${process.env.img}/user.png`
+                }
+                alt={user?.name}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = `${process.env.img}/user.png`;
+                }}
+              />
 
-            {subRoute == "alunos"
-              ? <>
-                <Column>
-                  <CopyToClipboard text={enrollment} />
-                </Column>
-                <WorkloadProgressBars workloadCount={user?.workloadCount} />
-              </>
-              : <>
-                <Column>
-                  <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
-                    <span>{user?.email}</span>
-                  </OverlayTrigger>
-                </Column>
+              <Column>
+                <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
+                  <span>{user?.name}</span>
+                </OverlayTrigger>
+              </Column>
 
-                <Column>
-                  <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
-                    <span>
-                      {user?.courses && user?.courses.length > 0 && user?.courses[0]?.name
-                        ? (<div className="text-with-ribbon">
-                          <span>{user?.courses[0]?.name}</span>
-                          {(user?.courses && user?.courses?.length > 1) &&
-                            <Ribbon>+{user?.courses?.length - 1}</Ribbon>
-                          }
-                        </div>)
-                        : "-"
+              {subRoute == "alunos"
+                ? <>
+                  <Column hideOnMobile={true}>
+                    <CopyToClipboard text={enrollment} />
+                  </Column>
+
+                  <WorkloadProgressBars workloadCount={user?.workloadCount} />
+                </>
+                : <>
+                  <Column hideOnMobile={true}>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
+                      <span>{user?.email}</span>
+                    </OverlayTrigger>
+                  </Column>
+
+                  <Column hideOnMobile={true}>
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip><CoursesColumnTooltip courses={user?.courses} /></Tooltip>}>
+                      <span>
+                        {user?.courses && user?.courses.length > 0 && user?.courses[0]?.name
+                          ? (<div className="text-with-ribbon">
+                            <span>{user?.courses[0]?.name}</span>
+                            {(user?.courses && user?.courses?.length > 1) &&
+                              <Ribbon>+{user?.courses?.length - 1}</Ribbon>
+                            }
+                          </div>)
+                          : "-"
+                        }
+                      </span>
+                    </OverlayTrigger>
+                  </Column>
+
+                </>
+              }
+              <Column>
+                <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
+              </Column>
+
+              <ToggleButton expanded={collapsed}>
+                <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
+              </ToggleButton>
+
+              {user && !disableMenu
+                ? (
+                  <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDanger(false)}>
+                    <Options variant="secondary">
+                      <i className="bi bi-three-dots-vertical" />
+                    </Options>
+
+                    <DropdownMenu renderOnMount={true}>
+                      {user && (<DropdownItem onClick={() =>
+                        toggleModalForm(
+                          `Editar informações (${getFirstAndLastName(user?.name)})`,
+                          <FormUpdateAccount user={user} onChange={onChange} />,
+                          "lg"
+                        )
+                      } accent={"var(--success)"}>
+                        <i className="bi bi-pencil-fill"></i> Editar informações
+                      </DropdownItem>)}
+                      {user && (<DropdownItem onClick={() =>
+                        toggleModalForm(
+                          `Editar cursos (${getFirstAndLastName(user?.name)})`,
+                          <EnrollmentList user={user} onChange={onChange} />,
+                          "lg"
+                        )
+                      } accent={"var(--success)"}>
+                        <i className="bi bi-mortarboard-fill"></i> Editar cursos
+                      </DropdownItem>)}
+                      {user && (<DropdownItem onClick={() =>
+                        toggleModalForm(
+                          `Resetar senha (${getFirstAndLastName(user?.name)})`,
+                          <FormSendPasswordResetLink user={user} />,
+                          "lg"
+                        )
+                      } accent={"var(--success)"}>
+                        <i className="bi bi-key-fill"></i> Resetar senha
+                      </DropdownItem>)}
+
+                      {user?.isActive === true
+                        ? (
+                          <DropdownItem onClick={(e) => handleDelete(e)} accent={"var(--danger)"}>
+                            {confirmDanger
+                              ? fetchingDelete ? <Spinner size={"21px"} color={"var(--danger)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                              : <><i className="bi bi-trash-fill"></i> Desativar</>
+                            }
+                          </DropdownItem>
+                        ) : (
+                          <DropdownItem onClick={(e) => handleRestore(e)} accent={"var(--warning)"}>
+                            {confirmDanger
+                              ? fetchingRestore ? <Spinner size={"21px"} color={"var(--warning)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
+                              : <><i className="bi bi-exclamation-triangle-fill"></i> Reativar</>
+                            }
+                          </DropdownItem>
+                        )
                       }
-                    </span>
-                  </OverlayTrigger>
-                </Column>
-              </>
-            }
+                    </DropdownMenu>
+                  </Dropdown>
+                ) : <div />}
+            </Item>
 
-            <Column>
-              <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
-            </Column>
-
-            {user && !disableMenu
-              ? (
-                <Dropdown align="end" onClick={(e) => handleDropdown(e)} onMouseLeave={() => setConfirmDanger(false)}>
-                  <Options variant="secondary">
-                    <i className="bi bi-three-dots-vertical" />
-                  </Options>
-
-                  <DropdownMenu renderOnMount={true}>
-                    {user && (<DropdownItem onClick={() => 
-                      toggleModalForm(
-                        `Editar informações (${getFirstAndLastName(user?.name)})`,
-                        <FormUpdateAccount user={user} onChange={onChange}/>,
-                        "lg"
-                      )
-                      } accent={"var(--success)"}>
-                      <i className="bi bi-pencil-fill"></i> Editar informações
-                    </DropdownItem>)}
-                    {user && (<DropdownItem onClick={() => 
-                      toggleModalForm(
-                        `Editar cursos (${getFirstAndLastName(user?.name)})`,
-                        <EnrollmentList user={user} onChange={onChange}/>,
-                        "lg"
-                      )
-                      } accent={"var(--success)"}>
-                      <i className="bi bi-mortarboard-fill"></i> Editar cursos
-                    </DropdownItem>)}
-                    {user && (<DropdownItem onClick={() => 
-                      toggleModalForm(
-                        `Resetar senha (${getFirstAndLastName(user?.name)})`,
-                        <FormSendPasswordResetLink user={user}/>,
-                        "lg"
-                      )
-                      } accent={"var(--success)"}>
-                      <i className="bi bi-key-fill"></i> Resetar senha
-                    </DropdownItem>)}
-
-                    {user?.isActive === true
-                      ? (
-                        <DropdownItem onClick={(e) => handleDelete(e)} accent={"var(--danger)"}>
-                          {confirmDanger
-                            ? fetchingDelete ? <Spinner size={"21px"} color={"var(--danger)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
-                            : <><i className="bi bi-trash-fill"></i> Desativar</>
-                          }
-                        </DropdownItem>
-                      ) : (
-                        <DropdownItem onClick={(e) => handleRestore(e)} accent={"var(--warning)"}>
-                          {confirmDanger
-                            ? fetchingRestore ? <Spinner size={"21px"} color={"var(--warning)"} /> : <><i className="bi bi-exclamation-circle-fill"></i> Confirmar</>
-                            : <><i className="bi bi-exclamation-triangle-fill"></i> Reativar</>
-                          }
-                        </DropdownItem>
-                      )
-                    }
-                  </DropdownMenu>
-                </Dropdown>
-              ) : <div />}
-          </Item>
+            <Collapse in={collapsed}>
+              <div>
+                <CollapseDetails user={user} onChange={onChange} />
+              </div>
+            </Collapse>
+          </ItemWrapper>
         )
   );
 }

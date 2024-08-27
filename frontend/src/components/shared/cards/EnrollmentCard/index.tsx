@@ -21,42 +21,39 @@ import {
 import ICourse from "interfaces/ICourse";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserTypes } from "constants/userTypes.constants";
-import { IRootState } from "redux/store";
 import IUser from "interfaces/IUser";
-import { onChange } from "react-toastify/dist/core/store";
 
 interface ICourseCard {
   course: ICourse;
-  onClick?: Function;
-  onDelete?: Function;
   editable?: boolean;
   marked?: boolean;
   blurred?: boolean;
-  children?: React.ReactNode;
+  onClick?: Function;
+  onDelete?: Function;
   onChange?: Function;
   handleCloseModalForm?: Function;
-  onEditSucess?: () => void
+  user: IUserLogged | IUser;
+  children?: React.ReactNode;
 }
 
 export default function EnrollmentCard({
   course,
-  onClick,
-  onDelete = () => { },
   editable = true,
   marked = false,
   blurred = false,
-  children,
+  onClick,
+  onDelete = () => { },
   onChange,
   handleCloseModalForm,
-  onEditSucess,
   user,
-}: ICourseCard & {user: IUserLogged}) {
+  children,
+}: ICourseCard) {
   function handleDropdown(e) {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  function CardBody({ course, marked, blurred }: ICourseCard) {
+  function CardBody({ course, editable, marked, blurred, onDelete, onChange, handleCloseModalForm, user, children }: ICourseCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
     //const user = useSelector<IRootState, IUserLogged>(state => state.user);
 
@@ -67,7 +64,7 @@ export default function EnrollmentCard({
       e.stopPropagation();
       setConfirmDeletion(!confirmDeletion);
 
-      if (confirmDeletion) {
+      if (confirmDeletion && onDelete) {
         onDelete();
       }
     }
@@ -127,9 +124,27 @@ export default function EnrollmentCard({
 
   return onClick ? (
     <UnstyledButton onClick={onClick} type="button">
-      <CardBody course={course} marked={marked} blurred={blurred} />
+      <CardBody
+        course={course}
+        editable={editable}
+        marked={marked}
+        blurred={blurred}
+        user={user}
+        onDelete={onDelete}
+        onChange={onChange}
+        handleCloseModalForm={handleCloseModalForm}
+      />
     </UnstyledButton>
   ) : (
-    <CardBody course={course} marked={marked} blurred={blurred} />
+    <CardBody
+      course={course}
+      editable={editable}
+      marked={marked}
+      blurred={blurred}
+      user={user}
+      onDelete={onDelete}
+      onChange={onChange}
+      handleCloseModalForm={handleCloseModalForm}
+    />
   );
 }

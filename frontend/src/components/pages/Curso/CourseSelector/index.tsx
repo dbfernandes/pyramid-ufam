@@ -8,7 +8,7 @@ import UserInfo from "components/shared/Header/UserInfo";
 
 // Custom
 import EnrollmentGrid from "components/shared/EnrollmentGrid";
-import { Wrapper } from "./styles";
+import { Container, Wrapper } from "./styles";
 
 // Interface
 import { IRootState } from "redux/store";
@@ -34,9 +34,11 @@ export default function CourseSelector() {
             justifyContent: "space-between",
             alignItems: "flex-start",
           }}>
-          <H3 style={{ marginBottom: 15 }}>Curso</H3>
+          <Container>
+            <H3 style={{ marginBottom: 15 }}>Curso</H3>
 
-          <UserInfo />
+            <UserInfo />
+          </Container>
         </div>
 
         <EnrollmentGrid user={user} />

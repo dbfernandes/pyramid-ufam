@@ -18,16 +18,16 @@ export default function IntroTile() {
     <TileWrapper>
       <div>
         <H5>Bem vindo(a), {getFirstName(user?.name)}!</H5>
-        {user?.userTypeId == 3 
-         ? <p>Você pode submeter uma nova solicitação</p>
-         : (
-          <p>Atualmente você está gerenciando o curso de <b>{user?.selectedCourse?.name}</b>.</p>
-        )}
+        {user?.userTypeId == 3
+          ? <p>Você pode enviar uma nova submissão.</p>
+          : (
+            <p>Atualmente você está gerenciando o curso de <b>{user?.selectedCourse?.name}</b>.</p>
+          )}
       </div>
 
       {user?.userTypeId == 3 ? (
         <CallToAction as="a" href="/minhas-solicitacoes/nova">
-          <i className="bi bi-file-earmark-check" />
+          <i className="bi bi-file-earmark-plus" />
           Nova submissão
         </CallToAction>
       ) : (

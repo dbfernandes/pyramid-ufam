@@ -15,6 +15,7 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import { H3 } from "components/shared/Titles";
+import { CourseGridComponent } from "components/shared/EnrollmentGrid/styles";
 
 export default function Atividades() {
   const router = useRouter();
@@ -46,9 +47,12 @@ export default function Atividades() {
         <Wrapper>
           <DefaultWrapper>
             <H3 style={{ paddingBottom: "0.5rem" }}>Grupos de atividades</H3>
+            <CourseGridComponent>
             <ActivityGroups
               link="/atividades/"
             />
+  
+            </CourseGridComponent>
           </DefaultWrapper>
         </Wrapper>
       ) : (

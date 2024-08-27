@@ -116,11 +116,10 @@ export default function ActivitySelect({
         .getElementById("activities")!
         .scrollIntoView({ behavior: "smooth" });
   }, [activities]);
-
   return (
     <Wrapper>
       <p style={{ color: "var(--muted)", marginBottom: "10px" }}>Em qual grupo sua atividade se enquadra?</p>
-
+  
       {fetchingGroups
         ? <Spinner size={"20px"} color={"var(--primary-color)"} />
         : groups.length > 0
@@ -142,7 +141,7 @@ export default function ActivitySelect({
           </CardGroup>
           : <Disclaimer>Nenhum grupo de atividades vinculados à este curso foi encontrado.</Disclaimer>
       }
-
+  
       {
         fetchingActivities
           ? <div style={{ marginTop: 30 }}><Spinner size={"20px"} color={"var(--primary-color)"} /></div>
@@ -150,7 +149,7 @@ export default function ActivitySelect({
             ? (
               <>
                 <p style={{ color: "var(--muted)", marginBottom: "10px" }} id="activities">Sua submissão é para qual tipo de atividade?</p>
-
+  
                 <CardGroup>
                   {activities?.map((_activity, index) => (
                     <ActivityCard
@@ -166,8 +165,8 @@ export default function ActivitySelect({
                 </CardGroup>
               </>
             )
-            : activeGroup && <Disclaimer>Nenhuma atividade desde grupo de atividade (para este curso) foi encontrada.</Disclaimer>
+            : activeGroup && <Disclaimer>Nenhuma atividade deste grupo de atividade (para este curso) foi encontrada.</Disclaimer>
       }
     </Wrapper >
   );
-}
+}  

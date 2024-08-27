@@ -17,6 +17,7 @@ export default function Dashboard() {
   return (
     <DashboardWrapper>
       <IntroTile />
+
       {user.userTypeId === 3
         ? <DashboardStudent user={user} />
         : <DashboardAdmin user={user} />

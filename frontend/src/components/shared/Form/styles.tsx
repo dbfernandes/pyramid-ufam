@@ -113,3 +113,16 @@ export const LinkWrapper = styled.div`
 export const Disclaimer = styled.p`
   color: var(--muted);
 `;
+
+export const CustomForm = styled.form<{ isOwnUser?: boolean }>`
+  max-width: 60%;
+  
+  @media (max-width: 1200px) {
+    max-width: 100%;
+  }
+
+  ${({ isOwnUser }) => isOwnUser === false && `
+    max-width: 100%;
+    padding: 0 30px 30px;
+  `}
+`;

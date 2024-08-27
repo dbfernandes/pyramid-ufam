@@ -36,10 +36,6 @@ export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
       color: ${({ accent }) => accent ? accent : "var(--primary-color)"};
     }
 	}
-
-	@media (max-width: 1024px) {
-		padding: 10px 20px;
-	}
 `;
 
 export const FilterButton = styled(Dropdown.Toggle)`

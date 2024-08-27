@@ -7,32 +7,31 @@ import { login, setProfileImage } from "redux/slicer/user";
 
 // Shared
 import { H5 } from "components/shared/Titles";
-import { FormAlert } from "components/shared/Form/styles";
+import { CustomForm, FormAlert } from "components/shared/Form/styles";
 import TextInput from "components/shared/TextInput";
 import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection, ModalForm, ProfilePicture } from "./styles";
+import { ProfilePicture } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
 import { Button } from "components/shared/Button";
+import IUser from "interfaces/IUser";
 
 interface IFormUpdateAccountProps {
-  user: IUserLogged;
+  user: IUserLogged | IUser;
   onChange?: Function;
   handleCloseModalForm?: Function;
 }
 
-export default function FormUpdateAccount({ user, onChange = () => {}, handleCloseModalForm }: IFormUpdateAccountProps) {
-  const isOwnUser = "logged" in user;
-  
+export default function FormUpdateAccount({ user, onChange = () => { }, handleCloseModalForm }: IFormUpdateAccountProps) {
+  const isOwnUser = "logged" in user && user.logged === true;
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [cpf, setCpf] = useState<string>("");
-
-  const loggedInUser = store.getState().user;
 
   // Loading user prop
   useEffect(() => {
@@ -48,6 +47,10 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
   const [fetching, setFetching] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  function cleanCpf(cpf) {
+    return cpf.replace(/[.-]/g, '');
+  }
+
   function handleUpdateUser(e) {
     e.preventDefault();
     setSent(true);
@@ -62,7 +65,11 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         email
       };
 
-      if (cpf.trim().length > 0 && validateCpf(cpf)) data = { ...data, cpf };
+      const cleanedCpf = cpf.trim().length > 0 ? cleanCpf(cpf) : '';
+
+      if (cleanedCpf.length > 0 && validateCpf(cleanedCpf)) {
+        data = { ...data, cpf: cleanedCpf };
+      }
 
       fetchUpdateUser(data);
     }
@@ -84,6 +91,9 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
     await axios
       .request(options as AxiosRequestConfig)
       .then((response) => {
+        if (isOwnUser) {
+          store.dispatch(login(response.data));
+        }
         setSuccess(true);
         onChange();
         if (handleCloseModalForm) {
@@ -108,7 +118,7 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
         setError(
           code in errorMessages ? errorMessages[code] : errorMessages[0]
         );
-        
+
         setSuccess(false);
       });
 
@@ -179,8 +189,8 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
   }
 
   return (
-    <CustomForm style={!isOwnUser ? { padding: "0 30px 30px", maxWidth: "100%" } : {}}>
-      <FormSection style={!isOwnUser ? { margin: 0 } : {}}>
+    <CustomForm isOwnUser={isOwnUser}>
+      <div>
         {isOwnUser && <H5 style={{ marginBottom: 25 }}>Alterar informações pessoais</H5>}
 
         <ProfilePicture>
@@ -259,8 +269,8 @@ export default function FormUpdateAccount({ user, onChange = () => {}, handleClo
             <FormAlert>{error}</FormAlert>
           )}
         </>
-      </FormSection>
+      </div>
     </CustomForm>
-    );
-  
+  );
+
 }

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const History = styled.div`
-  display: flex;;
+  display: flex;
   flex-direction: column;
   align-items: center;
 
@@ -20,7 +20,8 @@ export const HistoryItem = styled.div`
   & > div {
     display: flex;
     align-items: center;
-
+    flex-wrap: wrap;
+    
     & > img {
       width: 30px;
       height: 30px;
@@ -33,6 +34,8 @@ export const HistoryItem = styled.div`
 
     & > p {
       margin: 0;
+      flex: 1;
+      word-wrap: break-word;
     }
   }
 
@@ -45,6 +48,7 @@ export const HistoryItem = styled.div`
     width: 100%;
     margin: 10px 0 0;
     font-style: italic;
+    word-wrap: break-word;
   }
 
   margin-bottom: 15px;

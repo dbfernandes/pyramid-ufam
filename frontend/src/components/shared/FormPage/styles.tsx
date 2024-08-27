@@ -13,6 +13,10 @@ export const FormWrapper = styled.div<{ fullscreen: boolean }>`
 	& > div {
 		width: 60%;
 
+		@media (max-width: 1200px) {
+			width: 100%;
+		}
+
 		& > form {
 			display: flex;
 			flex-direction: column;
@@ -32,7 +36,7 @@ export const FormAlert = styled.div`
 	
 	font-weight: 300;
 	color: var(--danger);
-  text-align: center;
+	text-align: center;
 
 	transition: 0.3s;
 
@@ -68,10 +72,10 @@ export const LinkWrapper = styled.div`
 	border-top: 1px solid var(--white-2);
 
 	a, button {
-    padding: 0;
-    background: none;
-    outline: none;
-    border: none;
+		padding: 0;
+		background: none;
+		outline: none;
+		border: none;
 		color: var(--primary-color);
 		text-decoration: none;
 
@@ -82,11 +86,11 @@ export const LinkWrapper = styled.div`
 		}
 	}
 
-  span {
-    margin: 0 10px;
-  }
+	span {
+		margin: 0 10px;
+	}
 `;
 
 export const Disclaimer = styled.p`
-  color: var(--muted);
+	color: var(--muted);
 `;

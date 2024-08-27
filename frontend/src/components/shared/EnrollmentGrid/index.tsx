@@ -4,7 +4,11 @@ import { getToken } from "utils";
 
 // Shared
 import toggleModalForm from "components/shared/ModalForm";
-import { AddCourseButton, CourseGridComponent } from "./styles";
+import {
+  EnrollmentGridWrapper,
+  AddCourseButton,
+  CourseGridComponent
+} from "./styles";
 import FormLinkCourse from "components/shared/forms/FormLinkCourse";
 import EnrollmentCard from "components/shared/cards/EnrollmentCard";
 
@@ -54,7 +58,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
   }
 
   return (
-    <div>
+    <EnrollmentGridWrapper>
       <p className="title">
         {user.courses.length == 0
           ? "Você ainda não possui nenhum curso vinculado à sua conta e precisará adicionar um curso antes de prosseguir."
@@ -81,9 +85,10 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
               dispatch(defaultCourse({ ...course, enrollment: course.enrollment }));
             }}
             onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
+            user={user}
           />
         ))}
       </CourseGridComponent>
-    </div>
+    </EnrollmentGridWrapper>
   );
 }

@@ -58,13 +58,17 @@ export const Wrapper = styled.div <{ sidenavOpen: boolean }> `
   ${Burger} {
     ${({ sidenavOpen }) => !sidenavOpen && `margin-left: 5px;`}
   }
+
+  @media (max-width: 992px) {
+    height: 100%;
+  }
 `;
 
 export const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  grid-gap: 20px;
   margin: 20px 0;
 `;
 

@@ -51,7 +51,20 @@ export default function DashboardAdmin({
 
   return (
     fetchingReport
-      ? <Spinner size={"30px"} color={"var(--primary-color)"} />
+      ? <>
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
+      </>
       : <>
         <NumberTile
           icon="file-earmark-medical"

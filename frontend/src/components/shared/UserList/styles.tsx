@@ -1,27 +1,20 @@
 import styled from "styled-components";
-import { Button, ButtonAlt } from "components/shared/Button";
+import AddResourceButton from "../AddResourceButton";
 
 export const HeaderWrapper = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	flex-wrap: wrap;
 
 	& > h3 {
 		width: fit-content;
 	}
 `;
 
-export const AddUserButton = styled(Button)`
-	width: fit-content;
-	display: flex;
-	align-items: center;
-
-	& > i {
-		margin-right: 10px;
-	}
+export const AddUserLink = styled(AddResourceButton)`
+  padding: 8px 26px;
 `;
-
-export const AddUserLink = styled(AddUserButton)``;
 
 export const ListStyled = styled.div`
 	display: block;
@@ -37,7 +30,7 @@ export const Filter = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 15px;
+  grid-gap: 15px;
 
   margin-top: 15px;
 `;

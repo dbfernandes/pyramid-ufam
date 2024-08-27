@@ -50,7 +50,7 @@ export default function SolicitacoesGruposAtividades() {
           <DefaultWrapper>
             <H3 style={{ marginBottom: 35 }}>Grupos de atividades</H3>
 
-            <div style={{ width: "60%" }}>
+            <div>
               <ActivityGroups
                 link="/solicitacoes/grupo-atividade/"
                 grid="repeat(3, 1fr)"

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import { formatCpf, getFilename } from "utils";
 import { toast } from "react-toastify";
 
@@ -15,18 +15,18 @@ import {
   Column,
   CustomFormCheck,
   CheckboxPreventClick,
-
   SubmissionStatusStyled,
   ColoredBar,
-
   CollapseDetailsStyled,
   Info,
   FileInfo,
   ItemWrapper,
+  ToggleButton,
 } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
+
 interface ISubmissionCardProps {
   submission?: any;
   loading?: boolean;
@@ -34,7 +34,6 @@ interface ISubmissionCardProps {
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   user?: IUserLogged;
-
   onChange?: Function;
 }
 
@@ -45,9 +44,7 @@ export default function SubmissionCard({
   checkedIds = [],
   setCheckedIds = () => { },
   user,
-
   onChange = () => { },
-
   ...props
 }: ISubmissionCardProps) {
   function handleCheck(e) {
@@ -254,28 +251,28 @@ export default function SubmissionCard({
         ? <Column color={"var(--muted)"}>Descrição</Column>
         : <Column color={"var(--muted)"}>Aluno</Column>
       }
-      <Column color={"var(--muted)"}>Grupo de atividade</Column>
-      <Column color={"var(--muted)"}>Tipo de atividade</Column>
-      <Column color={"var(--muted)"}>Horas solicitadas</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>
       <Column color={"var(--muted)"}>Status</Column>
       <div></div>
     </Item>
   ) : loading ? (
     <Item>
       <div></div>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
-      <Column className={"placeholder-wave"}>
+      <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
       <div></div>
@@ -302,14 +299,16 @@ export default function SubmissionCard({
         />
 
         {user?.userTypeId == 3
-          ? <Column>
+          ?
+          <Column>
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.description}</Tooltip>}>
               <span>{submission?.description}</span>
             </OverlayTrigger>
           </Column>
-          : <Column>
+          :
+          <Column>
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.user?.name}</Tooltip>}>
@@ -318,14 +317,14 @@ export default function SubmissionCard({
           </Column>
         }
 
-        <Column>
+        <Column hideOnMobile={true}>
           <i
             className={`bi bi-${activityGroupsIcons[submission?.activity.activityGroup.name.toLowerCase().slice(0, 3)]}`}
           />
           {submission?.activity.activityGroup.name}
         </Column>
 
-        <Column>
+        <Column hideOnMobile={true}>
           <OverlayTrigger
             placement="bottom"
             overlay={<Tooltip>{submission?.activity.name}</Tooltip>}>
@@ -333,13 +332,15 @@ export default function SubmissionCard({
           </OverlayTrigger>
         </Column>
 
-        <Column>{submission?.workload}h</Column>
+        <Column hideOnMobile={true}>{submission?.workload}h</Column>
 
         <Column>
           <SubmissionStatus status={submission?.status} />
         </Column>
 
-        <i className={`text-center bi bi-${collapsed ? "chevron-up" : "chevron-down"}`} />
+        <ToggleButton expanded={collapsed}>
+          <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
+        </ToggleButton>
       </Item>
       <Collapse in={collapsed}>
         <div>

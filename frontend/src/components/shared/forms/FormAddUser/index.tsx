@@ -5,6 +5,7 @@ import { getToken, validateCpf, validateEmail, slugify } from "utils";
 
 // Shared
 import {
+  CustomForm,
   FormAlert,
   MultiField,
   SectionTitle,
@@ -18,16 +19,10 @@ import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import { toast } from "react-toastify";
 
 // Custom
-import { CustomForm, FormSection } from "./styles";
+import { FormSection } from "./styles";
 import UserTypeSelect from "./UserTypeSelect";
 
-// Interfaces
-import IUser from "interfaces/IUser";
-export default function FormAddUser({
-  user: userProp
-}: {
-  user: IUser;
-}) {
+export default function FormAddUser() {
   const userTypeSlugs = ["", "coordenador", "secretario", "aluno"];
   const router = useRouter();
 

@@ -63,7 +63,7 @@ export default function CourseCard({
 
     return (
       <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
-        <div style={{ width: "calc(100% - 22px)" }}>
+        <div style={editable ? { width: "calc(100% - 22px)" } : {}}>
           <H4>{course.name}</H4>
           <span>
             {course.userCount && course.userCount > 0

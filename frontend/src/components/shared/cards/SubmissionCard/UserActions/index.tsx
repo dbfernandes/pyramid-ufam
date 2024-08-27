@@ -10,11 +10,11 @@ import { toast } from "react-toastify";
 import FormUpdateStatusSubmission from "components/shared/forms/FormUpdateStatusSubmission";
 import FormUpdateSubmission from "components/shared/forms/FormAddSubmission/FormUpdateSubmission";
 import {
-  ButtonGroup,
   AcceptButton,
   DangerButtonAlt,
   InfoButton,
-  EditButton
+  EditButton,
+  ButtonGroupBottom
 } from "../styles";
 
 // Custom
@@ -24,6 +24,7 @@ import { History, HistoryItem } from "./styles";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserRole } from "components/shared/Header/UserInfo/styles";
 import { UserTypes } from "constants/userTypes.constants";
+
 interface IUserActionsProps {
   submission: any; //ISubmission;
   user: IUserLogged;
@@ -39,7 +40,6 @@ export default function UserActions({
   const [fetchingHistory, setFetchingHistory] = useState<boolean>(true);
   const [history, setHistory] = useState<any[]>([]);
 
-
   const [details, setDetails] = useState<string>("");
 
   // Form state
@@ -47,7 +47,6 @@ export default function UserActions({
   const [success, setSuccess] = useState<boolean>(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
 
   async function fetchHistory() {
     setFetchingHistory(true);
@@ -131,7 +130,7 @@ export default function UserActions({
 
   async function fetchUpdateStatusAndDelete() {
     setFetching(true);
-  
+
     const updateStatusOptions = {
       url: `${process.env.api}/submissions/${submission.id}/status`,
       method: "PATCH",
@@ -143,27 +142,27 @@ export default function UserActions({
         status: 5, // Status "Cancelado"
       },
     };
-  
+
     try {
       // Atualiza o status para "Cancelado"
       await axios.request(updateStatusOptions as AxiosRequestConfig);
       toast.success("Status atualizado para Cancelado com sucesso.");
       onChange(); // Atualiza a interface após a mudança de status
-  
+
     } catch (error) {
       const errorMessages = {
         0: "Oops, tivemos um erro. Tente novamente.",
       };
-  
+
       toast.error(errorMessages[0]);
     } finally {
       setFetching(false);
     }
   }
-  
+
 
   return (
-    <ButtonGroup>
+    <ButtonGroupBottom>
       <InfoButton onClick={() =>
         toggleModalForm(
           "Histórico da submissão",
@@ -171,7 +170,8 @@ export default function UserActions({
           "lg"
         )
       }>
-        <i className="bi bi-clock-history" /> Histórico
+        <i className="bi bi-clock-history" />
+        <span>Histórico</span>
       </InfoButton>
 
       {[1, 2, 4].includes(submission.status) && (
@@ -182,7 +182,8 @@ export default function UserActions({
             "lg"
           )
         }>
-          <i className="bi bi-pencil" /> Editar
+          <i className="bi bi-pencil" />
+          <span>Editar</span>
         </EditButton>
       )}
 
@@ -196,7 +197,8 @@ export default function UserActions({
                 "md"
               )
             }>
-            <i className="bi bi-x-lg" /> Rejeitar
+            <i className="bi bi-x-lg" />
+            <span>Rejeitar</span>
           </DangerButtonAlt>
 
           <AcceptButton
@@ -207,7 +209,8 @@ export default function UserActions({
                 "md"
               )
             }>
-            <i className="bi bi-check2-all" /> Aprovar
+            <i className="bi bi-check2-all" />
+            <span>Aprovar</span>
           </AcceptButton>
         </>
       )}
@@ -220,7 +223,8 @@ export default function UserActions({
               "md"
             )
           }>
-          <i className="bi bi-check2-all" /> Pré-aprovar
+          <i className="bi bi-check2-all" />
+          <span>Pré-aprovar</span>
         </AcceptButton>
       )}
       {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
@@ -233,9 +237,10 @@ export default function UserActions({
               ""
             )
           }>
-          <i className="bi bi-x-lg" /> Cancelar
+          <i className="bi bi-x-lg" />
+          <span>Cancelar</span>
         </DangerButtonAlt>
       )}
-    </ButtonGroup >
+    </ButtonGroupBottom >
   );
 }

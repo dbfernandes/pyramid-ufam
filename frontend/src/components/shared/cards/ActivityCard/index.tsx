@@ -79,7 +79,7 @@ export default function ActivityCard({
 
     return (
       <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
-        <div style={{ width: "calc(100% - 22px)" }}>
+        <div style={editable ? { width: "calc(100% - 22px)" } : {}}>
           <H4>{activity.name in GroupIcons && <i className={`bi bi-${GroupIcons[activity.name]}`} />}{activity.name}</H4>
           {activity.maxWorkload && <span>{activity.maxWorkload}h</span>}
         </div>

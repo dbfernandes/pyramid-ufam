@@ -19,4 +19,13 @@ export const CardGroup = styled.div`
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 25px;
 	justify-items: center;
+	margin-bottom: 20px;
+
+  @media (max-width: 1200px) {
+		grid-gap: 15px;
+	}
+	@media (max-width: 768px) {
+		display: flex;
+		flex-wrap: wrap;	
+	}
 `;

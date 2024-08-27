@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
 import { getPlural, getToken } from "utils";
@@ -12,9 +13,9 @@ import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollap
 import Paginator from "components/shared/Paginator";
 import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
-  ButtonGroup,
   AcceptButton,
   DangerButtonAlt,
+  ButtonGroupTop,
 } from "components/shared/cards/SubmissionCard/styles";
 
 import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
@@ -40,6 +41,7 @@ export default function SubmissionList({
   children,
 }: ISubmissionListProps) {
   const router = useRouter();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -90,7 +92,7 @@ export default function SubmissionList({
       .then((response) => {
         const count = response.data.count;
         if (count === 0) {
-          toast.info(`Nenhuma submissão foi ${status.toLowerCase().substring(0, status.length - 1).concat("a")}.`);
+          toast.info(`Submissões já aprovadas não podem ser alteradas. Nenhuma submissão foi ${status.toLowerCase().substring(0, status.length - 1).concat("a")}.`);
         } else {
           toast.success(`${count} submissões ${getPlural(status)} com sucesso.`);
         }
@@ -111,42 +113,48 @@ export default function SubmissionList({
     setFetchingMassUpdate(false);
   }
 
+  function MassActionsButtonGroup() {
+    return (
+      <ButtonGroupTop>
+        {user.userTypeId == 1 && <>
+          <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")} disabled={fetchingMassUpdate}>
+            {fetchingMassUpdate
+              ? <Spinner size={"20px"} color={"var(--danger)"} />
+              : <><i className="bi bi-x-lg" /> Rejeitar selecionadas</>
+            }
+          </DangerButtonAlt>
+          <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Aprovado")} disabled={fetchingMassUpdate}>
+            {fetchingMassUpdate
+              ? <Spinner size={"20px"} color={"var(--danger)"} />
+              : <><i className="bi bi-check2-all" /> Aprovar selecionadas</>
+            }
+          </AcceptButton>
+        </>}
+
+        {user.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")} disabled={fetchingMassUpdate}>
+          {fetchingMassUpdate
+            ? <Spinner size={"20px"} color={"var(--danger)"} />
+            : <><i className="bi bi-check2-all" /> Pré-aprovar selecionadas</>
+          }
+        </AcceptButton>}
+      </ButtonGroupTop>
+    );
+  }
+
   return (
     <Wrapper>
       <HeaderWrapper>
         <H3>Submissões {subTitle && `(${subTitle})`}</H3>
 
-        {checkedIds.length > 0 && (
-          <ButtonGroup style={{ margin: 0, width: "fit-content" }}>
-            {user.userTypeId == 1 && <>
-              <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")}>
-                {fetchingMassUpdate
-                  ? <Spinner size={"20px"} color={"var(--danger)"} />
-                  : <><i className="bi bi-x-lg" /> Rejeitar selecionados</>
-                }
-              </DangerButtonAlt>
-              <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Aprovado")}>
-                {fetchingMassUpdate
-                  ? <Spinner size={"20px"} color={"var(--danger)"} />
-                  : <><i className="bi bi-check2-all" /> Aprovar selecionados</>
-                }
-              </AcceptButton>
-            </>}
-
-            {user.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")}>
-              {fetchingMassUpdate
-                ? <Spinner size={"20px"} color={"var(--danger)"} />
-                : <><i className="bi bi-check2-all" /> Pré-aprovar selecionados</>
-              }
-            </AcceptButton>}
-          </ButtonGroup>
-        )}
+        {!isMobile && (checkedIds.length > 0 && <MassActionsButtonGroup />)}
       </HeaderWrapper>
 
       <Filter>
         <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={fetchingFilter} />
         <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
       </Filter>
+
+      {isMobile && (checkedIds.length > 0 && <MassActionsButtonGroup />)}
 
       {submissions?.length > 0 ? (
         <ListStyled>

@@ -32,7 +32,7 @@ export default function Curso() {
       </Head>
 
       {loaded
-        ? <Wrapper centerAlign={true} maxWidth={1024}>
+        ? <Wrapper centerAlign={true} maxWidth={992}>
           <CourseSelector />
         </Wrapper>
         : <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>

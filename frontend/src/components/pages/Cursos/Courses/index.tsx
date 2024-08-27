@@ -3,10 +3,12 @@ import axios, { AxiosRequestConfig } from "axios";
 import { getToken } from "utils";
 
 // Shared
+import AddResourceButton from "components/shared/AddResourceButton";
+import CardGroup from "components/shared/CardGroup";
 import { H3 } from "components/shared/Titles";
 import toggleModalForm from "components/shared/ModalForm";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
-import { AddUserButton, Filter, HeaderWrapper } from "components/shared/UserList/styles";
+import { Filter, HeaderWrapper } from "components/shared/UserList/styles";
 import SearchBar from "components/shared/SearchBar";
 import { Disclaimer } from "components/shared/UserList/styles";
 import Paginator from "components/shared/Paginator";
@@ -16,7 +18,6 @@ import { toast } from "react-toastify";
 import Spinner from "components/shared/Spinner";
 
 // Custom
-import { CardGroup } from "./styles";
 import CourseCard from "components/shared/cards/CourseCard";
 import FormAddCourse from "components/shared/forms/FormAddCourse";
 
@@ -38,7 +39,7 @@ export default function Courses({
   onChange = () => { }
 }: ICoursesProps) {
   const router = useRouter();
-  const isMobile = useMediaQuery({ maxWidth: 992 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   async function fetchDelete(id) {
     const options = {
@@ -67,31 +68,35 @@ export default function Courses({
       });
   }
 
+  function AddCourseButton() {
+    return (
+      <AddResourceButton onClick={() =>
+        toggleModalForm(
+          "Adicionar curso",
+          <FormAddCourse onChange={onChange} />,
+          "md"
+        )}>
+        <i className={`bi bi-mortarboard-fill`}>
+          <i className="bi bi-plus" />
+        </i>
+        Adicionar curso
+      </AddResourceButton>
+    );
+  }
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
         <H3>Cursos</H3>
 
-        {!isMobile && (
-          <AddUserButton onClick={() =>
-            toggleModalForm(
-              "Adicionar curso",
-              <FormAddCourse onChange={onChange} />,
-              "md"
-            )}>
-            <i className={`bi bi-mortarboard-fill`}>
-              <i className="bi bi-plus" />
-            </i>
-            Adicionar curso
-          </AddUserButton>
-        )}
-
-
+        {!isMobile && <AddCourseButton />}
       </HeaderWrapper>
 
       <Filter>
         <SearchBar placeholder="Pesquisar cursos" />
       </Filter>
+
+      {isMobile && <AddCourseButton />}
 
       {loading
         ? <div
