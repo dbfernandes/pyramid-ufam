@@ -238,13 +238,21 @@ export const FileInfo = styled(Info)`
 `;
 
 export const ButtonGroupTop = styled.div`
-  width: 100%;
 	display: flex;
 	justify-content: flex-end;
 	align-items: flex-start;
   gap: 10px;
 
-	margin-top: 15px;
+  & > button {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    margin-top: 15px;
+  }
 `;
 
 export const ButtonGroupBottom = styled.div`
@@ -309,22 +317,6 @@ export const DangerButtonAlt = styled(ButtonAlt)`
   &:hover {
     color: var(--danger-hover);
     border-color: var(--danger-hover);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-export const WarningButtonAlt = styled(ButtonAlt)`
-  width: fit-content;
-  padding: 8px 26px;
-  margin-left: 10px;
-  color: var(--warning-hover);
-
-  &:hover {
-    color: var(--warning);
-    border-color: var(--warning);
   }
 
   @media (max-width: 768px) {

@@ -39,7 +39,7 @@ export default function Courses({
   onChange = () => { }
 }: ICoursesProps) {
   const router = useRouter();
-  const isMobile = useMediaQuery({ maxWidth: 575 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   async function fetchDelete(id) {
     const options = {

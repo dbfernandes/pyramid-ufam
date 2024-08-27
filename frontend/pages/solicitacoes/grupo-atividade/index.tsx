@@ -51,7 +51,7 @@ export default function SolicitacoesGruposAtividades() {
             <H3 style={{ marginBottom: 35 }}>Grupos de atividades</H3>
 
             <div>
-                <ActivityGroups
+              <ActivityGroups
                 link="/solicitacoes/grupo-atividade/"
                 grid="repeat(3, 1fr)"
               />

@@ -5,6 +5,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { getToken } from "utils";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "react-responsive";
 
 // Shared
 import { H3 } from "components/shared/Titles";
@@ -55,6 +56,7 @@ export default function UserList({
 }: IUserListProps) {
   const loggedUser = useSelector<IRootState, IUserLogged>((state) => state.user);
   const router = useRouter();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
   const subRoutes = {
@@ -240,37 +242,45 @@ export default function UserList({
     setFetchingMassRestore(false);
   }
 
+  function AddUserButton() {
+    return (
+      <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
+        <AddUserLink>
+          <i className={`bi bi-${subRoutes[subRoute].icon}`}>
+            <i className="bi bi-plus" />
+          </i>
+          Adicionar {subRoutes[subRoute].singleTitle}
+        </AddUserLink>
+      </Link>
+    );
+  }
+
+  function MassActionsButtonGroup() {
+    return (
+      <>
+        <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
+          {fetchingMassDelete
+            ? <Spinner size={"20px"} color={"var(--danger)"} />
+            : <><i className="bi bi-x-lg" /> Desativar selecionados</>
+          }
+        </DangerButtonAlt>
+
+        <InfoButton onClick={() => fetchMassRestore(checkedIds.join(","))} disabled={fetchingMassRestore}>
+          {fetchingMassRestore
+            ? <Spinner size={"20px"} color={"var(--success)"} />
+            : <><i className="bi bi-exclamation-lg" /> Reativar selecionados</>
+          }
+        </InfoButton>
+      </>
+    );
+  }
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
         <H3>{title}</H3>
 
-        {checkedIds?.length > 0
-          ? (<ButtonGroupTop style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => fetchMassDelete(checkedIds.join(","))} disabled={fetchingMassDelete}>
-              {fetchingMassDelete
-                ? <Spinner size={"20px"} color={"var(--danger)"} />
-                : <><i className="bi bi-x-lg" /> Desativar selecionados</>
-              }
-            </DangerButtonAlt>
-
-            <InfoButton onClick={() => fetchMassRestore(checkedIds.join(","))} disabled={fetchingMassRestore}>
-              {fetchingMassRestore
-                ? <Spinner size={"20px"} color={"var(--success)"} />
-                : <><i className="bi bi-exclamation-lg" /> Reativar selecionados</>
-              }
-            </InfoButton>
-          </ButtonGroupTop>) : (
-            <Link href={`/usuarios/novo?tipo=${subRoutes[subRoute].singleTitle}`}>
-              <AddUserLink>
-                <i className={`bi bi-${subRoutes[subRoute].icon}`}>
-                  <i className="bi bi-plus" />
-                </i>
-                Adicionar {subRoutes[subRoute].singleTitle}
-              </AddUserLink>
-            </Link>
-          )}
-
+        {!isMobile && <ButtonGroupTop>{checkedIds?.length > 0 ? <MassActionsButtonGroup /> : <AddUserButton />}</ButtonGroupTop>}
       </HeaderWrapper>
 
       <Filter>
@@ -282,6 +292,8 @@ export default function UserList({
         <SearchBar
           placeholder="Pesquisar usuários" />
       </Filter>
+
+      {isMobile && <ButtonGroupTop>{checkedIds?.length > 0 ? <MassActionsButtonGroup /> : <AddUserButton />}</ButtonGroupTop>}
 
       {users?.length > 0 ?
         (<ListStyled>

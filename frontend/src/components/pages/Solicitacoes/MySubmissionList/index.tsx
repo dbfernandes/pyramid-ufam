@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
 import { getToken } from "utils";
 
@@ -48,6 +49,7 @@ export default function MySubmissionList({
   children
 }: ISubmissionListProps) {
   const router = useRouter();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const user = useSelector<IRootState, IUserLogged>(state => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
@@ -115,21 +117,25 @@ export default function MySubmissionList({
     setFetchingMassCancel(false);
   }
 
+  function MassActionsButtonGroup() {
+    return (
+      <ButtonGroupTop>
+        <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
+          {fetchingMassCancel
+            ? <Spinner size={"20px"} color={"var(--danger)"} />
+            : <><i className="bi bi-x-lg" />Cancelar selecionadas</>
+          }
+        </DangerButtonAlt>
+      </ButtonGroupTop>
+    );
+  }
+
   return (
     <Wrapper>
       <HeaderWrapper>
         <H3>Minhas submissões</H3>
 
-        {checkedIds?.length > 0 &&
-          <ButtonGroupTop style={{ margin: 0, width: "fit-content" }}>
-            <DangerButtonAlt onClick={() => fetchMassCancel(checkedIds.join(","))} disabled={fetchingMassCancel}>
-              {fetchingMassCancel
-                ? <Spinner size={"20px"} color={"var(--danger)"} />
-                : <><i className="bi bi-x-lg" />Cancelar selecionados</>
-              }
-            </DangerButtonAlt>
-          </ButtonGroupTop>
-        }
+        {!isMobile && (checkedIds?.length > 0 && <MassActionsButtonGroup />)}
       </HeaderWrapper>
 
       <Filter>
@@ -141,6 +147,8 @@ export default function MySubmissionList({
         <SearchBar
           placeholder="Pesquisar submissões" />
       </Filter>
+
+      {isMobile && (checkedIds?.length > 0 && <MassActionsButtonGroup />)}
 
       {submissions?.length > 0
         ? <ListStyled>

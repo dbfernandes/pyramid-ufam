@@ -13,7 +13,7 @@ export const FormWrapper = styled.div<{ fullscreen: boolean }>`
 	& > div {
 		width: 60%;
 
-		@media (max-width: 768px) {
+		@media (max-width: 1200px) {
 			width: 100%;
 		}
 
