@@ -302,6 +302,7 @@ export default function UserList({
             <User
               key={index}
               user={user}
+              userLogged={loggedUser}
               courseId={courseId}
               subRoute={subRoute}
               loading={loading}

@@ -45,6 +45,7 @@ export default function SubmissionList({
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
+  const [submissionCount, setSubmissionCount] = useState<number>(submissions.length)
 
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
@@ -55,6 +56,10 @@ export default function SubmissionList({
     { title: "Aprovadas", value: 3, accent: "var(--success)", checked: statuses?.includes("3") },
     { title: "Rejeitadas", value: 4, accent: "var(--danger)", checked: statuses?.includes("4") },
   ]);
+
+  useEffect(() => {
+    setSubmissionCount(submissions.length)
+  }, [submissions])
 
   useEffect(() => {
     setFetchingFilter(true);
@@ -156,7 +161,7 @@ export default function SubmissionList({
 
       {isMobile && (checkedIds.length > 0 && <MassActionsButtonGroup />)}
 
-      {submissions?.length > 0 ? (
+      {submissionCount > 0 ? (
         <ListStyled>
           <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} />
           {submissions.map((submission, index) => (
@@ -175,6 +180,8 @@ export default function SubmissionList({
       ) : (
         <Disclaimer>Nenhuma submissão nessa categoria foi encontrada. Tente alterar o filtro.</Disclaimer>
       )}
+
+      <p className="submissionsCount">Total de submissões: {submissionCount}</p>
 
       {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
     </Wrapper>

@@ -10,6 +10,7 @@ import {
   DropdownMenu,
   DropdownItem,
   FilterButton,
+  FilterLabel,
 } from "./styles";
 
 // Interfaces
@@ -31,7 +32,14 @@ export default function FilterCollapsible({
   setOptions,
   fetching
 }: IFilterCollapsibleProps) {
-  function handleDropdown(e) {
+  const [activeFilters, setActiveFilters] = useState<string>("");
+
+  useEffect(() => {
+    const activeOptions = options.filter(option => option.checked);
+    setActiveFilters(activeOptions.map(option => option.title).join(", "));
+  }, [options])
+
+  function handleDropdown(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -71,7 +79,11 @@ export default function FilterCollapsible({
       <FilterButton variant="secondary">
         {fetching
           ? <Spinner size={"16px"} color={"var(--text-default)"} />
-          : <i className="bi bi-sliders2" />
+          : 
+            <>
+              <i className="bi bi-sliders2" />
+              {activeFilters && <FilterLabel>{activeFilters}</FilterLabel>}
+            </>
         }
       </FilterButton>
 

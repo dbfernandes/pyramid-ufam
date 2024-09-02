@@ -6,4 +6,5 @@ export default interface ICourse {
 	periods: number;
 	isActive: boolean;
 	userCount?: number;
+	minWorkload?: number;
 }

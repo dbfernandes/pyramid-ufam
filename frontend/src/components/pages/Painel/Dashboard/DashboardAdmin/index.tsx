@@ -64,6 +64,9 @@ export default function DashboardAdmin({
         <NumberTile
           fetching={true}
         />
+        <NumberTile
+          fetching={true}
+        />
       </>
       : <>
         <NumberTile
@@ -73,6 +76,14 @@ export default function DashboardAdmin({
           value={report?.pendingSubmissions}
           callToAction="Visualizar"
           link="/solicitacoes?page=1&search=&status=1"
+        />
+        <NumberTile
+          icon="file-earmark-medical"
+          accent="var(--danger-hover)"
+          title="submissões rejeitadas"
+          value={report?.rejectedSubmissions}
+          callToAction="Visualizar"
+          link="/solicitacoes?page=1&search=&status=4"
         />
         <NumberTile
           icon="file-earmark-medical"

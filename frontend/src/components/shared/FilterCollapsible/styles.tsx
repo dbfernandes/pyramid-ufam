@@ -78,3 +78,12 @@ export const FilterButton = styled(Dropdown.Toggle)`
     }
 	}
 `;
+
+export const FilterLabel = styled.span`
+	margin-left: 8px;
+	font-size: 14px;
+	color: var(--text-default);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+`

@@ -7,6 +7,13 @@ export const Wrapper = styled.div`
 	background-color: var(--white-1);
 	border-radius: 5px;
 	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+
+	.submissionsCount {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		margin-top: 30px;
+	}
 `;
 
 export const HeaderWrapper = styled.div`

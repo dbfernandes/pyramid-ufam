@@ -17,8 +17,8 @@ export const ItemWrapper = styled.div`
 export const Item = styled.div<{ header?: boolean, student: boolean }>`
   width: 100%;
   display: grid;
-  grid-template-columns: 45px 30px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr" : "3fr 3fr 3fr"} 60px 30px 30px;
-	column-gap: 15px;
+  grid-template-columns: 45px 30px ${({ student }) => student ? "2fr 1fr 1fr 1fr 1fr 1fr" : "3fr 3fr 3fr"} 60px 30px 30px;
+  column-gap: 15px;
   align-items: center;
 
   margin-top: 5px;
@@ -33,12 +33,12 @@ export const Item = styled.div<{ header?: boolean, student: boolean }>`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 45px 40px minmax(0, 2fr) 60px 30px 30px;
+    grid-template-columns: 45px 40px ${({ student }) => student ? "minmax(0, 2fr) 1fr" : "3fr"} 30px 30px;
     column-gap: 5px;
     padding-right: 5px;
   }
   @media (max-width: 575px) {
-    grid-template-columns: 35px 40px minmax(0, 2fr) 60px 30px 30px;
+    grid-template-columns: 35px 40px ${({ student }) => student ? "minmax(0, 2fr) 1fr" : "3fr"} 30px 30px;
   }
 `;
 

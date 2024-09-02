@@ -61,6 +61,12 @@ export default function DashboardStudent({
         <NumberTile
           fetching={true}
         />
+        <NumberTile
+          fetching={true}
+        />
+        <NumberTile
+          fetching={true}
+        />
       </>
       : <>
         <NumberTile
@@ -81,11 +87,27 @@ export default function DashboardStudent({
         />
         <NumberTile
           icon="file-earmark-medical"
+          accent="var(--danger-hover)"
+          title="submissões rejeitadas"
+          value={report?.rejectedSubmissions}
+          callToAction="Visualizar"
+          link="/minhas-solicitacoes?page=1&search=&status=4"
+        />
+        <NumberTile
+          icon="file-earmark-medical"
           accent="var(--warning-hover)"
           title="submissões pré-aprovadas"
           value={report?.preApprovedSubmissions}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=2"
+        />
+        <NumberTile
+          icon="file-earmark-medical"
+          accent="var(--success)"
+          title="submissões aprovadas"
+          value={report?.approvedSubmissions}
+          callToAction="Visualizar"
+          link="/minhas-solicitacoes?page=1&search=&status=3"
         />
       </>
   );

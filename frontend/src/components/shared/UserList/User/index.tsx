@@ -29,9 +29,12 @@ import Spinner from "components/shared/Spinner";
 
 // Interfaces
 import IUser from "interfaces/IUser";
+import { current } from "@reduxjs/toolkit";
+import IUserLogged from "interfaces/IUserLogged";
 
 interface IUserProps {
   user?: IUser | null;
+  userLogged: IUserLogged
   courseId?: number | null | undefined;
   subRoute?: string;
   loading?: boolean;
@@ -51,6 +54,7 @@ interface IUserProps {
 
 export default function User({
   user = null,
+  userLogged,
   courseId = null,
   subRoute = "",
   loading = false,
@@ -134,31 +138,64 @@ export default function User({
     }
   }
 
+  const totalWorkload = (user?.workloadCount?.["Extensão"]?.totalWorkload || 0) +
+  (user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0) +
+  (user?.workloadCount?.["Ensino"]?.totalWorkload || 0);
+  const maxWorkload = userLogged?.selectedCourse?.minWorkload || 0;
+  console.log(userLogged)
+  const hoursRemaining = maxWorkload - totalWorkload;
+  const isComplete = hoursRemaining <= 0;
+
+  function CustomProgressBar({ current, max }) {
+    const progress = (current / max) * 100;
+    
+    const backgroundColor = current > 0 ? "var(--text-default)" : "var(--muted)";
+  
+    return (
+      <OverlayTrigger
+        placement="bottom"
+        overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}
+      >
+        <div style={{ position: "relative", width: "100%" }}>
+          <ProgressBar
+            animated
+            now={progress}
+            variant="success"
+            style={{
+              borderRadius: "8px",
+              height: "15px",
+              backgroundColor: backgroundColor,
+            }}
+          />
+          <span
+            style={{
+              position: "absolute",
+              width: "100%",
+              top: "0",
+              left: "50%",
+              transform: "translateX(-50%)",
+              textAlign: "center",
+              fontWeight: "bold",
+              color: "white",
+              fontSize: "10px",
+              lineHeight: "15px",
+            }}
+          >
+            {`${current}/${max}`}
+          </span>
+        </div>
+      </OverlayTrigger>
+    );
+  }
+  
+
   const [collapsed, setCollapsed] = useState<boolean>(false);
   function CollapseDetails({ user, onChange }) {
     function getCpf(user) {
       return user?.cpf ? formatCpf(user?.cpf) : "-"
     }
 
-    function CustomProgressBar({ current, max }) {
-      const progress = (current / max) * 100;
-
-      return (
-        <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
-          <ProgressBar
-            animated
-            now={current === 0 ? 100 : progress}
-            label={current === 0 ? `0/0` : `${current}/${max}`}
-            variant={current === 0 ? "secondary" : "success"}
-            style={{
-              borderRadius: "8px",
-              height: "15px",
-              backgroundColor: "#F1F1F1",
-            }}
-          />
-        </OverlayTrigger>
-      );
-    }
+    
 
     return (
       <CollapseDetailsStyled>
@@ -207,31 +244,34 @@ export default function User({
             </Info>
 
           )}
-          {user?.userTypeId == 3 && (<Info>
-            <H6>Informações do curso</H6>
+          {user?.userTypeId === 3 && (
+            <Info>
+              <H6>Informações do curso</H6>
 
-            <p>
-              <b>Matrícula deste curso:</b> {enrollment}
-            </p>
-            <p>
-              <b>Horas (Ensino):</b>
-              <div className="py-2">
-                <CustomProgressBar current={user?.workloadCount?.["Ensino"]?.totalWorkload || 0} max={user?.workloadCount?.["Ensino"]?.maxWorkload || 0} />
-              </div>
-            </p>
-            <p>
-              <b>Horas (Pesquisa):</b>
-              <div className="py-2">
-                <CustomProgressBar current={user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0} max={user?.workloadCount?.["Pesquisa"]?.maxWorkload || 0} />
-              </div>
-            </p>
-            <p>
-              <b>Horas (Extensão):</b>
-              <div className="pt-2">
-                <CustomProgressBar current={user?.workloadCount?.["Extensão"]?.totalWorkload || 0} max={user?.workloadCount?.["Extensão"]?.maxWorkload || 0} />
-              </div>
-            </p>
-          </Info>)}
+              <p>
+                <b>Matrícula deste curso:</b> {enrollment}
+              </p>
+              <br />
+              <p>
+                <b>Horas (Ensino):</b> {user?.workloadCount?.["Ensino"]?.totalWorkload || 0}
+              </p>
+              <p>
+                <b>Horas (Pesquisa):</b> {user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0}
+              </p>
+              <p>
+                <b>Horas (Extensão):</b>
+                {user?.workloadCount?.["Extensão"]?.totalWorkload || 0}
+              </p>
+              <br/>
+              <p style={{ display: 'flex', flexDirection: 'column', margin: '0' }}>
+                <b>Total:</b>
+                <div style={{ width: '100%', marginTop: '8px' }}>
+                  <CustomProgressBar current={totalWorkload} max={maxWorkload} />
+                </div>
+                <br />
+                <b>Status de Conclusão:</b> {isComplete ? 'Carga horária concluída!' : `Faltam ${hoursRemaining} horas`}
+              </p>
+            </Info>)}
         </div>
 
       </CollapseDetailsStyled>
@@ -280,32 +320,20 @@ export default function User({
     );
   }
 
-  const CustomProgressBar = ({ current, max }) => {
-    const progress = (current / max) * 100;
-
-    return (
-      <OverlayTrigger placement="bottom" overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}>
-        <ProgressBar
-          animated
-          now={current === 0 ? 100 : progress}
-          label={current === 0 ? `0/0` : `${current}/${max}`}
-          variant={current === 0 ? "secondary" : "success"}
-          style={{
-            borderRadius: "8px",
-            height: "15px",
-            backgroundColor: "#F1F1F1",
-          }}
-        />
-      </OverlayTrigger>
-    );
-  };
-
-  function WorkloadProgressBars({ workloadCount }) {
+  function Workload({ workloadCount }) {
     return (
       <>
-        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Ensino"].totalWorkload} max={workloadCount["Ensino"].maxWorkload} /></Column>
-        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Pesquisa"].totalWorkload} max={workloadCount["Pesquisa"].maxWorkload} /></Column>
-        <Column hideOnMobile={true}><CustomProgressBar current={workloadCount["Extensão"].totalWorkload} max={workloadCount["Extensão"].maxWorkload} /></Column>
+        <Column hideOnMobile={true}>{workloadCount["Ensino"].totalWorkload}</Column>
+        <Column hideOnMobile={true}>{workloadCount["Pesquisa"].totalWorkload}</Column>
+        <Column hideOnMobile={true}>{workloadCount["Extensão"].totalWorkload}</Column>
+      </>
+    )
+  }
+
+  function WorkloadProgressBar({ workloadCount }) {
+    return (
+      <>
+        <Column hideOnMobile={true}></Column>
       </>
     )
   }
@@ -345,13 +373,14 @@ export default function User({
               <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Ensino)</Column>
               <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Pesquisa)</Column>
               <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Extensão)</Column>
+              <Column color={"var(--muted)"}>Total</Column>
+              <Column color={"var(--muted)"} hideOnMobile={true}>Status</Column>
             </>
             : <>
               <Column color={"var(--muted)"} hideOnMobile={true}>Email</Column>
               <Column color={"var(--muted)"} hideOnMobile={true}>Curso(s)</Column>
             </>
           }
-          <Column color={"var(--muted)"}>Status</Column>
         </Item>
       ) : loading
         ? (
@@ -407,7 +436,8 @@ export default function User({
                     <CopyToClipboard text={enrollment} />
                   </Column>
 
-                  <WorkloadProgressBars workloadCount={user?.workloadCount} />
+                  <Workload workloadCount={user?.workloadCount} />
+                  <CustomProgressBar current={totalWorkload}  max={maxWorkload} />
                 </>
                 : <>
                   <Column hideOnMobile={true}>
@@ -434,7 +464,7 @@ export default function User({
 
                 </>
               }
-              <Column>
+              <Column hideOnMobile={true}>
                 <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
               </Column>
 

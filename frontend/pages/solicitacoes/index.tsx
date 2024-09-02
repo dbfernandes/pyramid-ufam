@@ -45,6 +45,7 @@ export default function Solicitacoes() {
 
   // Submissions
   const [submissions, setSubmissions] = useState<any[]>([]);
+  
   const [fetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true);
 
   // Fetching submissions
