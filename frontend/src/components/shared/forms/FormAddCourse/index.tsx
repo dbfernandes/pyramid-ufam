@@ -37,9 +37,9 @@ export default function FormAddCourse({
 
   // Workloads
   const [minWorkload, setMinWorkload] = useState<string>("240");
-  const [educationWorkload, setEducationWorkload] = useState<string>("240");
+  /*const [educationWorkload, setEducationWorkload] = useState<string>("240");
   const [researchWorkload, setResearchWorkload] = useState<string>("240");
-  const [extensionWorkload, setExtensionWorkload] = useState<string>("240");
+  const [extensionWorkload, setExtensionWorkload] = useState<string>("240");*/
 
   function validateWorkload(value) {
     const _value = parseInt(value);
@@ -58,9 +58,9 @@ export default function FormAddCourse({
       const _research = courseProp.activityGroups.find((group) => group.name === "Pesquisa");
       const _extension = courseProp.activityGroups.find((group) => group.name === "Extensão");
 
-      setEducationWorkload(_education.maxWorkload.toString());
+      /*setEducationWorkload(_education.maxWorkload.toString());
       setResearchWorkload(_research.maxWorkload.toString());
-      setExtensionWorkload(_extension.maxWorkload.toString());
+      setExtensionWorkload(_extension.maxWorkload.toString());*/
     }
   }, [courseProp]);
 
@@ -79,20 +79,20 @@ export default function FormAddCourse({
       code.length > 0 &&
       periods.length > 0 &&
       validatePeriods(periods) &&
-      validateWorkload(minWorkload) &&
+      validateWorkload(minWorkload)/* &&
       validateWorkload(educationWorkload) &&
       validateWorkload(researchWorkload) &&
-      validateWorkload(extensionWorkload)) {
+      validateWorkload(extensionWorkload)*/) {
       fetchAddCourse({
         name,
         code: code,
         periods: parseInt(periods),
         minWorkload: parseInt(minWorkload),
-        activityGroupsWorkloads: {
+        /*activityGroupsWorkloads: {
           education: parseInt(educationWorkload),
           research: parseInt(researchWorkload),
           extension: parseInt(extensionWorkload)
-        }
+        }*/
       }, operation === "Editar");
     }
   }
@@ -190,56 +190,58 @@ export default function FormAddCourse({
           displayAlert={sent}
         />
 
-        <SectionTitle>
-          <b>2.</b> Carga horária por grupo de atividade (horas)
-        </SectionTitle>
+        {/* [Disabled] Workloads
+          <SectionTitle>
+            <b>2.</b> Carga horária por grupo de atividade (horas)
+          </SectionTitle>
 
-        <MultiField customGrid={"1fr 1fr 1fr"}>
-          <TextInput
-            label={"Educação*"}
-            name={"educationWorkload"}
-            value={educationWorkload}
-            handleValue={setEducationWorkload}
-            mask={"999"}
-            validate={validateWorkload}
-            required={true}
-            displayAlert={sent}
-          />
+          <MultiField customGrid={"1fr 1fr 1fr"}>
+            <TextInput
+              label={"Educação*"}
+              name={"educationWorkload"}
+              value={educationWorkload}
+              handleValue={setEducationWorkload}
+              mask={"999"}
+              validate={validateWorkload}
+              required={true}
+              displayAlert={sent}
+            />
 
-          <TextInput
-            label={"Pesquisa*"}
-            name={"researchWorkload"}
-            value={researchWorkload}
-            handleValue={setResearchWorkload}
-            mask={"999"}
-            validate={validateWorkload}
-            required={true}
-            displayAlert={sent}
-          />
+            <TextInput
+              label={"Pesquisa*"}
+              name={"researchWorkload"}
+              value={researchWorkload}
+              handleValue={setResearchWorkload}
+              mask={"999"}
+              validate={validateWorkload}
+              required={true}
+              displayAlert={sent}
+            />
 
-          <TextInput
-            label={"Extensão*"}
-            name={"extensionWorkload"}
-            value={extensionWorkload}
-            handleValue={setExtensionWorkload}
-            mask={"999"}
-            validate={validateWorkload}
-            required={true}
-            displayAlert={sent}
-          />
-        </MultiField>
+            <TextInput
+              label={"Extensão*"}
+              name={"extensionWorkload"}
+              value={extensionWorkload}
+              handleValue={setExtensionWorkload}
+              mask={"999"}
+              validate={validateWorkload}
+              required={true}
+              displayAlert={sent}
+            />
+          </MultiField>
+         */}
       </div>
 
       <div style={{ width: "100%" }}>
         <>
-          {sent && !success && error.length != 0 && (
+          {sent && !success && error?.length !== 0 && (
             <FormAlert>{error}</FormAlert>
           )}
         </>
 
         <Button style={{ marginTop: 15 }} onClick={(e) => handleAddCourse(e)}>
           {fetching ? (
-            <Spinner size={"20px"} color={"var(--black-1)"} />
+            <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
               <i className="bi bi-check2-all" />

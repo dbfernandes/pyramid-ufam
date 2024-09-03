@@ -20,7 +20,7 @@ export default function ActivityGroups({
   link,
   grid
 }: IActivityGroupsProps) {
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>((state) => state.user);
 
   useEffect(() => {
     fetchGroups();
@@ -33,7 +33,7 @@ export default function ActivityGroups({
     setFetchingGroups(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}`,
+      url: `${process.env.api}/courses/${userLogged.selectedCourse?.id}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function ActivityGroups({
       {groups.map((group) => (
         <ActivityCard
           key={group.id}
-          user={user}
+          userLogged={userLogged}
           link={`${link}${slugify(group.name)}`}
           activity={group}
           editable={false}

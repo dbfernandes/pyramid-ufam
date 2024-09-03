@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import { getToken } from "utils";
-import NumberTile from "../NumberTile";
-
-// Shared
-import Spinner from "components/shared/Spinner";
 import { toast } from "react-toastify";
+import { getToken } from "utils";
 
-import IUserLogged from "interfaces/IUserLogged";
-export default function DashboardStudent({
-  user
-}: { user: IUserLogged }) {
+// Custom
+import NumberTile from "../NumberTile";
+import { getApprovedLabel, getConcludedHours, getPendingLabel, getPreApprovedLabel, getRejectedLabel, getStudentsLabel } from "../helpers";
+
+// Interfaces
+import { IDashboardProps } from "../interfaces";
+export default function DashboardStudent({ userLogged }: IDashboardProps) {
   useEffect(() => {
-    if (user?.selectedCourse) fetchReport(user?.id, user?.selectedCourse?.id);
+    if (userLogged?.selectedCourse) fetchReport(userLogged?.id, userLogged?.selectedCourse?.id);
   }, []);
 
   const [report, setReport] = useState<any>(null);
@@ -72,23 +71,22 @@ export default function DashboardStudent({
         <NumberTile
           icon="file-earmark-check"
           accent="var(--success)"
-          title="horas concluídas"
+          title={getConcludedHours(report?.workloadCount?.totalWorkload)}
           value={`${report?.workloadCount?.totalWorkload}/${report?.course.minWorkload}`}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=3"
         />
         <NumberTile
           icon="file-earmark-medical"
-          accent="var(--danger)"
-          title="submissões a serem avaliadas"
+          title={getPendingLabel(report?.pendingSubmissions)}
           value={report?.pendingSubmissions}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=1"
         />
         <NumberTile
           icon="file-earmark-medical"
-          accent="var(--danger-hover)"
-          title="submissões rejeitadas"
+          accent="var(--danger)"
+          title={getRejectedLabel(report?.rejectedSubmissions)}
           value={report?.rejectedSubmissions}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=4"
@@ -96,7 +94,7 @@ export default function DashboardStudent({
         <NumberTile
           icon="file-earmark-medical"
           accent="var(--warning-hover)"
-          title="submissões pré-aprovadas"
+          title={getPreApprovedLabel(report?.preApprovedSubmissions)}
           value={report?.preApprovedSubmissions}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=2"
@@ -104,7 +102,7 @@ export default function DashboardStudent({
         <NumberTile
           icon="file-earmark-medical"
           accent="var(--success)"
-          title="submissões aprovadas"
+          title={getApprovedLabel(report?.approvedSubmissions)}
           value={report?.approvedSubmissions}
           callToAction="Visualizar"
           link="/minhas-solicitacoes?page=1&search=&status=3"

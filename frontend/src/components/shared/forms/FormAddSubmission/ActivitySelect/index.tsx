@@ -24,7 +24,7 @@ interface IActivitySelectProps {
   setActiveGroup: React.Dispatch<React.SetStateAction<any | null>>;
   activity: IActivity | null;
   setActivity: React.Dispatch<React.SetStateAction<IActivity | null>>;
-  user: IUserLogged;
+  userLogged: IUserLogged;
 }
 
 export default function ActivitySelect({
@@ -32,7 +32,7 @@ export default function ActivitySelect({
   setActiveGroup,
   activity,
   setActivity,
-  user,
+  userLogged,
 }: IActivitySelectProps) {
   useEffect(() => {
     fetchGroups();
@@ -51,7 +51,7 @@ export default function ActivitySelect({
     setFetchingGroups(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user?.selectedCourse?.id}`,
+      url: `${process.env.api}/courses/${userLogged?.selectedCourse?.id}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export default function ActivitySelect({
     setFetchingActivities(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse ? user.selectedCourse.id : ""}/${ActivityGroupsNames[slugify(activeGroup.name)].slug}/activities`,
+      url: `${process.env.api}/courses/${userLogged?.selectedCourse ? userLogged?.selectedCourse.id : ""}/${ActivityGroupsNames[slugify(activeGroup.name)].slug}/activities`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -119,7 +119,7 @@ export default function ActivitySelect({
   return (
     <Wrapper>
       <p style={{ color: "var(--muted)", marginBottom: "10px" }}>Em qual grupo sua atividade se enquadra?</p>
-  
+
       {fetchingGroups
         ? <Spinner size={"20px"} color={"var(--primary-color)"} />
         : groups.length > 0
@@ -128,7 +128,7 @@ export default function ActivitySelect({
               <ActivityCard
                 key={group.id}
                 activity={group}
-                user={user}
+                userLogged={userLogged}
                 editable={false}
                 onClick={() => {
                   setActiveGroup(group);
@@ -141,7 +141,7 @@ export default function ActivitySelect({
           </CardGroup>
           : <Disclaimer>Nenhum grupo de atividades vinculados à este curso foi encontrado.</Disclaimer>
       }
-  
+
       {
         fetchingActivities
           ? <div style={{ marginTop: 30 }}><Spinner size={"20px"} color={"var(--primary-color)"} /></div>
@@ -149,13 +149,13 @@ export default function ActivitySelect({
             ? (
               <>
                 <p style={{ color: "var(--muted)", marginBottom: "10px" }} id="activities">Sua submissão é para qual tipo de atividade?</p>
-  
+
                 <CardGroup>
                   {activities?.map((_activity, index) => (
                     <ActivityCard
                       key={index}
                       activity={_activity}
-                      user={user}
+                      userLogged={userLogged}
                       editable={false}
                       onClick={() => setActivity(_activity)}
                       marked={activity != null && _activity.name == activity.name}

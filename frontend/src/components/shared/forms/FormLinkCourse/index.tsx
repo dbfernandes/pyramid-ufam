@@ -28,9 +28,9 @@ interface IFormComponentProps {
 export default function FormLinkCourse({
   course: courseProp = null,
   user,
-  onChange = () => {},
+  onChange = () => { },
   handleCloseModalForm,
-  onEditSuccess = () => {},
+  onEditSuccess = () => { },
 }: IFormComponentProps) {
   const operation = courseProp == null ? "Vincular" : "Editar";
   const isStudent = user.userTypeId === 3;
@@ -239,7 +239,7 @@ export default function FormLinkCourse({
 
         <Button style={{ marginTop: 15 }} onClick={handleAddCourse}>
           {fetching ? (
-            <Spinner size={"20px"} color={"var(--black-1)"} />
+            <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
               <i className="bi bi-check2-all" />

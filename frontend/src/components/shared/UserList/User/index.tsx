@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Collapse, Dropdown, OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
+import { Collapse, Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { formatCpf, getFirstAndLastName } from "utils";
 
 // Shared
@@ -24,17 +24,15 @@ import {
   UserStatus,
   CopyToClipboardSpan,
   UserProfilePicture,
+  CustomProgressBarWrapper,
+  CustomProgressBar,
 } from "./styles";
 import Spinner from "components/shared/Spinner";
 
 // Interfaces
 import IUser from "interfaces/IUser";
-import { current } from "@reduxjs/toolkit";
-import IUserLogged from "interfaces/IUserLogged";
-
 interface IUserProps {
   user?: IUser | null;
-  userLogged: IUserLogged
   courseId?: number | null | undefined;
   subRoute?: string;
   loading?: boolean;
@@ -54,7 +52,6 @@ interface IUserProps {
 
 export default function User({
   user = null,
-  userLogged,
   courseId = null,
   subRoute = "",
   loading = false,
@@ -138,64 +135,54 @@ export default function User({
     }
   }
 
-  const totalWorkload = (user?.workloadCount?.["Extensão"]?.totalWorkload || 0) +
-  (user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0) +
-  (user?.workloadCount?.["Ensino"]?.totalWorkload || 0);
-  const maxWorkload = userLogged?.selectedCourse?.minWorkload || 0;
-  console.log(userLogged)
-  const hoursRemaining = maxWorkload - totalWorkload;
+  // Workload
+  const selectedCourse = user?.courses.find((course) => course.id === courseId);
+  const minWorkload = selectedCourse?.minWorkload || 0;
+  const workloadCount = selectedCourse?.workloadCount;
+  const totalWorkload = workloadCount?.totalWorkload || 0;
+  const hoursRemaining = minWorkload - totalWorkload;
   const isComplete = hoursRemaining <= 0;
 
-  function CustomProgressBar({ current, max }) {
+  function ProgressBar({ current, max }) {
     const progress = (current / max) * 100;
-    
-    const backgroundColor = current > 0 ? "var(--text-default)" : "var(--muted)";
-  
+    const background = current > 0 ? "var(--text-default)" : "var(--muted)";
+
     return (
       <OverlayTrigger
         placement="bottom"
         overlay={<Tooltip>{`${current}h de ${max}h`}</Tooltip>}
       >
-        <div style={{ position: "relative", width: "100%" }}>
-          <ProgressBar
+        <CustomProgressBarWrapper>
+          <CustomProgressBar
             animated
             now={progress}
             variant="success"
-            style={{
-              borderRadius: "8px",
-              height: "15px",
-              backgroundColor: backgroundColor,
-            }}
+            background={background}
           />
-          <span
-            style={{
-              position: "absolute",
-              width: "100%",
-              top: "0",
-              left: "50%",
-              transform: "translateX(-50%)",
-              textAlign: "center",
-              fontWeight: "bold",
-              color: "white",
-              fontSize: "10px",
-              lineHeight: "15px",
-            }}
-          >
-            {`${current}/${max}`}
-          </span>
-        </div>
+          <span>{current}/{max}</span>
+        </CustomProgressBarWrapper>
       </OverlayTrigger>
     );
   }
-  
 
+  function Workload() {
+    return (
+      workloadCount
+        ? <>
+          <Column hideOnMobile={true}>{workloadCount?.["Ensino"]?.totalWorkload}h</Column>
+          <Column hideOnMobile={true}>{workloadCount?.["Pesquisa"]?.totalWorkload}h</Column>
+          <Column hideOnMobile={true}>{workloadCount?.["Extensão"]?.totalWorkload}h</Column>
+        </>
+        : null
+    )
+  }
+
+  // More details
   const [collapsed, setCollapsed] = useState<boolean>(false);
   function CollapseDetails({ user, onChange }) {
     function getCpf(user) {
       return user?.cpf ? formatCpf(user?.cpf) : "-"
     }
-
-    
 
     return (
       <CollapseDetailsStyled>
@@ -215,16 +202,10 @@ export default function User({
                   currentTarget.src = `${process.env.img}/user.png`;
                 }}
               />
-              <p>
-                <b>Nome:</b> {user.name}
-              </p>
-              <p>
-                <b>Email:</b> {user.email}
-              </p>
+              <p><b>Nome:</b> {user.name}</p>
+              <p><b>Email:</b> {user.email}</p>
               {user?.cpf && (
-                <p>
-                  <b>CPF:</b> {getCpf(user)}
-                </p>
+                <p><b>CPF:</b> {getCpf(user)}</p>
               )}
               <p>
                 <b>Curso(s):</b> {user?.courses && user?.courses.length > 0
@@ -238,9 +219,7 @@ export default function User({
                   : "-"
                 }
               </p>
-              <p>
-                <b>Status:</b> <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus>
-              </p>
+              <p><b>Status:</b> <UserStatus status={user?.isActive}>{user?.isActive === true ? "Ativo" : "Inativo"}</UserStatus></p>
             </Info>
 
           )}
@@ -248,29 +227,25 @@ export default function User({
             <Info>
               <H6>Informações do curso</H6>
 
-              <p>
-                <b>Matrícula deste curso:</b> {enrollment}
-              </p>
-              <br />
-              <p>
-                <b>Horas (Ensino):</b> {user?.workloadCount?.["Ensino"]?.totalWorkload || 0}
-              </p>
-              <p>
-                <b>Horas (Pesquisa):</b> {user?.workloadCount?.["Pesquisa"]?.totalWorkload || 0}
-              </p>
-              <p>
-                <b>Horas (Extensão):</b>
-                {user?.workloadCount?.["Extensão"]?.totalWorkload || 0}
-              </p>
-              <br/>
-              <p style={{ display: 'flex', flexDirection: 'column', margin: '0' }}>
-                <b>Total:</b>
-                <div style={{ width: '100%', marginTop: '8px' }}>
-                  <CustomProgressBar current={totalWorkload} max={maxWorkload} />
+              <p><b>Matrícula deste curso:</b> {enrollment}</p>
+              <hr />
+
+              <p><b>Horas (Ensino):</b> {workloadCount?.["Ensino"]?.totalWorkload}h</p>
+              <p><b>Horas (Pesquisa):</b> {workloadCount?.["Pesquisa"]?.totalWorkload}h</p>
+              <p><b>Horas (Extensão):</b> {workloadCount?.["Extensão"]?.totalWorkload}h</p>
+              <hr />
+
+              <div style={{ display: 'flex', flexDirection: 'column', margin: '0' }}>
+                <div>
+                  <b>Total:</b>
                 </div>
-                <br />
-                <b>Status de Conclusão:</b> {isComplete ? 'Carga horária concluída!' : `Faltam ${hoursRemaining} horas`}
-              </p>
+                <div style={{ width: '100%', marginTop: '8px' }}>
+                  <ProgressBar current={totalWorkload} max={minWorkload} />
+                </div>
+              </div>
+              <hr />
+
+              <p><b>Status de Conclusão:</b> {isComplete ? 'Carga horária concluída!' : `Faltam ${hoursRemaining} horas`}</p>
             </Info>)}
         </div>
 
@@ -320,24 +295,6 @@ export default function User({
     );
   }
 
-  function Workload({ workloadCount }) {
-    return (
-      <>
-        <Column hideOnMobile={true}>{workloadCount["Ensino"].totalWorkload}</Column>
-        <Column hideOnMobile={true}>{workloadCount["Pesquisa"].totalWorkload}</Column>
-        <Column hideOnMobile={true}>{workloadCount["Extensão"].totalWorkload}</Column>
-      </>
-    )
-  }
-
-  function WorkloadProgressBar({ workloadCount }) {
-    return (
-      <>
-        <Column hideOnMobile={true}></Column>
-      </>
-    )
-  }
-
   // Column value helpers
   function getEnrollment(user) {
     const course = user?.courses.find((course) => course.id === courseId);
@@ -345,13 +302,6 @@ export default function User({
     return course?.enrollment;
   }
   const enrollment = getEnrollment(user);
-
-  /*function getCpf(user) {
-    return user?.cpf ? formatCpf(user?.cpf) : "-"
-  }
-  const cpf = getCpf(user);*/
-
-
 
   return (
     header
@@ -436,8 +386,8 @@ export default function User({
                     <CopyToClipboard text={enrollment} />
                   </Column>
 
-                  <Workload workloadCount={user?.workloadCount} />
-                  <CustomProgressBar current={totalWorkload}  max={maxWorkload} />
+                  <Workload />
+                  <ProgressBar current={totalWorkload} max={minWorkload} />
                 </>
                 : <>
                   <Column hideOnMobile={true}>

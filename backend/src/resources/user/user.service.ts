@@ -275,7 +275,7 @@ export class UserService {
 		const workloadCount = { totalWorkload: 0 };
 		activityGroups.forEach((_activityGroup) => {
 			workloadCount[_activityGroup?.ActivityGroup?.name] = {
-				maxWorkload: _activityGroup.maxWorkload,
+				// maxWorkload: _activityGroup.maxWorkload,
 				totalWorkload: 0,
 			};
 		});
@@ -290,7 +290,7 @@ export class UserService {
 			) {
 				if (!workloadCount[ActivityGroup.name]) {
 					workloadCount[ActivityGroup.name] = {
-						maxWorkload: CourseActivityGroup.maxWorkload,
+						// maxWorkload: CourseActivityGroup.maxWorkload,
 						totalWorkload: 0,
 					};
 				}
@@ -299,19 +299,19 @@ export class UserService {
 			}
 		});
 
+		type WorkloadCount = {
+			maxWorkload?: number;
+			totalWorkload?: number;
+		};
+
 		workloadCount.totalWorkload = Object.values(workloadCount).reduce(
 			(acc, activity) => {
 				if (
 					typeof activity === "object" &&
 					activity &&
-					(activity as { maxWorkload?: number; totalWorkload?: number })
-						?.totalWorkload
+					(activity as WorkloadCount)?.totalWorkload
 				) {
-					return (
-						acc +
-						(activity as { maxWorkload?: number; totalWorkload?: number })
-							?.totalWorkload
-					);
+					return acc + (activity as WorkloadCount)?.totalWorkload;
 				}
 				return acc;
 			},
@@ -426,7 +426,7 @@ export class UserService {
 					UserType: { select: { id: true, name: true } },
 					CourseUsers: {
 						include: {
-							Course: { select: { id: true, name: true } },
+							Course: { select: { id: true, name: true, minWorkload: true } },
 						},
 					},
 					Submissions: {
@@ -456,12 +456,22 @@ export class UserService {
 
 		const _users = await Promise.all(
 			users.map(async (user) => {
-				const courses = user.CourseUsers.map((courseUser) => ({
-					id: courseUser.Course.id,
-					name: courseUser.Course.name,
-					enrollment: courseUser.enrollment,
-					startYear: courseUser.startYear,
-				}));
+				const courses = await Promise.all(
+					user.CourseUsers.map(async (courseUser) => ({
+						id: courseUser.Course.id,
+						name: courseUser.Course.name,
+						enrollment: courseUser.enrollment,
+						startYear: courseUser.startYear,
+						minWorkload: courseUser.Course.minWorkload,
+						workloadCount:
+							user.userTypeId === UserTypeIds.Aluno
+								? await this.groupAndCountWorkload(
+										user.Submissions,
+										courseUser.Course.id,
+									)
+								: undefined,
+					})),
+				);
 
 				return {
 					...user,
@@ -473,10 +483,6 @@ export class UserService {
 					password: undefined,
 					userType: user.UserType,
 					UserType: undefined,
-					workloadCount:
-						user.userTypeId === UserTypeIds.Aluno
-							? await this.groupAndCountWorkload(user.Submissions, +courseId)
-							: undefined,
 					Submissions: undefined,
 				};
 			}),
@@ -484,7 +490,7 @@ export class UserService {
 
 		return {
 			users: _users.filter((user) => user !== undefined && user !== null),
-			total: totalUsers,
+			totalItens: totalUsers,
 			totalPages: Math.ceil(totalUsers / limit),
 			currentPage: parseInt(page),
 		};

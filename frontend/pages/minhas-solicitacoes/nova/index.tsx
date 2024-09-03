@@ -18,7 +18,7 @@ import IUserLogged from "interfaces/IUserLogged";
 
 export default function NovaSolicitacao() {
   const router = useRouter();
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>(state => state.user);
   const [loaded, setLoaded] = useState(false);
   const { setLinks } = useBreadcrumb();
 
@@ -37,15 +37,15 @@ export default function NovaSolicitacao() {
 
   // Verifying user
   useEffect(() => {
-    if (!user.logged) {
+    if (!userLogged.logged) {
       router.replace("/entrar");
-    } else if (user.selectedCourse == null) {
+    } else if (userLogged.selectedCourse == null) {
       router.replace("/conta/curso");
     } else {
       setTimeout(() => setLoaded(true), 250);
     }
-    restrictPageForLoggedUsers(user, router, setLoaded, [3]);
-  }, [user]);
+    restrictPageForLoggedUsers(userLogged, router, setLoaded, [3]);
+  }, [userLogged]);
 
   return (
     <>
@@ -55,7 +55,7 @@ export default function NovaSolicitacao() {
 
       {loaded
         ? <Wrapper>
-          <FormAddSubmission user={user} />
+          <FormAddSubmission userLogged={userLogged} />
         </Wrapper>
         : <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <Spinner size={"30px"} color={"var(--primary-color)"} />

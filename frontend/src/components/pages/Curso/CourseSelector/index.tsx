@@ -41,7 +41,7 @@ export default function CourseSelector() {
           </Container>
         </div>
 
-        <EnrollmentGrid user={user} />
+        <EnrollmentGrid userLogged={user} />
       </div>
     </Wrapper>
   );

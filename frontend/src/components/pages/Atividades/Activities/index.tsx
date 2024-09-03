@@ -28,7 +28,7 @@ interface IActivitiesProps {
 }
 
 export default function Activities({ activities, title, groupSlug, onChange = () => { } }: IActivitiesProps) {
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>((state) => state.user);
   const isMobile = useMediaQuery({ maxWidth: 575 });
 
   async function fetchDelete(id) {
@@ -63,7 +63,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       <AddResourceButton onClick={() =>
         toggleModalForm(
           `Adicionar atividade (${title})`,
-          <FormAddActivity user={user} groupSlug={groupSlug} onChange={onChange} />,
+          <FormAddActivity userLogged={userLogged} groupSlug={groupSlug} onChange={onChange} />,
           "md"
         )}>
         <i className={`bi bi-${GroupIcons[title]}`}>
@@ -91,7 +91,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
               key={activity.id}
               // link={`/atividades/${slugify(title)}/${activity.id}`}
               activity={activity}
-              user={user}
+              userLogged={userLogged}
               groupSlug={groupSlug}
               editable={true}
               onDelete={() => fetchDelete(activity.id)}

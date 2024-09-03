@@ -53,8 +53,8 @@ export class CreateCourseDto {
 	@Max(500)
 	minWorkload?: number;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@ValidateNested()
 	@Type(() => ActivityGroups)
-	activityGroupsWorkloads: ActivityGroups;
+	activityGroupsWorkloads?: ActivityGroups;
 }

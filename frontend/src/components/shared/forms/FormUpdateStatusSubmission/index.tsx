@@ -107,7 +107,7 @@ export default function FormUpdateStatusSubmission({
 
       <div style={{ width: "100%" }}>
         <>
-          {sent && !success && error.length != 0 && (
+          {sent && !success && error?.length !== 0 && (
             <FormAlert>{error}</FormAlert>
           )}
         </>
@@ -115,7 +115,7 @@ export default function FormUpdateStatusSubmission({
         {status == "Rejeitado"
           ? <DangerButton style={{ marginTop: 15 }} onClick={(e) => handleUpdateStatus(e)}>
             {fetching ? (
-              <Spinner size={"20px"} color={"var(--black-1)"} />
+              <Spinner size={"20px"} color={"var(--white-1)"} />
             ) : (
               <>
                 <i className="bi bi-x-lg" />
@@ -125,7 +125,7 @@ export default function FormUpdateStatusSubmission({
           </DangerButton>
           : <Button style={{ marginTop: 15 }} onClick={(e) => handleUpdateStatus(e)}>
             {fetching ? (
-              <Spinner size={"20px"} color={"var(--black-1)"} />
+              <Spinner size={"20px"} color={"var(--white-1)"} />
             ) : (
               <>
                 <i className="bi bi-check2-all" />

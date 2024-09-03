@@ -52,6 +52,8 @@ export default function Cursos() {
   const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
 
   const [totalPages, setTotalPages] = useState<number>(0);
+  const itensPerPage = 16;
+  const [totalItens, setTotalItens] = useState<number>(0);
 
   useEffect(() => {
     const _page = parseInt(router.query.page as string);
@@ -69,7 +71,7 @@ export default function Cursos() {
     setFetchingCourses(true);
 
     const options = {
-      url: `${process.env.api}/courses?page=${_page}&limit=16&search=${_search}`,
+      url: `${process.env.api}/courses?page=${_page}&limit=${itensPerPage}&search=${_search}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -82,6 +84,7 @@ export default function Cursos() {
       .then((response) => {
         setCourses(response.data.courses);
         setTotalPages(response.data.totalPages);
+        setTotalItens(response.data.totalItens);
       })
       .catch((error) => {
         const errorMessages = {
@@ -108,6 +111,8 @@ export default function Cursos() {
             courses={courses}
             loading={fetchingCourses}
             totalPages={totalPages}
+            itensPerPage={itensPerPage}
+            totalItens={totalItens}
 
             onChange={() => fetchCourses(page, search)}
           />

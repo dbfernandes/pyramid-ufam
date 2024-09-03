@@ -22,11 +22,11 @@ import IUserLogged from "interfaces/IUserLogged";
 import { Button } from "components/shared/Button";
 
 interface IFormComponentProps {
-  user: IUserLogged;
+  userLogged: IUserLogged;
 }
 
 export default function FormAddSubmission({
-  user
+  userLogged
 }: IFormComponentProps) {
   const router = useRouter();
 
@@ -85,7 +85,7 @@ export default function FormAddSubmission({
 
     const config: AxiosRequestConfig = {
       method: "POST",
-      url: `${process.env.api}/users/${user.id}/submit`,
+      url: `${process.env.api}/users/${userLogged.id}/submit`,
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${getToken()}`,
@@ -122,7 +122,7 @@ export default function FormAddSubmission({
         setActiveGroup={setActiveGroup}
         activity={activity}
         setActivity={setActivity}
-        user={user}
+        userLogged={userLogged}
       />
 
       {activity != null && (
@@ -179,7 +179,7 @@ export default function FormAddSubmission({
       )}
 
       <>
-        {sent && !success && error.length != 0 && (
+        {sent && !success && error?.length !== 0 && (
           <FormAlert>{error}</FormAlert>
         )}
       </>

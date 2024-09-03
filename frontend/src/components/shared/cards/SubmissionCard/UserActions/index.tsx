@@ -27,13 +27,13 @@ import { UserTypes } from "constants/userTypes.constants";
 
 interface IUserActionsProps {
   submission: any; //ISubmission;
-  user: IUserLogged;
+  userLogged: IUserLogged;
   onChange?: Function;
 }
 
 export default function UserActions({
   submission,
-  user,
+  userLogged,
   onChange = () => { }
 }: IUserActionsProps) {
   // History
@@ -104,22 +104,22 @@ export default function UserActions({
               <HistoryItem key={index} color={colors[item.action]}>
                 <div>
                   <img
-                    src={user?.profileImage && user?.profileImage.length > 0
-                      ? user?.profileImage
+                    src={item?.user?.profileImage && item?.user?.profileImage.length > 0
+                      ? item?.user?.profileImage
                       : `${process.env.img}/user.png`
                     }
-                    alt={user.name}
+                    alt={item?.user?.name}
                     onError={({ currentTarget }) => {
                       currentTarget.src = `${process.env.img}/user.png`;
                     }}
                   />
                   <p>
-                    <b>{getFirstAndLastName(item.user.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item.user.userTypeId]}</UserRole>
-                    <span style={{ color: colors[item.action] }}>{item.action}</span> a submissão em {parseDateAndTime(item.createdAt)}
+                    <b>{getFirstAndLastName(item?.user?.name)}</b><UserRole style={{ marginRight: 5 }}>{UserTypes[item?.user?.userTypeId]}</UserRole>
+                    <span style={{ color: colors[item?.action] }}>{item?.action}</span> a submissão em {parseDateAndTime(item?.createdAt)}
                   </p>
                 </div>
 
-                {item.details && <p><span>Obs.:</span> {item.details}</p>}
+                {item?.details && <p><span>Obs.:</span> {item?.details}</p>}
               </HistoryItem>
             ))}
           </>
@@ -178,7 +178,7 @@ export default function UserActions({
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
-            <FormUpdateSubmission submission={submission} user={user} onChange={onChange} />,
+            <FormUpdateSubmission submission={submission} userLogged={userLogged} onChange={onChange} />,
             "lg"
           )
         }>
@@ -187,7 +187,7 @@ export default function UserActions({
         </EditButton>
       )}
 
-      {(user?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
+      {(userLogged?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
         <>
           <DangerButtonAlt
             onClick={() =>
@@ -214,7 +214,7 @@ export default function UserActions({
           </AcceptButton>
         </>
       )}
-      {(user?.userTypeId == 2 && [1].includes(submission.status)) && (
+      {(userLogged?.userTypeId == 2 && [1].includes(submission.status)) && (
         <AcceptButton
           onClick={() =>
             toggleModalForm(
@@ -227,7 +227,7 @@ export default function UserActions({
           <span>Pré-aprovar</span>
         </AcceptButton>
       )}
-      {(user?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
+      {(userLogged?.userTypeId == 3 && [1, 2, 4].includes(submission.status)) && (
         <DangerButtonAlt
           onClick={() =>
             confirm(

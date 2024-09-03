@@ -35,8 +35,10 @@ interface IUserListProps {
   users?: any[];
   loading?: boolean;
   totalPages: number;
-  subRoute?: string;
+  itensPerPage: number;
+  totalItens: number;
 
+  subRoute?: string;
   onChange?: Function;
 
   children?: React.ReactNode;
@@ -44,12 +46,14 @@ interface IUserListProps {
 
 export default function UserList({
   title,
+  courseId,
   users = [],
   loading,
   totalPages,
-  subRoute = "",
-  courseId,
+  itensPerPage,
+  totalItens,
 
+  subRoute = "",
   onChange = () => { },
 
   children
@@ -302,7 +306,6 @@ export default function UserList({
             <User
               key={index}
               user={user}
-              userLogged={loggedUser}
               courseId={courseId}
               subRoute={subRoute}
               loading={loading}
@@ -324,7 +327,13 @@ export default function UserList({
         : (<Disclaimer>Nenhum {subRoutes[subRoute].singleTitle} encontrado.</Disclaimer>)
       }
 
-      {users?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
+      {users?.length > 0 &&
+        <Paginator
+          page={parseInt(router.query.page as string)}
+          totalPages={totalPages}
+          itensPerPage={itensPerPage}
+          totalItens={totalItens}
+        />}
     </DefaultWrapper>
   );
 }

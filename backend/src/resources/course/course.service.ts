@@ -53,18 +53,20 @@ export class CourseService {
 		const course = await this.prisma.course.create({ data: courseDto });
 
 		// Definindo a carga horária máxima para cada grupo de atividades
-		activityGroupsArray.forEach(async (activityGroup, index) => {
-			const value =
-				activityGroup in activityGroupsWorkloads
-					? activityGroupsWorkloads[activityGroup]
-					: 240;
+		if (activityGroupsWorkloads) {
+			activityGroupsArray.forEach(async (activityGroup, index) => {
+				const value =
+					activityGroup in activityGroupsWorkloads
+						? activityGroupsWorkloads[activityGroup]
+						: 240;
 
-			await this.courseActivityGroupService.create({
-				courseId: course.id,
-				activityGroupId: index + 1,
-				maxWorkload: value,
+				await this.courseActivityGroupService.create({
+					courseId: course.id,
+					activityGroupId: index + 1,
+					maxWorkload: value,
+				});
 			});
-		});
+		}
 
 		const activityGroups = await this.courseActivityGroupService.findByCourseId(
 			course.id,
@@ -176,7 +178,7 @@ export class CourseService {
 		const _courses = courses.map((course) => {
 			const activityGroups = course.CourseActivityGroups.map((cag) => ({
 				name: cag.ActivityGroup.name,
-				maxWorkload: cag.maxWorkload,
+				// maxWorkload: cag.maxWorkload,
 			}));
 
 			return {
@@ -192,7 +194,7 @@ export class CourseService {
 			courses: _courses.filter(
 				(course) => course !== undefined && course !== null,
 			),
-			total: totalCourses,
+			totalItens: totalCourses,
 			totalPages: Math.ceil(totalCourses / limit),
 			currentPage: parseInt(page),
 		};
@@ -227,7 +229,7 @@ export class CourseService {
 
 		const activityGroups = course.CourseActivityGroups.map((cag) => ({
 			name: cag.ActivityGroup.name,
-			maxWorkload: cag.maxWorkload,
+			// maxWorkload: cag.maxWorkload,
 		}));
 
 		return {
@@ -363,23 +365,28 @@ export class CourseService {
 		await this.prisma.course.update({ where: { id }, data: courseDto });
 
 		// Setting max workload for each activity group
-		activityGroupsArray.forEach(async (activityGroup, index) => {
-			if (activityGroup in activityGroupsWorkloads) {
-				const value = activityGroupsWorkloads[activityGroup];
-				const courseActivityGroup =
-					await this.courseActivityGroupService.findByCourseAndActivityGroup(
-						id,
-						index + 1,
-					);
+		if (activityGroupsWorkloads) {
+			activityGroupsArray.forEach(async (activityGroup, index) => {
+				if (activityGroup in activityGroupsWorkloads) {
+					const value = activityGroupsWorkloads[activityGroup];
+					const courseActivityGroup =
+						await this.courseActivityGroupService.findByCourseAndActivityGroup(
+							id,
+							index + 1,
+						);
 
-				if (courseActivityGroup) {
-					await this.courseActivityGroupService.update(courseActivityGroup.id, {
-						activityGroupId: index + 1,
-						maxWorkload: value,
-					});
+					if (courseActivityGroup) {
+						await this.courseActivityGroupService.update(
+							courseActivityGroup.id,
+							{
+								activityGroupId: index + 1,
+								maxWorkload: value,
+							},
+						);
+					}
 				}
-			}
-		});
+			});
+		}
 
 		const activityGroups =
 			await this.courseActivityGroupService.findByCourseId(id);

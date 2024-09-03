@@ -62,6 +62,8 @@ export default function SolicitacoesGrupoAtividade() {
   const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
 
   const [totalPages, setTotalPages] = useState<number>(0);
+  const itensPerPage = 15;
+  const [totalItens, setTotalItens] = useState<number>(0);
 
   useEffect(() => {
     const _page = parseInt(router.query.page as string);
@@ -80,11 +82,11 @@ export default function SolicitacoesGrupoAtividade() {
   async function fetchSubmissions(_page, _search, _status) {
     setFetchingSubmissions(true);
 
-    let url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=${activityGroup}`;
+    let url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=${itensPerPage}&search=${_search}&status=${_status}&activityGroup=${activityGroup}`;
 
-    if (activityGroup === "extensao") {
-      url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}&activityGroup=extensao`;
-    }
+    /*if (activityGroup === "extensao") {
+      url = `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=${itensPerPage}&search=${_search}&status=${_status}&activityGroup=extensao`;
+    }*/
 
     const options = {
       url: url,
@@ -100,6 +102,7 @@ export default function SolicitacoesGrupoAtividade() {
       .then((response) => {
         setSubmissions(response.data.submissions);
         setTotalPages(response.data.totalPages);
+        setTotalItens(response.data.totalItens);
       })
       .catch((error) => {
         const errorMessages = {
@@ -127,6 +130,8 @@ export default function SolicitacoesGrupoAtividade() {
             submissions={submissions}
             loading={fetchingSubmissions}
             totalPages={totalPages}
+            itensPerPage={itensPerPage}
+            totalItens={totalItens}
 
             onChange={() => fetchSubmissions(page, search, status)}
           />

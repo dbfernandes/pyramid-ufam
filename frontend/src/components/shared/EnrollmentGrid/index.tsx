@@ -19,10 +19,10 @@ import axios, { AxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
 
 interface IEnrollmentGridProps {
-  user: IUserLogged;
+  userLogged: IUserLogged;
 }
 
-export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
+export default function EnrollmentGrid({ userLogged }: IEnrollmentGridProps) {
   const [fetching, setFetching] = useState<boolean>(false);
 
   const { dispatch } = store;
@@ -60,7 +60,7 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
   return (
     <EnrollmentGridWrapper>
       <p className="title">
-        {user.courses.length == 0
+        {userLogged?.courses?.length == 0
           ? "Você ainda não possui nenhum curso vinculado à sua conta e precisará adicionar um curso antes de prosseguir."
           : "Você deseja gerenciar as atividades de qual curso?"}
       </p>
@@ -70,22 +70,22 @@ export default function EnrollmentGrid({ user }: IEnrollmentGridProps) {
           onClick={() =>
             toggleModalForm(
               "Vincular curso",
-              <FormLinkCourse user={user} />,
+              <FormLinkCourse user={userLogged} />,
               "md"
             )
           }>
           <i className="bi bi-plus-lg" />
         </AddCourseButton>
 
-        {user.courses.map((course) => (
+        {userLogged?.courses?.map((course) => (
           <EnrollmentCard
             key={course.id}
             course={course}
             onClick={() => {
               dispatch(defaultCourse({ ...course, enrollment: course.enrollment }));
             }}
-            onDelete={() => fetchRemoveCourse({ userId: user.id, courseId: course.id })}
-            user={user}
+            onDelete={() => fetchRemoveCourse({ userId: userLogged.id, courseId: course.id })}
+            user={userLogged}
           />
         ))}
       </CourseGridComponent>

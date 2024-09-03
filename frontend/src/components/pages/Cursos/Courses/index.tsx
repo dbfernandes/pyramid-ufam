@@ -27,6 +27,8 @@ interface ICoursesProps {
   courses: ICourse[];
   loading: boolean;
   totalPages: number;
+  itensPerPage: number;
+  totalItens: number;
 
   onChange?: Function;
 }
@@ -35,6 +37,8 @@ export default function Courses({
   courses,
   loading,
   totalPages,
+  itensPerPage,
+  totalItens,
 
   onChange = () => { }
 }: ICoursesProps) {
@@ -127,11 +131,14 @@ export default function Courses({
           : (<Disclaimer>Nenhum curso encontrado.</Disclaimer>)
       }
 
-      {courses?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
-
-      {/*isMobile && (
-        <FloatingMenu onClickAdd={() => { }} />
-      )*/}
+      {courses?.length > 0 &&
+        <Paginator
+          page={parseInt(router.query.page as string)}
+          totalPages={totalPages}
+          itensPerPage={itensPerPage}
+          totalItens={totalItens}
+        />
+      }
     </DefaultWrapper>
   );
 }

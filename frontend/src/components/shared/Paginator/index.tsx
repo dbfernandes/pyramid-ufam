@@ -7,16 +7,19 @@ import {
   Wrapper,
   PaginatorWrapper,
   PageItem,
-  PageArrowButton
+  PageArrowButton,
+  ItensCountLabel
 } from "./styles";
 
 // Interfaces
 interface IPaginatorProps {
   page: number;
   totalPages: number;
+  itensPerPage: number;
+  totalItens: number;
 }
 
-export default function Paginator({ page, totalPages }: IPaginatorProps) {
+export default function Paginator({ page, totalPages, itensPerPage, totalItens }: IPaginatorProps) {
   function genereatePages(page, totalPages) {
     if (totalPages > 5) {
       const start = [1, 2, 3];
@@ -36,8 +39,21 @@ export default function Paginator({ page, totalPages }: IPaginatorProps) {
     });
   }
 
+  function ItensCount() {
+    const isFinalPage = page === totalPages;
+    const endItem = isFinalPage ? totalItens % itensPerPage : page * itensPerPage;
+    const startItem = (endItem + 1) - (isFinalPage ? endItem : itensPerPage);
+
+    return (
+      <ItensCountLabel>
+        Exibindo <b>{startItem}-{endItem}</b> do total de <b>{totalItens}</b>
+      </ItensCountLabel>
+    );
+  }
+
   return (
     <Wrapper>
+      <ItensCount />
       <PaginatorWrapper>
         <PageArrowButton disabled={page == 1} onClick={() => setPage(1)}><i className="bi bi-chevron-double-left" /></PageArrowButton>
         <PageArrowButton disabled={page == 1} onClick={() => setPage(page - 1)}><i className="bi bi-chevron-left" /></PageArrowButton>

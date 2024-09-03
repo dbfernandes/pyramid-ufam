@@ -137,7 +137,7 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
           style={{ marginTop: 15 }}
           onClick={(e) => handleUpdatePass(e)}>
           {fetching
-            ? <Spinner size={"20px"} color={"var(--black-1)"} />
+            ? <Spinner size={"20px"} color={"var(--white-1)"} />
             : <>
               <i className="fas fa-check"></i>
               Atualizar
@@ -146,7 +146,7 @@ export default function FormUpdatePass({ tokenObj }: IFormUpdatePassProps) {
         </Button>
 
         <>
-          {(sent && !success && error.length != 0) &&
+          {(sent && !success && error?.length !== 0) &&
             <FormAlert>
               {error}
             </FormAlert>

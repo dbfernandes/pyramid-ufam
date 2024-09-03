@@ -33,7 +33,7 @@ interface ISubmissionCardProps {
   header?: boolean;
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
-  user?: IUserLogged;
+  userLogged?: IUserLogged;
   onChange?: Function;
 }
 
@@ -43,10 +43,12 @@ export default function SubmissionCard({
   header = false,
   checkedIds = [],
   setCheckedIds = () => { },
-  user,
+  userLogged,
   onChange = () => { },
   ...props
 }: ISubmissionCardProps) {
+  const isAdmin = userLogged?.userTypeId !== 3;
+
   function handleCheck(e) {
     e.stopPropagation();
 
@@ -118,53 +120,35 @@ export default function SubmissionCard({
   }, [submission]);
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  function CollapseDetails({ submission, user, onChange }) {
-    function getCpf(user) {
-      return user?.cpf ? formatCpf(user?.cpf) : "-"
+  function CollapseDetails({ submission, userLogged, onChange }) {
+    function getCpf(_user) {
+      return _user?.cpf ? formatCpf(_user?.cpf) : "-"
     }
 
     return (
-      <CollapseDetailsStyled admin={user?.userTypeId !== 3}>
+      <CollapseDetailsStyled admin={isAdmin}>
         <div className="grid">
-          {(user?.userTypeId !== 3 && submission.user) && (
+          {(isAdmin && submission.user) && (
             <Info>
               <H6>Aluno</H6>
 
-              <p>
-                <b>Nome:</b> {submission.user.name}
-              </p>
-              <p>
-                <b>Email:</b> {submission.user.email}
-              </p>
+              <p><b>Nome:</b> {submission.user.name}</p>
+              <p><b>Email:</b> {submission.user.email}</p>
               {submission.user?.cpf && (
-                <p>
-                  <b>CPF:</b> {getCpf(submission.user)}
-                </p>
+                <p><b>CPF:</b> {getCpf(submission.user)}</p>
               )}
-              <p>
-                <b>Curso:</b> {submission.user.course}
-              </p>
-              <p>
-                <b>Matrícula:</b> {submission.user?.enrollment}
-              </p>
+              <p><b>Curso:</b> {submission.user.course}</p>
+              <p><b>Matrícula:</b> {submission.user?.enrollment}</p>
             </Info>
           )}
 
           <Info>
             <H6>Atividade</H6>
 
-            <p>
-              <b>Descrição:</b> {submission.description}
-            </p>
-            <p>
-              <b>Grupo de atividade:</b> {submission.activity.activityGroup.name}
-            </p>
-            <p>
-              <b>Tipo de atividade:</b> {submission.activity.name}
-            </p>
-            <p>
-              <b>Horas solicitadas:</b> {submission.workload}h
-            </p>
+            <p><b>Descrição:</b> {submission.description}</p>
+            <p><b>Grupo de atividade:</b> {submission.activity.activityGroup.name}</p>
+            <p><b>Tipo de atividade:</b> {submission.activity.name}</p>
+            <p><b>Horas solicitadas:</b> {submission.workload}h</p>
           </Info>
 
           <FileInfo>
@@ -175,9 +159,7 @@ export default function SubmissionCard({
 
               <div>
                 <p>{getFilename(submission.fileUrl)}</p>
-                <p>
-                  <span>{fileSize}</span>
-                </p>
+                <p><span>{fileSize}</span></p>
 
                 <i className="bi bi-box-arrow-up-right" />
               </div>
@@ -187,7 +169,7 @@ export default function SubmissionCard({
 
         <UserActions
           submission={submission}
-          user={user}
+          userLogged={userLogged}
           onChange={onChange}
         />
       </CollapseDetailsStyled>
@@ -238,7 +220,7 @@ export default function SubmissionCard({
   };
 
   return header ? (
-    <Item header={true}>
+    <Item header={true} admin={isAdmin}>
       <CustomFormCheck
         id="check-all"
         inline
@@ -247,10 +229,8 @@ export default function SubmissionCard({
         label={""}
         onClick={(e) => handleCheck(e)}
       />
-      {user?.userTypeId === 3
-        ? <Column color={"var(--muted)"}>Descrição</Column>
-        : <Column color={"var(--muted)"}>Aluno</Column>
-      }
+      {isAdmin && <Column color={"var(--muted)"}>Aluno</Column>}
+      <Column color={"var(--muted)"}>Descrição</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>
@@ -258,8 +238,11 @@ export default function SubmissionCard({
       <div></div>
     </Item>
   ) : loading ? (
-    <Item>
+    <Item admin={isAdmin}>
       <div></div>
+      {isAdmin && <Column className={"placeholder-glow"}>
+        <span className={"placeholder col-md-8 col-12"}></span>
+      </Column>}
       <Column className={"placeholder-glow"}>
         <span className={"placeholder col-md-8 col-12"}></span>
       </Column>
@@ -282,7 +265,8 @@ export default function SubmissionCard({
       <Item
         onClick={() => setCollapsed(!collapsed)}
         aria-expanded={collapsed}
-        collapsed={collapsed}>
+        collapsed={collapsed}
+        admin={isAdmin}>
         <CustomFormCheck
           inline
           name="submissions"
@@ -298,24 +282,23 @@ export default function SubmissionCard({
           onClick={(e) => handleCheck(e)}
         />
 
-        {user?.userTypeId == 3
-          ?
-          <Column>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={<Tooltip>{submission?.description}</Tooltip>}>
-              <span>{submission?.description}</span>
-            </OverlayTrigger>
-          </Column>
-          :
+        {isAdmin &&
           <Column>
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip>{submission?.user?.name}</Tooltip>}>
-              <>{submission?.user?.name}</>
+              <span>{submission?.user?.name}</span>
             </OverlayTrigger>
           </Column>
         }
+
+        <Column hideOnMobile={isAdmin}>
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip>{submission?.description}</Tooltip>}>
+            <span>{submission?.description}</span>
+          </OverlayTrigger>
+        </Column>
 
         <Column hideOnMobile={true}>
           <i
@@ -344,7 +327,7 @@ export default function SubmissionCard({
       </Item>
       <Collapse in={collapsed}>
         <div>
-          <CollapseDetails submission={submission} user={user} onChange={onChange} />
+          <CollapseDetails submission={submission} userLogged={userLogged} onChange={onChange} />
         </div>
       </Collapse>
     </ItemWrapper>

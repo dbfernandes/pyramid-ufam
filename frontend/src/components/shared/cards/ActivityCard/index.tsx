@@ -30,7 +30,7 @@ export interface IActivity {
 
 interface IActivityCard {
   activity: IActivity;
-  user: IUserLogged;
+  userLogged: IUserLogged;
   groupSlug?: string;
   link?: string;
   onClick?: Function;
@@ -46,7 +46,7 @@ interface IActivityCard {
 
 export default function ActivityCard({
   activity,
-  user,
+  userLogged,
   groupSlug = "",
   link,
   onClick,
@@ -64,7 +64,7 @@ export default function ActivityCard({
     e.stopPropagation();
   }
 
-  function CardBody({ activity, user, marked, blurred, groupSlug }: IActivityCard) {
+  function CardBody({ activity, userLogged, marked, blurred, groupSlug }: IActivityCard) {
     const [confirmDeletion, setConfirmDeletion] = useState<boolean>(false);
 
     function handleDeletion(e) {
@@ -102,7 +102,7 @@ export default function ActivityCard({
                   onClick={() =>
                     toggleModalForm(
                       `Editar curso (${activity.name})`,
-                      <FormAddActivity user={user} activity={activity} groupSlug={groupSlug} onChange={onChange} />,
+                      <FormAddActivity userLogged={userLogged} activity={activity} groupSlug={groupSlug} onChange={onChange} />,
                       "md"
                     )
                   }
@@ -139,14 +139,14 @@ export default function ActivityCard({
   return link ? (
     <Link href={link} passHref>
       <UnstyledLink>
-        <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+        <CardBody activity={activity} userLogged={userLogged} marked={marked} blurred={blurred} groupSlug={groupSlug} />
       </UnstyledLink>
     </Link>
   ) : onClick ? (
     <UnstyledButton onClick={onClick} type="button">
-      <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+      <CardBody activity={activity} userLogged={userLogged} marked={marked} blurred={blurred} groupSlug={groupSlug} />
     </UnstyledButton>
   ) : (
-    <CardBody activity={activity} user={user} marked={marked} blurred={blurred} groupSlug={groupSlug} />
+    <CardBody activity={activity} userLogged={userLogged} marked={marked} blurred={blurred} groupSlug={groupSlug} />
   );
 }

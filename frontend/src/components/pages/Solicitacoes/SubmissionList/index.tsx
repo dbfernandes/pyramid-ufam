@@ -28,6 +28,9 @@ interface ISubmissionListProps {
   submissions?: any[];
   loading?: boolean;
   totalPages: number;
+  itensPerPage: number;
+  totalItens: number;
+
   onChange?: Function;
   children?: React.ReactNode;
 }
@@ -37,12 +40,15 @@ export default function SubmissionList({
   submissions = [],
   loading,
   totalPages,
+  itensPerPage,
+  totalItens,
+
   onChange = () => { },
   children,
 }: ISubmissionListProps) {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
   const [submissionCount, setSubmissionCount] = useState<number>(submissions.length)
@@ -121,7 +127,7 @@ export default function SubmissionList({
   function MassActionsButtonGroup() {
     return (
       <ButtonGroupTop>
-        {user.userTypeId == 1 && <>
+        {userLogged.userTypeId == 1 && <>
           <DangerButtonAlt onClick={() => fetchMassUpdate(checkedIds.join(","), "Rejeitado")} disabled={fetchingMassUpdate}>
             {fetchingMassUpdate
               ? <Spinner size={"20px"} color={"var(--danger)"} />
@@ -136,7 +142,7 @@ export default function SubmissionList({
           </AcceptButton>
         </>}
 
-        {user.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")} disabled={fetchingMassUpdate}>
+        {userLogged.userTypeId == 2 && <AcceptButton onClick={() => fetchMassUpdate(checkedIds.join(","), "Pré-aprovado")} disabled={fetchingMassUpdate}>
           {fetchingMassUpdate
             ? <Spinner size={"20px"} color={"var(--danger)"} />
             : <><i className="bi bi-check2-all" /> Pré-aprovar selecionadas</>
@@ -171,7 +177,7 @@ export default function SubmissionList({
               loading={loading}
               checkedIds={checkedIds}
               setCheckedIds={setCheckedIds}
-              user={user}
+              userLogged={userLogged}
               onChange={onChange}
             />
           ))}
@@ -181,9 +187,14 @@ export default function SubmissionList({
         <Disclaimer>Nenhuma submissão nessa categoria foi encontrada. Tente alterar o filtro.</Disclaimer>
       )}
 
-      <p className="submissionsCount">Total de submissões: {submissionCount}</p>
-
-      {submissions.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
+      {submissions.length > 0 &&
+        <Paginator
+          page={parseInt(router.query.page as string)}
+          totalPages={totalPages}
+          itensPerPage={itensPerPage}
+          totalItens={totalItens}
+        />
+      }
     </Wrapper>
   );
 }

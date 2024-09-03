@@ -33,6 +33,8 @@ interface ISubmissionListProps {
   submissions?: any[];
   loading?: boolean;
   totalPages: number;
+  itensPerPage: number;
+  totalItens: number;
 
   onChange?: Function;
 
@@ -43,6 +45,8 @@ export default function MySubmissionList({
   submissions = [],
   loading,
   totalPages,
+  itensPerPage,
+  totalItens,
 
   onChange = () => { },
 
@@ -50,7 +54,7 @@ export default function MySubmissionList({
 }: ISubmissionListProps) {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const user = useSelector<IRootState, IUserLogged>(state => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>(state => state.user);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
   // Filter options
@@ -152,7 +156,7 @@ export default function MySubmissionList({
 
       {submissions?.length > 0
         ? <ListStyled>
-          <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} user={user} />
+          <SubmissionCard header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} userLogged={userLogged} />
           {submissions.map((submission) =>
             <SubmissionCard
               key={submission.id}
@@ -160,7 +164,7 @@ export default function MySubmissionList({
               loading={loading}
               checkedIds={checkedIds}
               setCheckedIds={setCheckedIds}
-              user={user}
+              userLogged={userLogged}
               onChange={onChange}
             />
           )}
@@ -170,7 +174,14 @@ export default function MySubmissionList({
         : <Disclaimer>Você ainda não fez nenhuma submissão.</Disclaimer>
       }
 
-      {submissions?.length > 0 && <Paginator page={parseInt(router.query.page as string)} totalPages={totalPages} />}
+      {submissions?.length > 0 &&
+        <Paginator
+          page={parseInt(router.query.page as string)}
+          totalPages={totalPages}
+          itensPerPage={itensPerPage}
+          totalItens={totalItens}
+        />
+      }
     </Wrapper>
   )
 }

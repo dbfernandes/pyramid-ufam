@@ -20,14 +20,14 @@ import { ParagraphTitle, RangeWrapper } from "../styles";
 import { IActivity } from "components/shared/cards/ActivityCard";
 import IUserLogged from "interfaces/IUserLogged";
 interface IFormComponentProps {
-  user: IUserLogged;
+  userLogged: IUserLogged;
   submission?: any;
   onChange?: Function;
   handleCloseModalForm?: Function;
 }
 
 export default function FormUpdateSubmission({
-  user,
+  userLogged,
   submission: submissionProp = null,
   onChange = () => { },
   handleCloseModalForm,
@@ -151,7 +151,7 @@ export default function FormUpdateSubmission({
         setActiveGroup={setActiveGroup}
         activity={activity}
         setActivity={setActivity}
-        user={user}
+        userLogged={userLogged}
       />
 
       {activity != null && (
@@ -208,7 +208,7 @@ export default function FormUpdateSubmission({
       )}
 
       <>
-        {sent && !success && error.length != 0 && (
+        {sent && !success && error?.length !== 0 && (
           <FormAlert>{error}</FormAlert>
         )}
       </>

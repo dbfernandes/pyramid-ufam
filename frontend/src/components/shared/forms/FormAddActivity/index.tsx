@@ -16,7 +16,7 @@ import TextArea from "components/shared/TextArea";
 
 interface IFormComponentProps {
   activity?: any;
-  user: IUserLogged;
+  userLogged: IUserLogged;
   groupSlug: string;
   onChange?: Function;
   handleCloseModalForm?: Function;
@@ -24,7 +24,7 @@ interface IFormComponentProps {
 
 export default function FormAddActivity({
   activity: activityProp = null,
-  user,
+  userLogged,
   groupSlug,
   onChange = () => { },
   handleCloseModalForm,
@@ -76,7 +76,7 @@ export default function FormAddActivity({
     const options = {
       url: isEdit
         ? `${process.env.api}/activities/${activityProp ? activityProp.id : ""}`
-        : `${process.env.api}/courses/${user.selectedCourse ? user.selectedCourse.id : ""}/${groupSlug}/activities`,
+        : `${process.env.api}/courses/${userLogged?.selectedCourse ? userLogged?.selectedCourse?.id : ""}/${groupSlug}/activities`,
       method: isEdit ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
@@ -143,14 +143,14 @@ export default function FormAddActivity({
 
       <div style={{ width: "100%" }}>
         <>
-          {sent && !success && error.length != 0 && (
+          {sent && !success && error?.length !== 0 && (
             <FormAlert>{error}</FormAlert>
           )}
         </>
 
         <Button style={{ marginTop: 15 }} onClick={(e) => handleAddActivity(e)}>
           {fetching ? (
-            <Spinner size={"20px"} color={"var(--black-1)"} />
+            <Spinner size={"20px"} color={"var(--white-1)"} />
           ) : (
             <>
               <i className="bi bi-check2-all" />

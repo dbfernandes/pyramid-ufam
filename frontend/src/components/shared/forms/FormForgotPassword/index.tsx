@@ -107,7 +107,7 @@ export default function FormForgotPassword() {
         </Button>
 
         <>
-          {(sent && !success && error.length != 0) &&
+          {(sent && !success && error?.length !== 0) &&
             <FormAlert>
               {error}
             </FormAlert>

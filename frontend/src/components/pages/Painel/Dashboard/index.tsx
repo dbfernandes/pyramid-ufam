@@ -12,15 +12,15 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 
 export default function Dashboard() {
-  const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const userLogged = useSelector<IRootState, IUserLogged>((state) => state.user);
 
   return (
     <DashboardWrapper>
       <IntroTile />
 
-      {user.userTypeId === 3
-        ? <DashboardStudent user={user} />
-        : <DashboardAdmin user={user} />
+      {userLogged?.userTypeId === 3
+        ? <DashboardStudent userLogged={userLogged} />
+        : <DashboardAdmin userLogged={userLogged} />
       }
     </DashboardWrapper>
   );

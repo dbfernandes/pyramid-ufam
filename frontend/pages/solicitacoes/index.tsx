@@ -45,7 +45,7 @@ export default function Solicitacoes() {
 
   // Submissions
   const [submissions, setSubmissions] = useState<any[]>([]);
-  
+
   const [fetchingSubmissions, setFetchingSubmissions] = useState<boolean>(true);
 
   // Fetching submissions
@@ -54,6 +54,8 @@ export default function Solicitacoes() {
   const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
 
   const [totalPages, setTotalPages] = useState<number>(0);
+  const itensPerPage = 15;
+  const [totalItens, setTotalItens] = useState<number>(0);
 
   useEffect(() => {
     const _page = parseInt(router.query.page as string);
@@ -73,7 +75,7 @@ export default function Solicitacoes() {
     setFetchingSubmissions(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=15&search=${_search}&status=${_status}`,
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=${itensPerPage}&search=${_search}&status=${_status}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -86,6 +88,7 @@ export default function Solicitacoes() {
       .then((response) => {
         setSubmissions(response.data.submissions);
         setTotalPages(response.data.totalPages);
+        setTotalItens(response.data.totalItens);
       })
       .catch((error) => {
         const errorMessages = {
@@ -113,6 +116,8 @@ export default function Solicitacoes() {
             submissions={submissions}
             loading={fetchingSubmissions}
             totalPages={totalPages}
+            itensPerPage={itensPerPage}
+            totalItens={totalItens}
 
             onChange={() => fetchSubmissions(page, search, status)}
           />

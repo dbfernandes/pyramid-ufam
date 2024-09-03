@@ -11,6 +11,7 @@ export const ItemWrapper = styled.div`
 
   &:hover {
 		border-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 	}
 `;
 
@@ -229,4 +230,27 @@ export const UserStatus = styled.span`
     font-size: 0.75rem;
     padding: 4px;
   }
+`;
+
+export const CustomProgressBarWrapper = styled.div`
+  width: 100%;
+  position: relative;
+
+  & > span {
+    width: 100%;
+    position: absolute;
+    top: 0%;
+    left: 50%;
+
+    text-align: center;
+    font-weight: bold;
+    color: var(--white-1);
+    font-size: 0.75rem;
+    transform: translateX(-50%);
+  }
+`;
+export const CustomProgressBar = styled(ProgressBar) <{ background?: string }>`
+  height: 15px;
+  border-radius: 8px;
+  ${({ background }) => `background-color: ${background};`}
 `;

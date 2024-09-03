@@ -4,6 +4,7 @@ export const Wrapper = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
+  align-items: center;
 	margin-top: 30px;
 `;
 
@@ -50,4 +51,11 @@ export const PageArrowButton = styled(PageItem)`
 	&:disabled {
 		color: var(--muted);
 	}
+`;
+
+export const ItensCountLabel = styled.p`
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0;
+  margin-right: 10px;
 `;

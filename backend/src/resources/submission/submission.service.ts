@@ -166,6 +166,13 @@ export class SubmissionService {
 				},
 			});
 
+			if (_submission.status === StatusSubmissions["Rejeitado"]) {
+				await this.prisma.submission.update({
+					where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+					data: { status: StatusSubmissions["Pendente"] },
+				});
+			}
+
 			// Adding to history
 			await this.submissionActionService
 				.create({
@@ -273,7 +280,7 @@ export class SubmissionService {
 					},
 					activityGroup: {
 						name: ActivityGroup.name,
-						maxWorkload: CourseActivityGroup.maxWorkload,
+						// maxWorkload: CourseActivityGroup.maxWorkload,
 					},
 				},
 				history: _submissionActions,
@@ -417,7 +424,7 @@ export class SubmissionService {
 					},
 					activityGroup: {
 						name: ActivityGroup.name,
-						maxWorkload: CourseActivityGroup.maxWorkload,
+						// maxWorkload: CourseActivityGroup.maxWorkload,
 					},
 				},
 				fileUrl: `${getFilesLocation("submissions")}/${file}`,
@@ -429,7 +436,7 @@ export class SubmissionService {
 
 		return {
 			submissions: _submissions,
-			total: totalSubmissions,
+			totalItens: totalSubmissions,
 			totalPages: Math.ceil(totalSubmissions / limit),
 			currentPage: parseInt(page),
 		};

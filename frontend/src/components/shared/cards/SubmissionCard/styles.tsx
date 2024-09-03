@@ -13,14 +13,15 @@ export const ItemWrapper = styled.div`
 
   &:hover {
 		border-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 	}
 `;
 
 // Item com rolagem horizontal em telas pequenas
-export const Item = styled.div<{ header?: boolean }>`
+export const Item = styled.div<{ header?: boolean, admin?: boolean }>`
   width: 100%;
   display: grid;
-  grid-template-columns: 45px 1fr 1fr 1fr 1fr 1fr 30px;
+  grid-template-columns: 45px 2fr ${({ admin }) => admin ? "2fr" : ""} 1fr 1fr 1fr 1fr 30px;
   column-gap: 15px;
   align-items: center;
 
@@ -257,15 +258,15 @@ export const ButtonGroupTop = styled.div`
 
 export const ButtonGroupBottom = styled.div`
   width: 100%;
-  display: grid;
+  display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  grid-template-columns: repeat(4, 0fr);
-  grid-gap: 10px;
+  gap: 10px;
   
   margin-top: 15px;
   
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
     padding-top: 15px;
     grid-gap: 10px;
