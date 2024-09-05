@@ -230,7 +230,7 @@ export default function SubmissionCard({
         onClick={(e) => handleCheck(e)}
       />
       {isAdmin && <Column color={"var(--muted)"}>Aluno</Column>}
-      <Column color={"var(--muted)"}>Descrição</Column>
+      <Column color={"var(--muted)"} hideOnMobile={true}>Descrição</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>

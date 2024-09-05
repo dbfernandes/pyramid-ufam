@@ -11,32 +11,34 @@ export const DropdownMenu = styled(Dropdown.Menu)`
 	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
 `;
+
 export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
   display: flex;
   align-items: center;
-	padding: 7.5px 15px;
+  padding: 7.5px 15px;
 
-	font-size: 0.875rem;
-	color: var(--text-default) !important;
-	border-left: 3px solid transparent;
+  font-size: 0.75rem; /* Diminua a fonte aqui */
+  color: var(--text-default) !important;
+  border-left: 3px solid transparent;
 
-	transition: 0.3s;
+  transition: 0.3s;
 
-	& > ${CustomFormCheck} {
+  & > ${CustomFormCheck} {
     padding: 0;
-		margin-right: 10px;
+    margin-right: 10px;
     cursor: pointer;
-	}
+  }
 
-	&:hover {
-		background-color: var(--white-2);
-		border-color: ${({ accent }) => accent ? accent : "var(--primary-color)"};
+  &:hover {
+    background-color: var(--white-2);
+    border-color: ${({ accent }) => accent ? accent : "var(--primary-color)"};
 
     i {
       color: ${({ accent }) => accent ? accent : "var(--primary-color)"};
     }
-	}
+  }
 `;
+
 
 export const FilterButton = styled(Dropdown.Toggle)`
   height: 41px;
@@ -87,3 +89,33 @@ export const FilterLabel = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 `
+
+export const ActiveFiltersContainer = styled.div`
+  	display: flex;
+  	gap: 8px;
+  	align-items: center;
+  	height: 41px;
+	margin-bottom: 4px;
+	overflow: auto;
+	width: 100%;
+`;
+  
+export const ActiveFilter = styled.div`
+  	display: flex;
+  	align-items: center;
+  	background-color: var(--white-2);
+  	padding: 5px 10px;
+  	border-radius: 4px;
+  	height: 100%;
+
+	@media (max-width: 768)
+`;
+
+export const RemoveFilterButton = styled.button`
+  	background: none;
+  	border: none;
+  	color: var(--hidden);
+  	margin-left: 5px;
+  	cursor: pointer;
+  	font-size: 1rem;
+`;

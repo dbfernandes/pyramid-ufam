@@ -11,6 +11,9 @@ import {
   DropdownItem,
   FilterButton,
   FilterLabel,
+  ActiveFiltersContainer,
+  ActiveFilter,
+  RemoveFilterButton,
 } from "./styles";
 
 // Interfaces
@@ -32,11 +35,11 @@ export default function FilterCollapsible({
   setOptions,
   fetching
 }: IFilterCollapsibleProps) {
-  const [activeFilters, setActiveFilters] = useState<string>("");
+  const [activeFilters, setActiveFilters] = useState<IFilterOption[]>([]);
 
   useEffect(() => {
     const activeOptions = options.filter(option => option.checked);
-    setActiveFilters(activeOptions.map(option => option.title).join(", "));
+    setActiveFilters(activeOptions);
   }, [options])
 
   function handleDropdown(e: React.MouseEvent) {
@@ -60,6 +63,15 @@ export default function FilterCollapsible({
     }));
   }
 
+  function removeActiveFilter(value: string | number) {
+    setOptions(options.map(option => {
+      if (option.value === value) {
+        return { ...option, checked: false };
+      }
+      return option;
+    }));
+  }
+
   function DropdownItemComponent(option: IFilterOption) {
     return (
       <DropdownItem
@@ -75,23 +87,34 @@ export default function FilterCollapsible({
   }
 
   return (
-    <Dropdown align="end" onClick={(e) => handleDropdown(e)} autoClose={"outside"}>
-      <FilterButton variant="secondary">
-        {fetching
-          ? <Spinner size={"16px"} color={"var(--text-default)"} />
-          : 
-            <>
-              <i className="bi bi-sliders2" />
-              {activeFilters && <FilterLabel>{activeFilters}</FilterLabel>}
-            </>
-        }
-      </FilterButton>
+    <>
+      <Dropdown align="end" onClick={(e) => handleDropdown(e)} autoClose={"outside"}>
+        <FilterButton variant="secondary">
+          {fetching
+            ? <Spinner size={"16px"} color={"var(--text-default)"} />
+            : <i className="bi bi-sliders2" />
+          }
+        </FilterButton>
 
-      <DropdownMenu renderOnMount={true}>
-        {options.map((option, index) => (
-          <DropdownItemComponent key={index} {...option} />
-        ))}
-      </DropdownMenu>
-    </Dropdown>
+        <DropdownMenu renderOnMount={true}>
+          {options.map((option, index) => (
+            <DropdownItemComponent key={index} {...option} />
+          ))}
+        </DropdownMenu>
+      </Dropdown>
+      {activeFilters.length > 0 && (
+        <ActiveFiltersContainer>
+          {activeFilters.map((filter) => (
+            <ActiveFilter key={filter.value}>
+              {filter.title}
+              <RemoveFilterButton onClick={() => removeActiveFilter(filter.value)}>
+                x
+              </RemoveFilterButton>
+            </ActiveFilter>
+          ))}
+        </ActiveFiltersContainer>
+      )}
+
+    </>
   );
 }

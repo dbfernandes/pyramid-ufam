@@ -56,6 +56,8 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
   const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
 
   const [totalPages, setTotalPages] = useState<number>(0);
+  const itensPerPage = 15;
+  const [totalItens, setTotalItens] = useState<number>(0);
 
   useEffect(() => {
     const _page = parseInt(router.query.page as string);
@@ -88,6 +90,7 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
       .then((response) => {
         setUsers(response.data.users);
         setTotalPages(response.data.totalPages);
+        setTotalItens(response.data.totalItens);
       })
       .catch((error) => {
         const errorMessages = {
@@ -117,6 +120,8 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
             courseId={user.selectedCourse ? user.selectedCourse.id : null}
             loading={fetchingUsers}
             totalPages={totalPages}
+            itensPerPage={itensPerPage}
+            totalItens={totalItens}
 
             onChange={() => fetchUsers(page, search, status)}
           />

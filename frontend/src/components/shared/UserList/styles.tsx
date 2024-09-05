@@ -30,7 +30,11 @@ export const Filter = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   grid-gap: 15px;
-
   margin-top: 15px;
+
+  @media (max-width: 575px) {
+    flex-wrap: wrap;
+  }
 `;
