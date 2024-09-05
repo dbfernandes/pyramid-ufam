@@ -74,6 +74,9 @@ export const FilterButton = styled(Dropdown.Toggle)`
     margin-right: 2px;
   }
 
+
+
+
   @media (max-width: 575px) {
 		& > .spinner {
       margin-right: 0;
@@ -95,7 +98,6 @@ export const ActiveFiltersContainer = styled.div`
   	gap: 8px;
   	align-items: center;
   	height: 41px;
-	margin-bottom: 4px;
 	overflow: auto;
 	width: 100%;
 `;
