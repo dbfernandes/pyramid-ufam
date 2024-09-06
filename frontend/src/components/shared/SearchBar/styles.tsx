@@ -9,6 +9,10 @@ export const Wrapper = styled.div`
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
+
+  @media (max-width: 575px) {
+    width: 100%;
+  }
 `;
 
 export const ExpandingSearchWrapper = styled.div`
