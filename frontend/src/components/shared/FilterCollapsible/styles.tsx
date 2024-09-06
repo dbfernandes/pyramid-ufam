@@ -75,13 +75,12 @@ export const FilterButton = styled(Dropdown.Toggle)`
   }
 
 
-
-
   @media (max-width: 575px) {
 		& > .spinner {
       margin-right: 0;
     }
 	}
+
 `;
 
 export const FilterLabel = styled.span`
@@ -103,21 +102,23 @@ export const ActiveFiltersContainer = styled.div`
 `;
   
 export const ActiveFilter = styled.div`
-  	display: flex;
-  	align-items: center;
-  	background-color: var(--white-2);
-  	padding: 5px 10px;
-  	border-radius: 4px;
-  	height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: var(--white-2);
+  padding: 5px 10px;
+  border-radius: 4px;
+  height: 100%;
 
-	@media (max-width: 768)
+  .pre-aprovadas {
+    width: 160px;
+  }
 `;
 
 export const RemoveFilterButton = styled.button`
-  	background: none;
-  	border: none;
-  	color: var(--hidden);
-  	margin-left: 5px;
-  	cursor: pointer;
-  	font-size: 1rem;
+  background: none;
+  border: none;
+  color: var(--hidden);
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 1rem;
 `;

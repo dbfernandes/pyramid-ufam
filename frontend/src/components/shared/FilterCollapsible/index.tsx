@@ -76,7 +76,8 @@ export default function FilterCollapsible({
     return (
       <DropdownItem
         onClick={(e) => handleCheck(option.value)}
-        accent={option.accent}>
+        accent={option.accent}
+        >
         <CustomFormCheck
           type="checkbox"
           checked={option.checked}
@@ -105,7 +106,7 @@ export default function FilterCollapsible({
       {activeFilters.length > 0 && (
         <ActiveFiltersContainer>
           {activeFilters.map((filter) => (
-            <ActiveFilter key={filter.value}>
+            <ActiveFilter key={filter.value}  className={filter.title === "Pré-aprovadas" ? "pre-aprovadas" : ""}>
               {filter.title}
               <RemoveFilterButton onClick={() => removeActiveFilter(filter.value)}>
                 x
