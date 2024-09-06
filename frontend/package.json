@@ -8,8 +8,7 @@
 		"start": "next start --port 3366",
 		"lint": "next lint",
 		"deploy": "gcloud app deploy --no-promote --version=1-0-2",
-		"deploy:prod": "npm run deploy -- --appyaml=app-prod.yaml --project=aacc-404719",
-		"proxy": "http://localhost:3366"
+		"deploy:prod": "npm run deploy -- --appyaml=app-prod.yaml --project=aacc-404719"
 	},
 	"dependencies": {
 		"@nestjs/cli": "^8.0.0",
