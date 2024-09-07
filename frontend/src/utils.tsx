@@ -251,9 +251,23 @@ export function parseDate(date: string) {
 }
 
 export function parseDateAndTime(date: string) {
-  const dateArr = date.split("T")[0].split("-");
-  const timeArr = date.split("T")[1].split(":");
-  return `${dateArr[2]}/${dateArr[1]}/${dateArr[0]} às ${timeArr[0]}:${timeArr[1]}`;
+  const dateObj = new Date(date);
+
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: "America/Manaus",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("pt-BR", options).format(dateObj);
+
+  const [datePart, timePart] = formattedDate.split(" ");
+
+  return `${datePart} às ${timePart}`;
 }
 
 export function range(start: number, end: number) {

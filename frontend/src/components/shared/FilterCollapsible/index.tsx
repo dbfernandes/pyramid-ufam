@@ -10,10 +10,10 @@ import {
   DropdownMenu,
   DropdownItem,
   FilterButton,
-  FilterLabel,
   ActiveFiltersContainer,
   ActiveFilter,
   RemoveFilterButton,
+  FilterButtonContainer
 } from "./styles";
 
 // Interfaces
@@ -77,7 +77,7 @@ export default function FilterCollapsible({
       <DropdownItem
         onClick={(e) => handleCheck(option.value)}
         accent={option.accent}
-        >
+      >
         <CustomFormCheck
           type="checkbox"
           checked={option.checked}
@@ -89,33 +89,34 @@ export default function FilterCollapsible({
 
   return (
     <>
-      <Dropdown align="end" onClick={(e) => handleDropdown(e)} autoClose={"outside"}>
-        <FilterButton variant="secondary">
-          {fetching
-            ? <Spinner size={"16px"} color={"var(--text-default)"} />
-            : <i className="bi bi-sliders2" />
-          }
-        </FilterButton>
+      <FilterButtonContainer>
+        <Dropdown align="end" onClick={(e) => handleDropdown(e)} autoClose={"outside"}>
+          <FilterButton variant="secondary">
+            {fetching
+              ? <Spinner size={"16px"} color={"var(--text-default)"} />
+              : <i className="bi bi-sliders2" />
+            }
+          </FilterButton>
 
-        <DropdownMenu renderOnMount={true}>
-          {options.map((option, index) => (
-            <DropdownItemComponent key={index} {...option} />
-          ))}
-        </DropdownMenu>
-      </Dropdown>
-      {activeFilters.length > 0 && (
-        <ActiveFiltersContainer>
-          {activeFilters.map((filter) => (
-            <ActiveFilter key={filter.value}  className={filter.title === "Pré-aprovadas" ? "pre-aprovadas" : ""}>
-              {filter.title}
-              <RemoveFilterButton onClick={() => removeActiveFilter(filter.value)}>
-                x
-              </RemoveFilterButton>
-            </ActiveFilter>
-          ))}
-        </ActiveFiltersContainer>
-      )}
-
+          <DropdownMenu renderOnMount={true}>
+            {options.map((option, index) => (
+              <DropdownItemComponent key={index} {...option} />
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+        {activeFilters.length > 0 && (
+          <ActiveFiltersContainer>
+            {activeFilters.map((filter) => (
+              <ActiveFilter key={filter.value} className={filter.title === "Pré-aprovadas" ? "pre-aprovadas" : ""}>
+                {filter.title}
+                <RemoveFilterButton onClick={() => removeActiveFilter(filter.value)}>
+                  x
+                </RemoveFilterButton>
+              </ActiveFilter>
+            ))}
+          </ActiveFiltersContainer>
+        )}
+      </FilterButtonContainer>
     </>
   );
 }

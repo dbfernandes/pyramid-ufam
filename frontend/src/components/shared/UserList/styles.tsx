@@ -33,8 +33,5 @@ export const Filter = styled.div`
   justify-content: space-between;
   grid-gap: 15px;
   margin-top: 15px;
-
-  @media (max-width: 575px) {
-    flex-wrap: wrap;
-  }
+  flex-wrap: wrap;
 `;
