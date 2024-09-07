@@ -56,7 +56,7 @@ function App(props: any) {
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <meta name="theme-color" content="#111" />
+        <meta name="theme-color" content="#f4f4f8" />
 
         <title>{process.env.title}</title>
 
