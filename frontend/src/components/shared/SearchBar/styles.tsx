@@ -1,9 +1,18 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  width: 100%;
+  width: 60%;
+
   display: grid;
   grid-template-columns: 1fr;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const ExpandingSearchWrapper = styled.div`
@@ -22,8 +31,8 @@ export const SearchButton = styled.button<{ unstyledBorder: boolean }>`
   top: 0;
   left: 0;
 
-  width: 45px;
-  height: 45px;
+  width: 41px;
+  height: 41px;
   display: flex;
   align-items: center;
   justify-content: center;
