@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Wrapper = styled.div`
   width: 60%;
 
+
   display: grid;
   grid-template-columns: 1fr;
 
@@ -77,5 +78,22 @@ export const ExpandingSearch = styled.input`
 
   &:not(:placeholder-shown) {
     width: 100%;
+  }
+`;
+
+export const ClearButton = styled.button`
+  position: absolute;
+  right: 15px;
+  background: none;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  align-items: center;
+  font-size:  20px;
+  cursor: pointer;
+  color: var(--text-default);
+
+  &:hover {
+    color: var(--text-secondary);
   }
 `;

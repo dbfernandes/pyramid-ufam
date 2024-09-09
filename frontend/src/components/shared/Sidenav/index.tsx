@@ -41,16 +41,16 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
   }, []);
 
   const [displayLinkTitles, setDisplayLinkTitles] = useState<boolean>(true);
+  
   function toggleSidenavOpen() {
     if (sidenavOpen) {
       setSidenavOpen(false);
       setDisplayLinkTitles(false);
     } else {
-      setSidenavOpen(true)
+      setSidenavOpen(true);
       setTimeout(() => setDisplayLinkTitles(true), 120);
     }
   }
-
   const buttonGroups = [
     {
       title: null,
@@ -224,30 +224,36 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                     : null
                   }
 
-                  {/* Fix: OverlayTrigger not working */}
-                  <div>
-                    {group.links.map((link, index) =>
-                      checkPermission(link, user.userTypeId)
-                        ? (<OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
-                          <div>
-                            {link?.route ? (
-                              <Link href={link.route} passHref>
-                                <SidenavLink>
-                                  {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
-                                  {displayLinkTitles && <span>{link.title}</span>}
-                                </SidenavLink>
-                              </Link>
-                            ) : (
-                              <SidenavButton onClick={link.onClick}>
+                  {group.links.map((link, index) =>
+                    checkPermission(link, user.userTypeId) ? (
+                      <OverlayTrigger key={index} placement="right" overlay={!sidenavOpen ? <Tooltip>{link.title}</Tooltip> : <></>}>
+                        <div>
+                          {link?.route ? (
+                            <Link href={link.route} passHref>
+                              <SidenavLink onClick={() => {
+                                if (window.innerWidth < 992) {
+                                  setSidenavOpen(false);
+                                }
+                              }}>
                                 {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
                                 {displayLinkTitles && <span>{link.title}</span>}
-                              </SidenavButton>
-                            )}
-                          </div>
-                        </OverlayTrigger>)
-                        : null
-                    )}
-                  </div>
+                              </SidenavLink>
+                            </Link>
+                          ) : (
+                            <SidenavButton onClick={() => {
+                              link.onClick();
+                              if (window.innerWidth < 992) {
+                                setSidenavOpen(false);
+                              }
+                            }}>
+                              {link.icon ? link.icon : <i className="bi bi-exclamation-triangle-fill" style={{ color: "var(--danger)" }} />}
+                              {displayLinkTitles && <span>{link.title}</span>}
+                            </SidenavButton>
+                          )}
+                        </div>
+                      </OverlayTrigger>
+                    ) : null
+                  )}                                 
                 </LinkWrapper>
               )
           )}

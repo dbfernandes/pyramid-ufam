@@ -48,7 +48,7 @@ export default function Header({ isMobile }: IHeaderProps) {
                 </button>
               </div>
 
-              <Sidenav isMobile={true} />
+              <Sidenav isMobile={true} setSidenavOpen={setShowSidenav} />
             </div>
           </SidenavWrapper>
 

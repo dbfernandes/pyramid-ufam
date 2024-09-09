@@ -9,7 +9,8 @@ import {
   Wrapper,
   ExpandingSearch,
   ExpandingSearchWrapper,
-  SearchButton
+  SearchButton,
+  ClearButton
 } from "./styles";
 
 // Interfaces
@@ -45,6 +46,13 @@ export default function SearchBar({
     }
   }
 
+  function clearSearch() {
+    setSearch("");
+    if (inputSearchRef.current) {
+      inputSearchRef.current.focus();
+    }
+  }
+
   return (
     <Wrapper>
       <ExpandingSearchWrapper>
@@ -56,12 +64,23 @@ export default function SearchBar({
           onChange={(e) => setSearch(e.target.value)}
           onBlur={() => setSearchBarFocused(false)} />
 
-        {fetching
-          ? <Spinner size={"16px"} color={"var(--text-default)"} />
-          : <SearchButton onClick={() => focusSearch()} unstyledBorder={searchBarFocused || search.length != 0}>
-            <i className="bi bi-search" />
-          </SearchButton>
-        }
+        {fetching ? (
+          <Spinner size={"16px"} color={"var(--text-default)"} />
+        ) : (
+          <>
+            {search.length > 0 && (
+              <ClearButton onClick={clearSearch}>
+                <i className="bi bi-x" />
+              </ClearButton>
+            )}
+            <SearchButton
+              onClick={() => focusSearch()}
+              unstyledBorder={searchBarFocused || search.length !== 0}
+            >
+              <i className="bi bi-search" />
+            </SearchButton>
+          </>
+        )}
       </ExpandingSearchWrapper>
     </Wrapper>
   );
