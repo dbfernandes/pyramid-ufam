@@ -145,9 +145,9 @@ export default function SubmissionCard({
           <Info>
             <H6>Atividade</H6>
 
-            <p><b>Descrição:</b> {submission.description}</p>
             <p><b>Grupo de atividade:</b> {submission.activity.activityGroup.name}</p>
             <p><b>Tipo de atividade:</b> {submission.activity.name}</p>
+            <p><b>Descrição:</b> {submission.description}</p>
             <p><b>Horas solicitadas:</b> {submission.workload}h</p>
           </Info>
 
