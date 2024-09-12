@@ -159,7 +159,7 @@ export class SubmissionService {
 
 			const { details, ...rest } = updateSubmissionDto;
 			const _submission = await this.prisma.submission.update({
-				where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+				where: { id },
 				data: {
 					...rest,
 					file: filename.replace(".tmp", ""),
@@ -168,7 +168,7 @@ export class SubmissionService {
 
 			if (_submission.status === StatusSubmissions["Rejeitado"]) {
 				await this.prisma.submission.update({
-					where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+					where: { id },
 					data: { status: StatusSubmissions["Pendente"] },
 				});
 			}
@@ -453,7 +453,7 @@ export class SubmissionService {
 			const { status, details } = updateStatusDto;
 			const statusId = StatusSubmissions[status];
 			const submission = await this.prisma.submission.update({
-				where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+				where: { id },
 				data: { status: statusId },
 			});
 
@@ -486,7 +486,6 @@ export class SubmissionService {
 			const submissions = await this.prisma.submission.updateMany({
 				where: {
 					id: { in: _ids },
-					status: { not: StatusSubmissions["Aprovado"] },
 				},
 				data: { status: statusId },
 			});
@@ -511,7 +510,7 @@ export class SubmissionService {
 
 	async remove(id: number): Promise<Submission> {
 		return await this.prisma.submission.update({
-			where: { id, status: { not: StatusSubmissions["Aprovado"] } },
+			where: { id },
 			data: { isActive: false },
 		});
 	}
@@ -522,7 +521,6 @@ export class SubmissionService {
 		const submissions = this.prisma.submission.updateMany({
 			where: {
 				id: { in: _ids },
-				status: { not: StatusSubmissions["Aprovado"] },
 			},
 			data: { isActive: false },
 		});

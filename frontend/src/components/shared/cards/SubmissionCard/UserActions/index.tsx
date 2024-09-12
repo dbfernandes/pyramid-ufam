@@ -174,7 +174,7 @@ export default function UserActions({
         <span>Histórico</span>
       </InfoButton>
 
-      {[1, 2, 4].includes(submission.status) && (
+      {[1, 2, 3, 4].includes(submission.status) && (
         <EditButton onClick={() =>
           toggleModalForm(
             "Editar submissão",
@@ -187,7 +187,7 @@ export default function UserActions({
         </EditButton>
       )}
 
-      {(userLogged?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
+      {(userLogged?.userTypeId == 1 && [1, 2, 3].includes(submission.status)) && (
         <>
           <DangerButtonAlt
             onClick={() =>
@@ -200,7 +200,10 @@ export default function UserActions({
             <i className="bi bi-x-lg" />
             <span>Rejeitar</span>
           </DangerButtonAlt>
-
+        </>
+        )}
+      {(userLogged?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
+        <>
           <AcceptButton
             onClick={() =>
               toggleModalForm(
@@ -213,6 +216,7 @@ export default function UserActions({
             <span>Aprovar</span>
           </AcceptButton>
         </>
+
       )}
       {(userLogged?.userTypeId == 2 && [1].includes(submission.status)) && (
         <AcceptButton
