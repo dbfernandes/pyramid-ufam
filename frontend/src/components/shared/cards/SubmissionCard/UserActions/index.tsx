@@ -139,17 +139,18 @@ export default function UserActions({
         "Authorization": `Bearer ${getToken()}`,
       },
       data: {
-        status: 5, // Status "Cancelado"
+        status: "Cancelado",
       },
     };
 
     try {
-      // Atualiza o status para "Cancelado"
       await axios.request(updateStatusOptions as AxiosRequestConfig);
       toast.success("Status atualizado para Cancelado com sucesso.");
-      onChange(); // Atualiza a interface após a mudança de status
-
+      onChange();
+      
     } catch (error) {
+      console.log(updateStatusOptions)
+      console.log(submission)
       const errorMessages = {
         0: "Oops, tivemos um erro. Tente novamente.",
       };
@@ -159,7 +160,6 @@ export default function UserActions({
       setFetching(false);
     }
   }
-
 
   return (
     <ButtonGroupBottom>

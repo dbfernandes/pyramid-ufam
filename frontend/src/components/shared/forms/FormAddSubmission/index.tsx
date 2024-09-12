@@ -150,7 +150,8 @@ export default function FormAddSubmission({
             handleValue={setDescription}
             required={true}
             displayAlert={sent}
-            maxLength={255}
+            maxLength={100}
+            showCharCount={true}
           />
           <ParagraphTitle>
             Quantas horas complementares você gostaria de solicitar?*

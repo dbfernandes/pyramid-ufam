@@ -155,6 +155,8 @@ export default function FormAddCourse({
           handleValue={setName}
           required={true}
           displayAlert={sent}
+          maxLength={100}
+          showCharCount={true}
         />
 
         <MultiField>

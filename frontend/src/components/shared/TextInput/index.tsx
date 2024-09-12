@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InputMask from "react-input-mask";
 
-import { InputWrapper, FloatingLabel, AlertLabel, Input } from "./styles";
+import { InputWrapper, FloatingLabel, AlertLabel, Input, CharCount } from "./styles";
 
 // Interface
 interface ITextInputProps {
@@ -9,6 +9,7 @@ interface ITextInputProps {
   label: string;
   value: string;
   handleValue: (e) => any;
+  maxLength?: number;
   mask?: any;
   maskChar?: string | null;
   formatChars?: any;
@@ -19,6 +20,7 @@ interface ITextInputProps {
   displayAlert?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  showCharCount?: boolean;
   children?: React.ReactNode;
   [x: string]: any;
 };
@@ -28,6 +30,7 @@ export default function TextInput({
   label,
   value,
   handleValue,
+  maxLength = -1,
   mask = null,
   maskChar = null,
   formatChars = null,
@@ -40,6 +43,7 @@ export default function TextInput({
   displayAlert = !!(alert.length != 0 || required),
   onFocus = () => { },
   onBlur = () => { },
+  showCharCount = false,
   children,
   ...props
 }: ITextInputProps) {
@@ -47,12 +51,14 @@ export default function TextInput({
   const [verified, setVerified] = useState(false);
   const [empty, setEmpty] = useState(true);
   const [valid, setValid] = useState(false);
+  const [charCount, setCharCount] = useState<number>(0);
 
   function handleAndValidate(e) {
     setVerified(true);
 
     let valueTemp = e.target.value;
     handleValue(valueTemp);
+    setCharCount(valueTemp.length);
 
     let emptyTemp = valueTemp.length == 0;
     setEmpty(emptyTemp);
@@ -68,6 +74,7 @@ export default function TextInput({
       let emptyTemp = value.length == 0;
       setEmpty(emptyTemp);
       setValid(required ? !emptyTemp && validate(value) : validate(value));
+      setCharCount(value.length);
     } else {
       setEmpty(true);
       setValid(required ? false && validate(value) : validate(value));
@@ -101,6 +108,7 @@ export default function TextInput({
                 setFocused(false);
                 onBlur();
               }}
+              maxLength={maxLength}
               {...props} />
           ) : (
             <InputMask
@@ -123,6 +131,10 @@ export default function TextInput({
         }
 
         <FloatingLabel>{label}</FloatingLabel>
+        {showCharCount && maxLength !== -1 && (
+          <CharCount>{charCount}/{maxLength}</CharCount>
+        )}
+
         <AlertLabel>
           {displayAlert
             ? required && empty

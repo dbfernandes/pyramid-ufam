@@ -119,7 +119,9 @@ export default function FormAddActivity({
           value={name}
           handleValue={setName}
           required={true}
-          displayAlert={sent}
+          displayAlert={sent} 
+          maxLength={100}
+          showCharCount={true}
         />
 
         <TextInput
@@ -128,7 +130,7 @@ export default function FormAddActivity({
           value={maxWorkload}
           handleValue={setMaxWorkload}
           required={true}
-          displayAlert={sent}
+          displayAlert={sent}       
         />
 
         <TextArea

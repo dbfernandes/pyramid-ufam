@@ -117,3 +117,43 @@ export class IsStatus implements ValidatorConstraintInterface {
 		return "Invalid status (must be either 'Pendente', 'Pré-aprovado', 'Aprovado', 'Rejeitado')";
 	}
 }
+
+@ValidatorConstraint({ name: "IsDescriptionActivityLengthValid", async: false })
+export class IsDescriptionActivityLengthValid
+	implements ValidatorConstraintInterface
+{
+	validate(description: string) {
+		return typeof description === "string" && description.length <= 255;
+	}
+
+	defaultMessage() {
+		return "A descrição deve ter no máximo 255 caracteres";
+	}
+}
+
+@ValidatorConstraint({ name: "IsNameActivityLengthValid", async: false })
+export class IsNameActivityLengthValid implements ValidatorConstraintInterface {
+	validate(description: string) {
+		return typeof description === "string" && description.length <= 100;
+	}
+
+	defaultMessage() {
+		return "O nome deve ter no máximo 100 caracteres";
+	}
+}
+
+@ValidatorConstraint({
+	name: "IsDescriptionSubmissionLengthValid",
+	async: false,
+})
+export class IsDescriptionSubmissionLengthValid
+	implements ValidatorConstraintInterface
+{
+	validate(description: string) {
+		return typeof description === "string" && description.length <= 100;
+	}
+
+	defaultMessage() {
+		return "A descrição deve ter no máximo 100 caracteres";
+	}
+}

@@ -24,4 +24,5 @@ export enum Statuses {
 	PREAPPROVED = "Pré-aprovado",
 	APPROVED = "Aprovado",
 	REJECTED = "Rejeitado",
+	CANCELED = "Cancelado",
 }

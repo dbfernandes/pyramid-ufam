@@ -1,5 +1,12 @@
 import { Transform } from "class-transformer";
-import { IsInt, IsString, IsOptional, IsNotEmpty } from "class-validator";
+import {
+	IsInt,
+	IsString,
+	IsOptional,
+	IsNotEmpty,
+	Validate,
+} from "class-validator";
+import { IsDescriptionSubmissionLengthValid } from "src/common/validators.validator";
 
 export class UpdateSubmissionDto {
 	@IsInt()
@@ -9,6 +16,7 @@ export class UpdateSubmissionDto {
 
 	@IsString()
 	@IsNotEmpty()
+	@Validate(IsDescriptionSubmissionLengthValid)
 	description: string;
 
 	@IsInt()

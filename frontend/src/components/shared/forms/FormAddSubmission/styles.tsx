@@ -15,3 +15,11 @@ export const RangeWrapper = styled.div`
     grid-template-columns: 1fr;
   }
 `;
+
+export const CharacterCount = styled.span`
+  position: absolute;
+  top: -5px;
+  right: 10px;
+  font-size: 12px;
+  color: green;
+`;

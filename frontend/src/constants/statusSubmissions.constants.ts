@@ -3,4 +3,5 @@ export enum StatusSubmissions {
 	"Pré-aprovado" = 2,
 	"Aprovado" = 3,
 	"Rejeitado" = 4,
+	"Cancelado" = 5,
 }
