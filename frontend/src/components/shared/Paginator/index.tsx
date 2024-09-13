@@ -1,4 +1,5 @@
-
+import { useLayoutEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { range } from "utils";
 import { useRouter } from "next/router";
 
@@ -20,18 +21,25 @@ interface IPaginatorProps {
 }
 
 export default function Paginator({ page, totalPages, itensPerPage, totalItens }: IPaginatorProps) {
-  const maxPages = 3; // Needs to be odd
+  const isMobile = useMediaQuery({ maxWidth: 992 });
+  const maxPagesMobile = 5;
+  const maxPagesDesktop = 5;
+  const [maxPages, setMaxPages] = useState<number>(5); // Needs to be odd
+
+  useLayoutEffect(() => {
+    setMaxPages(isMobile ? maxPagesMobile : maxPagesDesktop);
+  }, [isMobile]);
 
   function genereatePages(page, totalPages) {
     if (totalPages > maxPages) {
-      const start = [1, 2, 3]; // First 3 pages
-      const end = range(totalPages - 2, totalPages); // Last 3 pages
-
       const half = Math.floor(maxPages / 2);
 
+      const start = range(1, half + 1); // First n/2 + 1 pages
+      const end = range(totalPages - half, totalPages); // Last n/2 + 1 pages
+
       // Grouping the page
-      if (start.includes(page)) return range(1, maxPages); // Check if the page is in the first 3 pages
-      if (end.includes(page as never)) return range(totalPages - 4, totalPages); // Check if the page is in the last 3 pages
+      if (start.includes(page as never)) return range(1, maxPages); // Check if the page is in the first n/2 + 1 pages
+      if (end.includes(page as never)) return range(totalPages - (maxPages - 1), totalPages); // Check if the page is in the last n/2 + 1 pages
       return range(page - half, page + half); // Check if the page is in the middle
     }
     return Array.from({ length: totalPages }, (_, i) => i + 1);

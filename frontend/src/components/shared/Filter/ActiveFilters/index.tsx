@@ -1,8 +1,4 @@
-import { useEffect, useState } from "react";
-import { Dropdown } from "react-bootstrap";
-
-// Shared
-import { CustomFormCheck } from "../../cards/SubmissionCard/styles";
+import useActiveFilters, { IFilterOption } from "../useActiveFilters";
 
 // Custom
 import {
@@ -13,7 +9,6 @@ import {
 import { toast } from "react-toastify";
 
 // Interfaces
-import useActiveFilters, { IFilterOption } from "../useActiveFilters";
 interface IActiveFiltersProps {
   options: IFilterOption[];
   setOptions: React.Dispatch<React.SetStateAction<IFilterOption[]>>;
@@ -30,10 +25,11 @@ export function ActiveFilters({
   function handleCheck(value: string | number, checked?: boolean) {
     const checkedLength = options.filter(option => option.checked === true)?.length;
     if (checkedLength === 1) {
-      toast.info("Ao menos uma opção deve permanecer selecionada.");
       const checkedOption = options.find(option => option.checked === true);
 
-      if (checkedOption && checkedOption.value === value) return;
+      if (checkedOption && checkedOption.value === value) {
+        return toast.info("Ao menos uma opção deve permanecer selecionada.");;
+      }
     }
 
     setOptions(options.map(option => {

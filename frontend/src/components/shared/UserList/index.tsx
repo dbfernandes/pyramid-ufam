@@ -335,7 +335,7 @@ export default function UserList({
       {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
-          totalPages={totalPages}
+          totalPages={30}//totalPages}
           itensPerPage={itensPerPage}
           totalItens={totalItens}
         />}

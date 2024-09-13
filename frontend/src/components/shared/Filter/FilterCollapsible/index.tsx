@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { IFilterOption } from "../useActiveFilters";
 import { Dropdown } from "react-bootstrap";
 
 // Shared
@@ -14,7 +14,6 @@ import {
 import { toast } from "react-toastify";
 
 // Interfaces
-import useActiveFilters, { IFilterOption } from "../useActiveFilters";
 interface IFilterCollapsibleProps {
   options: IFilterOption[];
   setOptions: React.Dispatch<React.SetStateAction<IFilterOption[]>>;
@@ -26,8 +25,6 @@ export function FilterCollapsible({
   setOptions,
   fetching
 }: IFilterCollapsibleProps) {
-  const activeFilters = useActiveFilters(options);
-
   function handleDropdown(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
@@ -36,10 +33,11 @@ export function FilterCollapsible({
   function handleCheck(value: string | number, checked?: boolean) {
     const checkedLength = options.filter(option => option.checked === true)?.length;
     if (checkedLength === 1) {
-      toast.info("Ao menos uma opção deve permanecer selecionada.");
       const checkedOption = options.find(option => option.checked === true);
 
-      if (checkedOption && checkedOption.value === value) return;
+      if (checkedOption && checkedOption.value === value) {
+        return toast.info("Ao menos uma opção deve permanecer selecionada.");;
+      }
     }
 
     setOptions(options.map(option => {
