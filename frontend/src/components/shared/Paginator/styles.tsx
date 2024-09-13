@@ -6,6 +6,12 @@ export const Wrapper = styled.div`
 	justify-content: flex-end;
   align-items: center;
 	margin-top: 30px;
+
+  @media (max-width: 992px) {
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
 `;
 
 export const PaginatorWrapper = styled.div`

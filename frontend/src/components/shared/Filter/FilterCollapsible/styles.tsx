@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Dropdown } from "react-bootstrap";
-import { CustomFormCheck } from "../cards/SubmissionCard/styles";
+import { CustomFormCheck } from "../../cards/SubmissionCard/styles";
 
 export const DropdownMenu = styled(Dropdown.Menu)`
   z-index: 10;
@@ -10,7 +10,7 @@ export const DropdownMenu = styled(Dropdown.Menu)`
   border-radius: 5px;
 `;
 
-export const DropdownItem = styled(Dropdown.Item)<{ accent?: string }>`
+export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
   display: flex;
   align-items: center;
   padding: 7.5px 15px;
@@ -71,48 +71,4 @@ export const FilterButton = styled(Dropdown.Toggle)`
       margin-right: 0;
     }
   }
-`;
-
-export const FilterButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-export const ActiveFiltersContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  overflow: auto;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (max-width: 575px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-export const ActiveFilter = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--white-2);
-  padding: 5px 10px;
-  border-radius: 4px;
-  height: 45px;
-  width: 100%;
-  box-sizing: border-box;
-`;
-
-export const RemoveFilterButton = styled.button`
-  background: none;
-  border: none;
-  color: var(--hidden);
-  margin-left: 5px;
-  cursor: pointer;
-  font-size: 1rem;
 `;

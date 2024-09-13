@@ -8,12 +8,11 @@ import { useSelector } from "react-redux";
 import { useMediaQuery } from "react-responsive";
 
 // Shared
+import Filter, { FilterCollapsible, IFilterOption, ActiveFilters, SearchBar } from "components/shared/Filter";
 import { H3 } from "components/shared/Titles";
 import { ButtonGroupTop, DangerButtonAlt, InfoButton } from "components/shared/cards/SubmissionCard/styles";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
-import SearchBar from "components/shared/SearchBar";
-import FilterCollapsible, { IFilterOption } from "../FilterCollapsible";
 import Spinner from "../Spinner";
 
 // Custom
@@ -21,8 +20,7 @@ import {
   HeaderWrapper,
   AddUserLink,
   ListStyled,
-  Disclaimer,
-  Filter
+  Disclaimer
 } from "./styles";
 import User from "./User";
 
@@ -288,13 +286,20 @@ export default function UserList({
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible
+        <div className="filter-bar">
+          <FilterCollapsible
+            options={filterOptions}
+            setOptions={setFilterOptions}
+            fetching={fetchingFilter}
+          />
+          <SearchBar placeholder="Pesquisar usuários" />
+        </div>
+
+        <ActiveFilters
           options={filterOptions}
           setOptions={setFilterOptions}
           fetching={fetchingFilter}
         />
-        <SearchBar
-          placeholder="Pesquisar usuários" />
       </Filter>
 
       {isMobile && <ButtonGroupTop>{checkedIds?.length > 0 ? <MassActionsButtonGroup /> : <AddUserButton />}</ButtonGroupTop>}
@@ -324,10 +329,10 @@ export default function UserList({
           )}
           {children}
         </ListStyled>)
-        : (<Disclaimer>Nenhum {subRoutes[subRoute].singleTitle} encontrado.</Disclaimer>)
+        : (<Disclaimer>Nenhum {subRoutes[subRoute].singleTitle} encontrado. Tente alterar a busca, filtro ou página.</Disclaimer>)
       }
 
-      {users?.length > 0 &&
+      {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
           totalPages={totalPages}

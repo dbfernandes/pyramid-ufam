@@ -18,7 +18,7 @@ interface ISearchBarProps {
   placeholder?: string;
 }
 
-export default function SearchBar({
+export function SearchBar({
   placeholder = "Pesquisar...",
 }: ISearchBarProps) {
   const router = useRouter();
@@ -85,3 +85,5 @@ export default function SearchBar({
     </Wrapper>
   );
 }
+
+export default SearchBar;

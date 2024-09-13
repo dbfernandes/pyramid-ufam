@@ -4,12 +4,13 @@ import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
 import { getPlural, getToken } from "utils";
+import { toast } from "react-toastify";
 
+// Shared
+import Filter, { FilterCollapsible, IFilterOption, ActiveFilters, SearchBar } from "components/shared/Filter";
 import { H3 } from "components/shared/Titles";
 import Spinner from "components/shared/Spinner";
-import { Disclaimer, Filter } from "components/shared/UserList/styles";
-import SearchBar from "components/shared/SearchBar";
-import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
+import { Disclaimer } from "components/shared/UserList/styles";
 import Paginator from "components/shared/Paginator";
 import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
@@ -18,9 +19,10 @@ import {
   ButtonGroupTop,
 } from "components/shared/cards/SubmissionCard/styles";
 
+// Custom
 import { Wrapper, HeaderWrapper, ListStyled } from "../styles";
-import { toast } from "react-toastify";
 
+// Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 interface ISubmissionListProps {
@@ -161,8 +163,20 @@ export default function SubmissionList({
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible options={filterOptions} setOptions={setFilterOptions} fetching={fetchingFilter} />
-        <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
+        <div className="filter-bar">
+          <FilterCollapsible
+            options={filterOptions}
+            setOptions={setFilterOptions}
+            fetching={fetchingFilter}
+          />
+          <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
+        </div>
+
+        <ActiveFilters
+          options={filterOptions}
+          setOptions={setFilterOptions}
+          fetching={fetchingFilter}
+        />
       </Filter>
 
       {isMobile && (checkedIds.length > 0 && <MassActionsButtonGroup />)}
@@ -184,10 +198,10 @@ export default function SubmissionList({
           {children}
         </ListStyled>
       ) : (
-        <Disclaimer>Nenhuma submissão nessa categoria foi encontrada. Tente alterar o filtro.</Disclaimer>
+        <Disclaimer>Nenhuma submissão nessa categoria foi encontrada. Tente alterar a busca, filtro ou página.</Disclaimer>
       )}
 
-      {submissions.length > 0 &&
+      {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
           totalPages={totalPages}

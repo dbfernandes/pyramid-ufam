@@ -25,13 +25,3 @@ export const Disclaimer = styled.p`
   color: var(--muted);
   margin: 15px 0 0;
 `;
-
-export const Filter = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  grid-gap: 15px;
-  margin-top: 15px;
-  flex-wrap: wrap;
-`;

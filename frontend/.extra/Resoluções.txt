@@ -1,13 +1,11 @@
 Referência: https://getbootstrap.com/docs/5.0/layout/breakpoints/
 
-sm - Celulares: até 575px
-@media (max-width: 575px) { }
-
-md - Tablets: até 768px
-@media (max-width: 768px) { }
-
-lg - Telas menores: até 992px
-@media (max-width: 992px) { }
-
 xl - Telas maiores: até 1200px
+lg - Telas menores: até 992px
+md - Tablets: até 768px
+sm - Celulares: até 575px
+
 @media (max-width: 1200px) { }
+@media (max-width: 992px) { }
+@media (max-width: 768px) { }
+@media (max-width: 575px) { }

@@ -1,19 +1,14 @@
 import styled from "styled-components";
 
+const size = 45;
+
+
 export const Wrapper = styled.div`
-  width: 60%;
+  width: 50%;
 
-
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+  @media (max-width: 1200px) { width: 80%;}
+  @media (max-width: 992px) { width: 65%; }
+  @media (max-width: 768px) { width: 100%; }
 `;
 
 export const ExpandingSearchWrapper = styled.div`
@@ -32,8 +27,10 @@ export const SearchButton = styled.button<{ unstyledBorder: boolean }>`
   top: 0;
   left: 0;
 
-  width: 41px;
-  height: 41px;
+   // Size + 2px border
+  width: ${size + 2}px;
+  height: ${size + 2}px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +39,7 @@ export const SearchButton = styled.button<{ unstyledBorder: boolean }>`
 
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 20px;
+  border-radius: ${size / 2}px;
 
   transition: 0.3s;
 
@@ -52,15 +49,15 @@ export const SearchButton = styled.button<{ unstyledBorder: boolean }>`
 `;
 
 export const ExpandingSearch = styled.input`
-  width: 40px;
-  height: 40px;
+  width: ${size}px;
+  height: ${size}px;
   overflow: hidden;
   padding: 0;
-  padding-left: 40px;
+  padding-left: ${size}px;
 
   border: 1px solid transparent;
   outline: none;
-  border-radius: 20px;
+  border-radius: ${size / 2}px; // Needs to be the exact value as above, and not relative to element width
   background-color: var(--white-2);
   font-style: italic;
   color: var(--text-default) !important;

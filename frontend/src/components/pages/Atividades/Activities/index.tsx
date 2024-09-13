@@ -99,7 +99,7 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
             />
           ))}
         </CardGroup>)
-        : (<Disclaimer>Nenhuma atividade encontrada.</Disclaimer>)
+        : (<Disclaimer>Nenhuma atividade deste grupo de atividade (para este curso) foi encontrada.</Disclaimer>)
       }
     </DefaultWrapper>
   );

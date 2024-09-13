@@ -20,14 +20,19 @@ interface IPaginatorProps {
 }
 
 export default function Paginator({ page, totalPages, itensPerPage, totalItens }: IPaginatorProps) {
-  function genereatePages(page, totalPages) {
-    if (totalPages > 5) {
-      const start = [1, 2, 3];
-      const end = range(totalPages - 2, totalPages);
+  const maxPages = 3; // Needs to be odd
 
-      if (start.includes(page)) return range(1, 5);
-      else if (end.includes(page as never)) return range(totalPages - 4, totalPages);
-      else return range(page - 2, page + 2);
+  function genereatePages(page, totalPages) {
+    if (totalPages > maxPages) {
+      const start = [1, 2, 3]; // First 3 pages
+      const end = range(totalPages - 2, totalPages); // Last 3 pages
+
+      const half = Math.floor(maxPages / 2);
+
+      // Grouping the page
+      if (start.includes(page)) return range(1, maxPages); // Check if the page is in the first 3 pages
+      if (end.includes(page as never)) return range(totalPages - 4, totalPages); // Check if the page is in the last 3 pages
+      return range(page - half, page + half); // Check if the page is in the middle
     }
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }

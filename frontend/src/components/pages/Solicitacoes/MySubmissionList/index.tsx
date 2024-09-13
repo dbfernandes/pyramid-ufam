@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useMediaQuery } from "react-responsive";
 import { useRouter } from "next/router";
+import axios, { AxiosRequestConfig } from "axios";
+import { toast } from "react-toastify";
 import { getToken } from "utils";
 
 // Shared
+import Filter, { FilterCollapsible, IFilterOption, ActiveFilters, SearchBar } from "components/shared/Filter";
 import { H3 } from "components/shared/Titles";
+import Spinner from "components/shared/Spinner";
 import Paginator from "components/shared/Paginator";
-import { Disclaimer, Filter } from "components/shared/UserList/styles";
+import { Disclaimer } from "components/shared/UserList/styles";
 import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
   ButtonGroupTop,
@@ -24,11 +28,7 @@ import {
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import SearchBar from "components/shared/SearchBar";
-import FilterCollapsible, { IFilterOption } from "components/shared/FilterCollapsible";
-import axios, { AxiosRequestConfig } from "axios";
-import { toast } from "react-toastify";
-import Spinner from "components/shared/Spinner";
+
 interface ISubmissionListProps {
   submissions?: any[];
   loading?: boolean;
@@ -143,13 +143,20 @@ export default function MySubmissionList({
       </HeaderWrapper>
 
       <Filter>
-        <FilterCollapsible
+        <div className="filter-bar">
+          <FilterCollapsible
+            options={filterOptions}
+            setOptions={setFilterOptions}
+            fetching={fetchingFilter}
+          />
+          <SearchBar placeholder="Pesquisar submissões" />
+        </div>
+
+        <ActiveFilters
           options={filterOptions}
           setOptions={setFilterOptions}
           fetching={fetchingFilter}
         />
-        <SearchBar
-          placeholder="Pesquisar submissões" />
       </Filter>
 
       {isMobile && (checkedIds?.length > 0 && <MassActionsButtonGroup />)}
@@ -171,10 +178,10 @@ export default function MySubmissionList({
 
           {children}
         </ListStyled>
-        : <Disclaimer>Você ainda não fez nenhuma submissão.</Disclaimer>
+        : <Disclaimer>{totalItens === 0 ? "Você ainda não fez nenhuma submissão." : "Nenhuma submissão encontrada. Tente alterar a busca, filtro ou página."}</Disclaimer>
       }
 
-      {submissions?.length > 0 &&
+      {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
           totalPages={totalPages}

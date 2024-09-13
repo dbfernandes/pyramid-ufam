@@ -201,7 +201,7 @@ export default function FormLinkCourse({
             required={true}
             displayAlert={sent}
             fetching={fetchingCourses}
-            noOptionsMessage={"Nenhum curso encontrado"}
+            noOptionsMessage={"Nenhum curso disponível"}
           />
         )}
 

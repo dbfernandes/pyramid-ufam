@@ -36,12 +36,8 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
 
-  useEffect(() => {
-    setSidenavOpen(true);
-  }, []);
-
   const [displayLinkTitles, setDisplayLinkTitles] = useState<boolean>(true);
-  
+
   function toggleSidenavOpen() {
     if (sidenavOpen) {
       setSidenavOpen(false);
@@ -51,6 +47,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
       setTimeout(() => setDisplayLinkTitles(true), 120);
     }
   }
+
   const buttonGroups = [
     {
       title: null,
@@ -253,7 +250,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
                         </div>
                       </OverlayTrigger>
                     ) : null
-                  )}                                 
+                  )}
                 </LinkWrapper>
               )
           )}

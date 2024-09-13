@@ -8,8 +8,8 @@ import CardGroup from "components/shared/CardGroup";
 import { H3 } from "components/shared/Titles";
 import toggleModalForm from "components/shared/ModalForm";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
-import { Filter, HeaderWrapper } from "components/shared/UserList/styles";
-import SearchBar from "components/shared/SearchBar";
+import { HeaderWrapper } from "components/shared/UserList/styles";
+import Filter, { FilterCollapsible, ActiveFilters, SearchBar } from "components/shared/Filter";
 import { Disclaimer } from "components/shared/UserList/styles";
 import Paginator from "components/shared/Paginator";
 import { useMediaQuery } from "react-responsive";
@@ -128,10 +128,10 @@ export default function Courses({
               ))}
             </CardGroup>
           </>)
-          : (<Disclaimer>Nenhum curso encontrado.</Disclaimer>)
+          : (<Disclaimer>Nenhum curso encontrado. Tente alterar a busca, filtro ou página.</Disclaimer>)
       }
 
-      {courses?.length > 0 &&
+      {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
           totalPages={totalPages}
