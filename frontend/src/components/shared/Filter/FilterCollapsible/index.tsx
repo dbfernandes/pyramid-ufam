@@ -36,7 +36,7 @@ export function FilterCollapsible({
       const checkedOption = options.find(option => option.checked === true);
 
       if (checkedOption && checkedOption.value === value) {
-        return toast.info("Ao menos uma opção deve permanecer selecionada.");;
+        return toast.info("Ao menos uma opção deve permanecer selecionada.");
       }
     }
 
