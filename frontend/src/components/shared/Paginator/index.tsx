@@ -24,7 +24,7 @@ export default function Paginator({ page, totalPages, itensPerPage, totalItens }
   const isMobile = useMediaQuery({ maxWidth: 992 });
   const maxPagesMobile = 5;
   const maxPagesDesktop = 5;
-  const [maxPages, setMaxPages] = useState<number>(5); // Needs to be odd
+  const [maxPages, setMaxPages] = useState<number>(isMobile ? maxPagesMobile : maxPagesDesktop); // Needs to be odd
 
   useLayoutEffect(() => {
     setMaxPages(isMobile ? maxPagesMobile : maxPagesDesktop);
