@@ -1,17 +1,17 @@
-import { IFilterOption } from "../useActiveFilters";
 import { Dropdown } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 // Shared
-import { CustomFormCheck } from "../../cards/SubmissionCard/styles";
-import Spinner from "../../Spinner";
+import { CustomFormCheck } from "components/shared/Table";
+import Spinner from "components/shared/Spinner";
 
 // Custom
+import { IFilterOption } from "../useActiveFilters";
 import {
   DropdownMenu,
   DropdownItem,
   FilterButton,
 } from "./styles";
-import { toast } from "react-toastify";
 
 // Interfaces
 interface IFilterCollapsibleProps {

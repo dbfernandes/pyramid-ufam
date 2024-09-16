@@ -15,7 +15,7 @@ import {
   InfoButton,
   EditButton,
   ButtonGroupBottom
-} from "../styles";
+} from "components/shared/Table";
 
 // Custom
 import { History, HistoryItem } from "./styles";
@@ -147,7 +147,7 @@ export default function UserActions({
       await axios.request(updateStatusOptions as AxiosRequestConfig);
       toast.success("Status atualizado para Cancelado com sucesso.");
       onChange();
-      
+
     } catch (error) {
       console.log(updateStatusOptions)
       console.log(submission)
@@ -201,7 +201,7 @@ export default function UserActions({
             <span>Rejeitar</span>
           </DangerButtonAlt>
         </>
-        )}
+      )}
       {(userLogged?.userTypeId == 1 && [1, 2, 4].includes(submission.status)) && (
         <>
           <AcceptButton

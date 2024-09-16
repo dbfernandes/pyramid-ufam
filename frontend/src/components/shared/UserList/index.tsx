@@ -8,9 +8,9 @@ import { useSelector } from "react-redux";
 import { useMediaQuery } from "react-responsive";
 
 // Shared
-import Filter, { FilterCollapsible, IFilterOption, ActiveFilters, SearchBar } from "components/shared/Filter";
 import { H3 } from "components/shared/Titles";
-import { ButtonGroupTop, DangerButtonAlt, InfoButton } from "components/shared/cards/SubmissionCard/styles";
+import Filter, { FilterCollapsible, IFilterOption, ActiveFilters, SearchBar } from "components/shared/Filter";
+import { ButtonGroupTop, DangerButtonAlt, InfoButton } from "components/shared/Table";
 import Paginator from "components/shared/Paginator";
 import { DefaultWrapper } from "components/shared/Wrapper/styles";
 import Spinner from "../Spinner";
@@ -335,7 +335,7 @@ export default function UserList({
       {totalItens > 0 &&
         <Paginator
           page={parseInt(router.query.page as string)}
-          totalPages={30}//totalPages}
+          totalPages={totalPages}
           itensPerPage={itensPerPage}
           totalItens={totalItens}
         />}

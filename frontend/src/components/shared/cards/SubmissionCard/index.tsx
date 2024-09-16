@@ -1,32 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import axios from "axios";
-import { formatCpf, getFilename } from "utils";
-import { toast } from "react-toastify";
 
 // Shared
-import { H6 } from "components/shared/Titles";
-import UserActions from "./UserActions";
-
-// Custom
 import {
-  Item,
   Column,
   CustomFormCheck,
   CheckboxPreventClick,
-  SubmissionStatusStyled,
-  ColoredBar,
-  CollapseDetailsStyled,
-  Info,
-  FileInfo,
   ItemWrapper,
   ToggleButton,
+  UserProfilePicture
+} from "components/shared/Table";
+
+// Custom
+import SubmissionStatus from "./SubmissionStatus";
+import CollapseDetails from "./CollapseDetails";
+import {
+  CustomItem,
 } from "./styles";
 
 // Interfaces
 import IUserLogged from "interfaces/IUserLogged";
-
 interface ISubmissionCardProps {
   submission?: any;
   loading?: boolean;
@@ -48,6 +42,7 @@ export default function SubmissionCard({
   ...props
 }: ISubmissionCardProps) {
   const isAdmin = userLogged?.userTypeId !== 3;
+  const [collapsed, setCollapsed] = useState<boolean>(false);
 
   function handleCheck(e) {
     e.stopPropagation();
@@ -92,127 +87,6 @@ export default function SubmissionCard({
     }
   }
 
-  const [fileSize, setFileSize] = useState<string>("");
-  async function getFileSize(fileUrl) {
-    try {
-      const response = await axios.head(fileUrl);
-      const contentLength = response.headers['content-length'];
-      if (contentLength) {
-        const length = response.headers["content-length"];
-        const size = Math.round(parseInt(length) / 1024);
-
-        if (size > 1024) {
-          setFileSize(`${(size / 1024).toFixed(2)} MB`);
-          return;
-        }
-
-        setFileSize(`${size.toString()} KB`);
-      }
-    } catch (error) {
-      console.error('Error fetching file size:', error);
-    }
-  }
-
-  useEffect(() => {
-    if (submission) {
-      getFileSize(submission.fileUrl);
-    }
-  }, [submission]);
-
-  const [collapsed, setCollapsed] = useState<boolean>(false);
-  function CollapseDetails({ submission, userLogged, onChange }) {
-    function getCpf(_user) {
-      return _user?.cpf ? formatCpf(_user?.cpf) : "-"
-    }
-
-    return (
-      <CollapseDetailsStyled admin={isAdmin}>
-        <div className="grid">
-          {(isAdmin && submission.user) && (
-            <Info>
-              <H6>Aluno</H6>
-
-              <p><b>Nome:</b> {submission.user.name}</p>
-              <p><b>Email:</b> {submission.user.email}</p>
-              {submission.user?.cpf && (
-                <p><b>CPF:</b> {getCpf(submission.user)}</p>
-              )}
-              <p><b>Curso:</b> {submission.user.course}</p>
-              <p><b>Matrícula:</b> {submission.user?.enrollment}</p>
-            </Info>
-          )}
-
-          <Info>
-            <H6>Atividade</H6>
-
-            <p><b>Grupo de atividade:</b> {submission.activity.activityGroup.name}</p>
-            <p><b>Tipo de atividade:</b> {submission.activity.name}</p>
-            <p><b>Descrição:</b> {submission.description}</p>
-            <p><b>Horas solicitadas:</b> {submission.workload}h</p>
-          </Info>
-
-          <FileInfo>
-            <H6>Arquivo(s)</H6>
-
-            <a href={submission.fileUrl} target="_blank" rel="noopener noreferrer">
-              <i className="bi bi-filetype-pdf" />
-
-              <div>
-                <p>{getFilename(submission.fileUrl)}</p>
-                <p><span>{fileSize}</span></p>
-
-                <i className="bi bi-box-arrow-up-right" />
-              </div>
-            </a>
-          </FileInfo>
-        </div>
-
-        <UserActions
-          submission={submission}
-          userLogged={userLogged}
-          onChange={onChange}
-        />
-      </CollapseDetailsStyled>
-    );
-  }
-
-  function SubmissionStatus({ status }) {
-    const statusBars = {
-      1: {
-        text: "Pendente",
-        bars: ["g", "w", "w"],
-      },
-      2: {
-        text: "Pré-aprovado",
-        bars: ["g", "g", "w"],
-      },
-      3: {
-        text: "Aprovado",
-        bars: ["g", "g", "g"],
-      },
-      4: {
-        text: "Rejeitado",
-        bars: ["g", "r", "r"],
-      },
-      5: {
-        text: "Cancelado",
-        bars: ["r", "w", "w"],
-      },
-    };
-
-    return (
-      <SubmissionStatusStyled>
-        <p>{statusBars[status].text}</p>
-
-        <div>
-          {statusBars[status].bars.map((bar, index) => (
-            <ColoredBar key={index} color={bar} />
-          ))}
-        </div>
-      </SubmissionStatusStyled>
-    );
-  }
-
   const activityGroupsIcons = {
     ens: "person-video3",
     pes: "search",
@@ -220,7 +94,7 @@ export default function SubmissionCard({
   };
 
   return header ? (
-    <Item header={true} admin={isAdmin}>
+    <CustomItem header={true} admin={isAdmin}>
       <CustomFormCheck
         id="check-all"
         inline
@@ -229,40 +103,38 @@ export default function SubmissionCard({
         label={""}
         onClick={(e) => handleCheck(e)}
       />
-      {isAdmin && <Column color={"var(--muted)"}>Aluno</Column>}
+      {isAdmin && <><div /><Column color={"var(--muted)"}>Aluno</Column></>}
       <Column color={"var(--muted)"} hideOnMobile={true}>Descrição</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
       <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>
       <Column color={"var(--muted)"}>Status</Column>
-      <div></div>
-    </Item>
+      <div />
+    </CustomItem>
   ) : loading ? (
-    <Item admin={isAdmin}>
-      <div></div>
-      {isAdmin && <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>}
-      <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>
-      <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>
-      <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>
-      <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>
-      <Column className={"placeholder-glow"}>
-        <span className={"placeholder col-md-8 col-12"}></span>
-      </Column>
-      <div></div>
-    </Item>
+    <CustomItem admin={isAdmin}>
+      <div /> {/* Checkbox */}
+
+      {isAdmin && <>
+        {/* User profile picture and name */}
+        <div />
+        <Column className={"placeholder-glow"}>
+          <span className={"placeholder col-md-8 col-12"} />
+        </Column>
+      </>}
+
+      {/* Description */}
+      {Array.from(Array(5).keys()).map((i) =>
+        <Column key={i} className={"placeholder-glow"}>
+          <span className={"placeholder col-md-8 col-12"} />
+        </Column>
+      )}
+
+      <div /> {/* Options */}
+    </CustomItem>
   ) : (
     <ItemWrapper>
-      <Item
+      <CustomItem
         onClick={() => setCollapsed(!collapsed)}
         aria-expanded={collapsed}
         collapsed={collapsed}
@@ -282,7 +154,19 @@ export default function SubmissionCard({
           onClick={(e) => handleCheck(e)}
         />
 
-        {isAdmin &&
+        {isAdmin && <>
+          <UserProfilePicture
+            src={
+              submission?.user?.profileImage && submission?.user?.profileImage.length > 0
+                ? submission?.user?.profileImage
+                : `${process.env.img}/user.png`
+            }
+            alt={submission?.user?.name}
+            onError={({ currentTarget }) => {
+              currentTarget.src = `${process.env.img}/user.png`;
+            }}
+          />
+
           <Column>
             <OverlayTrigger
               placement="bottom"
@@ -290,6 +174,8 @@ export default function SubmissionCard({
               <span>{submission?.user?.name}</span>
             </OverlayTrigger>
           </Column>
+        </>
+
         }
 
         <Column hideOnMobile={isAdmin}>
@@ -324,7 +210,7 @@ export default function SubmissionCard({
         <ToggleButton expanded={collapsed}>
           <i className={`bi bi-chevron-${collapsed ? "up" : "down"}`}></i>
         </ToggleButton>
-      </Item>
+      </CustomItem>
       <Collapse in={collapsed}>
         <div>
           <CollapseDetails submission={submission} userLogged={userLogged} onChange={onChange} />
