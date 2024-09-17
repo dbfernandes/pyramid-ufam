@@ -303,9 +303,12 @@ export class SubmissionService {
 			activityGroup,
 			activity,
 			status,
+			sort,
+			order,
 		} = query;
+
 		const skip = (page - 1) * limit;
-		let where: any =
+		const where: any =
 			search && search.trim() !== ""
 				? {
 						isActive: true,
@@ -314,47 +317,85 @@ export class SubmissionService {
 				: { isActive: true, User: { is: { isActive: true } } };
 
 		if (userId && !isNaN(parseInt(userId))) {
-			where = {
-				...where,
-				userId: parseInt(userId),
-			};
+			where["userId"] = parseInt(userId);
 		}
 		if (courseId && !isNaN(parseInt(courseId))) {
-			where = {
-				...where,
-				Activity: {
-					CourseActivityGroup: {
-						Course: {
-							id: parseInt(courseId),
-						},
+			where["Activity"] = {
+				CourseActivityGroup: {
+					Course: {
+						id: parseInt(courseId),
 					},
 				},
 			};
 		}
 		if (activityGroup && activityGroup.length > 0) {
-			where = {
-				...where,
-				Activity: {
-					CourseActivityGroup: {
-						activityGroupId: ActivityGroupIds[activityGroup],
-					},
+			const previousCondition = where["Activity"]["CourseActivityGroup"] || {};
+			where["Activity"] = {
+				CourseActivityGroup: {
+					...previousCondition,
+					activityGroupId: ActivityGroupIds[activityGroup],
 				},
 			};
 		}
 		if (activity && !isNaN(parseInt(activity))) {
-			where = {
-				...where,
-				activityId: parseInt(activity),
-			};
+			where["activityId"] = parseInt(activity);
 		}
 		if (status && status.length > 0) {
 			const statusArray = status.split("-").map(Number);
-			where = {
-				...where,
-				status: {
-					in: statusArray,
-				},
+			where["status"] = {
+				in: statusArray,
 			};
+		}
+
+		let orderBy = [];
+		if (sort && sort.length > 0 && order && order.length > 0) {
+			// Nested fields
+			const specialCases = ["name", "activity-name", "activity-group"];
+
+			// Split the sort and order strings into arrays
+			const sortFields = sort?.split(",") || [];
+			const sortOrders = order?.split(",") || [];
+
+			// Build the orderBy array for Prisma
+			sortFields.forEach((field, index) => {
+				const _order = sortOrders[index];
+				if (["asc", "desc"].includes(_order)) {
+					if (!specialCases.includes(field)) {
+						orderBy.push({
+							[field]: _order,
+						});
+					}
+
+					// Special cases
+					if (field === "name") {
+						orderBy.push({
+							User: {
+								name: _order,
+							},
+						});
+					}
+
+					if (field === "activity-name") {
+						orderBy.push({
+							Activity: {
+								name: _order,
+							},
+						});
+					}
+
+					if (field === "activity-group") {
+						orderBy.push({
+							Activity: {
+								CourseActivityGroup: {
+									ActivityGroup: {
+										name: _order,
+									},
+								},
+							},
+						});
+					}
+				}
+			});
 		}
 
 		const [submissions, totalSubmissions] = await this.prisma.$transaction([
@@ -387,6 +428,7 @@ export class SubmissionService {
 						},
 					},
 				},
+				orderBy,
 			}),
 			this.prisma.submission.count({
 				where,
@@ -439,6 +481,7 @@ export class SubmissionService {
 			totalItens: totalSubmissions,
 			totalPages: Math.ceil(totalSubmissions / limit),
 			currentPage: parseInt(page),
+			orderBy: orderBy,
 		};
 	}
 

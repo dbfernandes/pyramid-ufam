@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
@@ -45,9 +45,18 @@ export function Column({
 
   type ISortTypes = "asc" | "desc" | "none";
   const [sorting, setSorting] = useState<ISortTypes>("none");
+  const [ordinal, setOrdinal] = useState<number>(0); // Feedback to show in what position the column is being sorted
+
+  /*
+    Example: if the user is sorting by 3 columns, the first one will be the main one,
+    the second one will be the secondary one, and the third one will be the tertiary one.
+
+    The order is determined by the order the user clicked on the columns.
+  */
 
   function mapSorting() {
     const { sort, order } = router.query;
+    let foundInQuery = false;
 
     if (sort && order) {
       const sortArray = sort?.toString().split(",");
@@ -56,30 +65,33 @@ export function Column({
       const minLength = Math.min(sortArray.length, orderArray.length);
 
       const map = {};
-      let foundInQuery = false;
-
       for (let i = 0; i < minLength; i++) {
-        map[sortArray[i]] = orderArray[i];
+        if (orderArray[i] !== "none") {
+          map[sortArray[i]] = orderArray[i];
 
-        if (sortBy === sortArray[i] && ["asc", "desc"].includes(orderArray[i])) {
-          setSorting(orderArray[i] as "asc" | "desc");
-          foundInQuery = true;
+          if (sortBy === sortArray[i]) {
+            if (["asc", "desc"].includes(orderArray[i])) {
+              setSorting(orderArray[i] as ISortTypes);
+            }
+
+            foundInQuery = true;
+            setOrdinal(i + 1);
+          }
         }
-      }
-
-      if (!foundInQuery) {
-        setSorting("none");
       }
 
       return map;
     }
 
+    if (!foundInQuery) {
+      setSorting("none");
+      setOrdinal(0);
+    }
+
     return {};
   }
 
-  useEffect(() => {
-    mapSorting();
-  }, [router]);
+  const sortingMap = useMemo(() => mapSorting(), [router]);
 
   function sort() {
     function toggleSorting() {
@@ -98,10 +110,12 @@ export function Column({
 
     if (sortBy) {
       const newOrder = toggleSorting();
-      const map = mapSorting();
+      const map = JSON.parse(JSON.stringify(sortingMap)); // Shallow copy
 
-      if (newOrder === "none" && sortBy in map) {
+      if (newOrder === "none") {
         delete map[sortBy];
+        setSorting("none");
+        setOrdinal(0);
       } else {
         map[sortBy] = newOrder;
       }
@@ -109,13 +123,15 @@ export function Column({
       const sortArray = Object.keys(map);
       const orderArray = Object.values(map);
 
-      router.push({
-        query: {
-          ...router.query,
-          sort: sortArray.join(","),
-          order: orderArray.join(","),
-        },
-      });
+      const query = {
+        ...router.query,
+        sort: sortArray.join(","),
+        order: orderArray.join(","),
+      };
+
+      console.log(query);
+
+      router.push({ query });
     }
   }
 
@@ -126,10 +142,13 @@ export function Column({
 
       {/* Sortable header */}
       {header && sortBy && (
-        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]?.label}`}</Tooltip>}>
+        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar ${ordinal > 0 ? `(${ordinal}°)` : ""} por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]?.label}`}</Tooltip>}>
           <Sortable className="btn btn-link" onClick={() => sort()}>
+            <i className={`bi bi-chevron-${sortingLabels[sorting]?.icon}`}>
+              {ordinal > 0 && <span>{ordinal}</span>}
+            </i>
+
             <span>{children}</span>
-            <i className={`bi bi-chevron-${sortingLabels[sorting]?.icon}`} />
           </Sortable>
         </OverlayTrigger>
       )}

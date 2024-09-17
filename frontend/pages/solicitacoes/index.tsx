@@ -73,14 +73,14 @@ export default function Solicitacoes() {
       search: searchReload,
       status: statusReload,
       sort: sortReload,
-      order: ordeReloadr
+      order: orderReload
     } = router.query;
 
     const _page = parseInt(pageReload as string);
     const _search = searchReload as string;
     const _status = statusReload as string;
     const _sort = sortReload as string;
-    const _order = ordeReloadr as string;
+    const _order = orderReload as string;
 
     if (_page !== undefined && _status !== undefined && _search !== undefined) {
       setPage(_page);
@@ -102,7 +102,7 @@ export default function Solicitacoes() {
     setFetchingSubmissions(true);
 
     const options = {
-      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=${itensPerPage}&search=${_search}&status=${_status}${sort ? `&sort=${_sort}` : ""}${order ? `&order=${_order}` : ""}`,
+      url: `${process.env.api}/courses/${user.selectedCourse?.id}/submissions?page=${_page}&limit=${itensPerPage}&search=${_search}&status=${_status}${_sort ? `&sort=${_sort}` : ""}${_order ? `&order=${_order}` : ""}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",

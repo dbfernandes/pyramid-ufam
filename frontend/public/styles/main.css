@@ -31,6 +31,8 @@
 	--toastify-color-success: var(--primary-color);
 	--toastify-color-warning: var(--warning-hover);
 	--toastify-color-error: var(--danger);
+
+	--font-family: "Inter";
 }
 
 /*---------------------- GENERAL ----------------------*/
@@ -53,7 +55,7 @@ html {
 body {
 	background-color: var(--background);
 	color: var(--text-default);
-	font-family: "Inter";
+	font-family: var(--font-family);
 	font-weight: 500;
 	padding: 0;
 	margin: 0;

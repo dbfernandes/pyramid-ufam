@@ -388,7 +388,8 @@ export class UserService {
 	}
 
 	async findAll(query: any): Promise<any> {
-		const { page, limit, search, type, courseId, active } = query;
+		const { page, limit, search, type, courseId, active, sort, order } = query;
+
 		const skip = (page - 1) * limit;
 		const where =
 			search && search.trim() !== ""
@@ -415,6 +416,54 @@ export class UserService {
 
 		if (active !== undefined && active !== null) {
 			where["isActive"] = active == "true";
+		}
+
+		let orderBy = [];
+		if (sort && sort.length > 0 && order && order.length > 0) {
+			const specialCases = [
+				"enrollment",
+				"education",
+				"research",
+				"extension",
+				"total",
+			];
+
+			// Split the sort and order strings into arrays
+			const sortFields = sort?.split(",") || [];
+			const sortOrders = order?.split(",") || [];
+
+			// Build the orderBy array for Prisma
+			sortFields.forEach((field, index) => {
+				const _order = sortOrders[index];
+				if (["asc", "desc"].includes(_order)) {
+					if (!specialCases.includes(field)) {
+						orderBy.push({
+							[field]: _order,
+						});
+					}
+
+					// [TODO] Special cases
+					if (field === "enrollment") {
+						orderBy.push({});
+					}
+
+					if (field === "education") {
+						orderBy.push({});
+					}
+
+					if (field === "research") {
+						orderBy.push({});
+					}
+
+					if (field === "extension") {
+						orderBy.push({});
+					}
+
+					if (field === "total") {
+						orderBy.push({});
+					}
+				}
+			});
 		}
 
 		const [users, totalUsers] = await this.prisma.$transaction([
@@ -448,6 +497,7 @@ export class UserService {
 						},
 					},
 				},
+				orderBy,
 			}),
 			this.prisma.user.count({
 				where,

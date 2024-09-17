@@ -48,11 +48,21 @@ export const Sortable = styled.button`
   font-weight: inherit;
 
   i {
-    margin-left: 5px;
+    position: relative;
+    margin-right: 5px;
 
     &:not(.bi-chevron-expand) {
       color: var(--primary-color);
       font-weight: bold;
+    }
+    
+    span {
+      font-style: normal;
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      
+      font-size: 0.625rem;
     }
   }
 

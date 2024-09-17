@@ -178,11 +178,11 @@ export default function User({
           <Column header={true} sortBy={"name"}>Nome</Column>
           {subRoute == "alunos"
             ? <>
-              <Column header={true} hideOnMobile={true} sortBy={"enrollment"}>Matrícula</Column>
-              <Column header={true} hideOnMobile={true} sortBy={"education"} isNumeric={true}>Horas (Ensino)</Column>
-              <Column header={true} hideOnMobile={true} sortBy={"research"} isNumeric={true}>Horas (Pesquisa)</Column>
-              <Column header={true} hideOnMobile={true} sortBy={"extension"} isNumeric={true}>Horas (Extensão)</Column>
-              <Column header={true} sortBy={"total"} isNumeric={true}>Total</Column>
+              <Column header={true} hideOnMobile={true}/* sortBy={"enrollment"}*/>Matrícula</Column>
+              <Column header={true} hideOnMobile={true}/* sortBy={"education"} isNumeric={true}*/>Horas (Ensino)</Column>
+              <Column header={true} hideOnMobile={true}/* sortBy={"research"} isNumeric={true}*/>Horas (Pesquisa)</Column>
+              <Column header={true} hideOnMobile={true}/* sortBy={"extension"} isNumeric={true}*/>Horas (Extensão)</Column>
+              <Column header={true}/* sortBy={"total"} isNumeric={true}*/>Total</Column>
               <Column header={true} hideOnMobile={true}>Status</Column>
             </>
             : <>

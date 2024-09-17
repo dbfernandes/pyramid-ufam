@@ -110,8 +110,8 @@ export default function SubmissionCard({
         </>
       }
       <Column header={true} hideOnMobile={true} sortBy={"description"}>Descrição</Column>
-      <Column header={true} hideOnMobile={true} sortBy={"activity-group"}>Grupo de atividade</Column>
-      <Column header={true} hideOnMobile={true} sortBy={"activity-name"}>Tipo de atividade</Column>
+      <Column header={true} hideOnMobile={true} sortBy={"activity-group"}>Grupo</Column>
+      <Column header={true} hideOnMobile={true} sortBy={"activity-name"}>Atividade</Column>
       <Column header={true} hideOnMobile={true} sortBy={"workload"} isNumeric={true}>Horas solicitadas</Column>
       <Column header={true}>Status</Column>
       <div />
