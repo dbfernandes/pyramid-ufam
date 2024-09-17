@@ -56,13 +56,19 @@ export function Column({
       const minLength = Math.min(sortArray.length, orderArray.length);
 
       const map = {};
+      let foundInQuery = false;
 
       for (let i = 0; i < minLength; i++) {
         map[sortArray[i]] = orderArray[i];
 
-        if (sortBy === sortArray[i] && orderArray[i] in ["asc", "desc"]) {
+        if (sortBy === sortArray[i] && ["asc", "desc"].includes(orderArray[i])) {
           setSorting(orderArray[i] as "asc" | "desc");
+          foundInQuery = true;
         }
+      }
+
+      if (!foundInQuery) {
+        setSorting("none");
       }
 
       return map;

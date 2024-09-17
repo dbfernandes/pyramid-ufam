@@ -193,14 +193,16 @@ export default function User({
         </CustomItem>
       ) : loading
         ? (
-          <CustomItem student={subRoute === "alunos"}>
-            <div />
-            {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) =>
-              <Column key={i} loading={true} />
-            )}
-            <div />
-            <div />
-          </CustomItem >
+          <ItemWrapper>
+            <CustomItem student={subRoute === "alunos"}>
+              <div />
+              {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) =>
+                <Column key={i} loading={true} />
+              )}
+              <div />
+              <div />
+            </CustomItem>
+          </ItemWrapper>
         ) : (
           <ItemWrapper>
             <CustomItem

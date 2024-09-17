@@ -45,33 +45,60 @@ export default function Coordenadores() {
   const [fetchingUsers, setFetchingUsers] = useState<boolean>(true);
 
   // Fetching users
-  const [page, setPage] = useState<number>(router.query.page ? parseInt(router.query.page as string) : 1);
-  const [search, setSearch] = useState<string>(router.query.search ? router.query.search as string : "");
-  const [status, setStatus] = useState<string>(router.query.status ? router.query.status as string : "1");
+  const {
+    page: pageInitial,
+    search: searchInitial,
+    status: statusInitial,
+    sort: sortInitial,
+    order: orderInitial
+  } = router.query;
+
+  const [page, setPage] = useState<number>(pageInitial ? parseInt(pageInitial as string) : 1);
+  const [search, setSearch] = useState<string>(searchInitial ? searchInitial as string : "");
+  const [status, setStatus] = useState<string>(statusInitial ? statusInitial as string : "1");
+  const [sort, setSort] = useState<string>(sortInitial ? sortInitial as string : "");
+  const [order, setOrder] = useState<string>(orderInitial ? orderInitial as string : "");
 
   const [totalPages, setTotalPages] = useState<number>(0);
   const itensPerPage = 15;
   const [totalItens, setTotalItens] = useState<number>(0);
 
   useEffect(() => {
-    const _page = parseInt(router.query.page as string);
-    const _search = router.query.search as string;
-    const _status = router.query.status as string;
+    const {
+      page: pageReload,
+      search: searchReload,
+      status: statusReload,
+      sort: sortReload,
+      order: ordeReloadr
+    } = router.query;
+
+    const _page = parseInt(pageReload as string);
+    const _search = searchReload as string;
+    const _status = statusReload as string;
+    const _sort = sortReload as string;
+    const _order = ordeReloadr as string;
 
     if (_page !== undefined && _status !== undefined && _search !== undefined) {
       setPage(_page);
       setSearch(_search);
       setStatus(_status);
 
-      fetchUsers(_page, _search, _status);
+      if (_sort !== undefined) {
+        setSort(_sort);
+      }
+      if (_order !== undefined) {
+        setOrder(_order);
+      }
+
+      fetchUsers(_page, _search, _status, _sort, _order);
     }
   }, [router]);
 
-  async function fetchUsers(_page, _search, _status) {
+  async function fetchUsers(_page, _search, _status, _sort, _order) {
     setFetchingUsers(true);
 
     const options = {
-      url: `${process.env.api}/users?type=coordenador&page=${_page}&limit=15&search=${_search}${parseUserActiveParam(_status)}`,
+      url: `${process.env.api}/users?type=coordenador&page=${_page}&limit=${itensPerPage}&search=${_search}${parseUserActiveParam(_status)}${sort ? `&sort=${_sort}` : ""}${order ? `&order=${_order}` : ""}`,
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +144,7 @@ export default function Coordenadores() {
             itensPerPage={itensPerPage}
             totalItens={totalItens}
 
-            onChange={() => fetchUsers(page, search, status)}
+            onChange={() => fetchUsers(page, search, status, sort, order)}
           />
         </Wrapper>
       ) : (

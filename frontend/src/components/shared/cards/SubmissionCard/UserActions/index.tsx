@@ -149,8 +149,6 @@ export default function UserActions({
       onChange();
 
     } catch (error) {
-      console.log(updateStatusOptions)
-      console.log(submission)
       const errorMessages = {
         0: "Oops, tivemos um erro. Tente novamente.",
       };

@@ -117,22 +117,24 @@ export default function SubmissionCard({
       <div />
     </CustomItem>
   ) : loading ? (
-    <CustomItem admin={isAdmin}>
-      <div /> {/* Checkbox */}
+    <ItemWrapper>
+      <CustomItem admin={isAdmin}>
+        <div /> {/* Checkbox */}
 
-      {isAdmin && <>
-        {/* User profile picture and name */}
-        <div />
-        <Column loading={true} />
-      </>}
+        {isAdmin && <>
+          {/* User profile picture and name */}
+          <div />
+          <Column loading={true} />
+        </>}
 
-      {/* Description */}
-      {Array.from(Array(5).keys()).map((i) =>
-        <Column loading={true} />
-      )}
+        {/* Description */}
+        {Array.from(Array(5).keys()).map((i) =>
+          <Column loading={true} />
+        )}
 
-      <div /> {/* Options */}
-    </CustomItem>
+        <div /> {/* Options */}
+      </CustomItem>
+    </ItemWrapper>
   ) : (
     <ItemWrapper>
       <CustomItem

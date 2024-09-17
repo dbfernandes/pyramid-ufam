@@ -25,6 +25,8 @@ export const ColumnStyled = styled.div<{ hideOnMobile?: boolean, color?: string 
 	}
 
   & > .placeholder {
+    height: 24px;
+    margin: 10px 0;
     color: var(--white-5);
   }
 
