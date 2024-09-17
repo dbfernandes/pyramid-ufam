@@ -16,7 +16,7 @@ import SubmissionCard from "components/shared/cards/SubmissionCard";
 import {
   ButtonGroupTop,
   DangerButtonAlt
-} from "components/shared/cards/SubmissionCard/styles";
+} from "components/shared/Table";
 
 // Custom
 import {
@@ -155,7 +155,6 @@ export default function MySubmissionList({
         <ActiveFilters
           options={filterOptions}
           setOptions={setFilterOptions}
-          fetching={fetchingFilter}
         />
       </Filter>
 

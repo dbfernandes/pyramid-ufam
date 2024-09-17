@@ -15,18 +15,12 @@ import UserList from "components/shared/UserList";
 // Interfaces
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
-import { useMediaQuery } from "react-responsive";
 
-interface IAlunoProps {
-  onChange?: Function;
-}
-
-export default function Alunos({ onChange = () => { } }: IAlunoProps) {
+export default function Alunos() {
   const router = useRouter();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
   const [loaded, setLoaded] = useState(false);
   const { setLinks } = useBreadcrumb();
-  const isMobile = useMediaQuery({ maxWidth: 992 });
 
   // Setting links used in breadcrumb
   useEffect(() => {
@@ -36,7 +30,7 @@ export default function Alunos({ onChange = () => { } }: IAlunoProps) {
     }
 
     setLinks([
-      { title: "Usuário" },
+      { title: "Usuários" },
       { title: "Alunos" },
     ]);
   }, []);

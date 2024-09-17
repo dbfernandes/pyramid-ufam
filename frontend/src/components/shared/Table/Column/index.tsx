@@ -1,9 +1,9 @@
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ColumnStyled } from "./styles";
-import { useState } from "react";
 
 // Custom
-import { Sortable } from "./styles";
+import { ColumnStyled, Sortable } from "./styles";
 
 // Interfaces
 interface IColumnProps {
@@ -26,26 +26,90 @@ export function Column({
   children,
   ...props
 }: IColumnProps) {
-  const sortingIcons = {
-    asc: "up",
-    desc: "down",
-    none: "expand",
-  }
-  const sortingLabels = {
-    asc: isNumeric ? "1 a 9" : "A a Z",
-    desc: isNumeric ? "9 a 1" : "Z a A",
-    none: "-",
-  }
-  const [sorting, setSorting] = useState<"asc" | "desc" | "none">("none");
-  //const [sortKey, setSortKey] = useState<string | null>(null);
+  const router = useRouter();
 
-  function toggleSorting() {
-    if (sorting === "asc") {
-      setSorting("desc");
-    } else if (sorting === "desc") {
-      setSorting("none");
-    } else {
-      setSorting("asc");
+  const sortingLabels = {
+    asc: {
+      icon: "up",
+      label: isNumeric ? "1 a 9" : "A a Z",
+    },
+    desc: {
+      icon: "down",
+      label: isNumeric ? "9 a 1" : "Z a A",
+    },
+    none: {
+      icon: "expand",
+      label: "-",
+    },
+  }
+
+  type ISortTypes = "asc" | "desc" | "none";
+  const [sorting, setSorting] = useState<ISortTypes>("none");
+
+  function mapSorting() {
+    const { sort, order } = router.query;
+
+    if (sort && order) {
+      const sortArray = sort?.toString().split(",");
+      const orderArray = order?.toString().split(",");
+
+      const minLength = Math.min(sortArray.length, orderArray.length);
+
+      const map = {};
+
+      for (let i = 0; i < minLength; i++) {
+        map[sortArray[i]] = orderArray[i];
+
+        if (sortBy === sortArray[i] && orderArray[i] in ["asc", "desc"]) {
+          setSorting(orderArray[i] as "asc" | "desc");
+        }
+      }
+
+      return map;
+    }
+
+    return {};
+  }
+
+  useEffect(() => {
+    mapSorting();
+  }, [router]);
+
+  function sort() {
+    function toggleSorting() {
+      let next: ISortTypes;
+      if (sorting === "asc") {
+        next = "desc";
+      } else if (sorting === "desc") {
+        next = "none";
+      } else {
+        next = "asc";
+      }
+
+      setSorting(next);
+      return next;
+    }
+
+    if (sortBy) {
+      const newOrder = toggleSorting();
+      const map = mapSorting();
+
+      if (newOrder === "none" && sortBy in map) {
+        delete map[sortBy];
+      } else {
+        map[sortBy] = newOrder;
+      }
+
+      const sortArray = Object.keys(map);
+      const orderArray = Object.values(map);
+
+      router.push({
+        query: {
+          ...router.query,
+          sort: sortArray.join(","),
+          order: orderArray.join(","),
+        },
+      });
     }
   }
 
@@ -56,10 +120,10 @@ export function Column({
 
       {/* Sortable header */}
       {header && sortBy && (
-        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]}`}</Tooltip>}>
-          <Sortable className="btn btn-link" onClick={toggleSorting}>
+        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]?.label}`}</Tooltip>}>
+          <Sortable className="btn btn-link" onClick={() => sort()}>
             <span>{children}</span>
-            <i className={`bi bi-chevron-${sortingIcons[sorting]}`} />
+            <i className={`bi bi-chevron-${sortingLabels[sorting]?.icon}`} />
           </Sortable>
         </OverlayTrigger>
       )}

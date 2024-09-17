@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { Dropdown } from "react-bootstrap";
 import { CustomFormCheck } from "components/shared/Table";
 
+const size = 40;
+
 export const DropdownMenu = styled(Dropdown.Menu)`
   z-index: 10;
   padding: 10px 0;
@@ -36,7 +38,7 @@ export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
 `;
 
 export const FilterButton = styled(Dropdown.Toggle)`
-  height: 45px;
+  height: ${size}px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -12,13 +12,11 @@ import { toast } from "react-toastify";
 interface IActiveFiltersProps {
   options: IFilterOption[];
   setOptions: React.Dispatch<React.SetStateAction<IFilterOption[]>>;
-  fetching: boolean;
 }
 
 export function ActiveFilters({
   options,
-  setOptions,
-  fetching
+  setOptions
 }: IActiveFiltersProps) {
   const activeFilters = useActiveFilters(options);
 

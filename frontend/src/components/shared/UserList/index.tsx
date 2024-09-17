@@ -298,7 +298,6 @@ export default function UserList({
         <ActiveFilters
           options={filterOptions}
           setOptions={setFilterOptions}
-          fetching={fetchingFilter}
         />
       </Filter>
 
