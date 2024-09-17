@@ -324,7 +324,7 @@ export default function User({
 
             <Collapse in={collapsed}>
               <div>
-                <CollapseDetails user={user} />
+                <CollapseDetails user={user} courseId={courseId} />
               </div>
             </Collapse>
           </ItemWrapper>

@@ -17,6 +17,7 @@ interface ICollapseDetailsProps {
 
 export default function CollapseDetails({ user, courseId }: ICollapseDetailsProps) {
   const more = getMoreInfo(user, courseId);
+
   function getCpf(user) {
     return user?.cpf ? formatCpf(user?.cpf) : "-"
   }
