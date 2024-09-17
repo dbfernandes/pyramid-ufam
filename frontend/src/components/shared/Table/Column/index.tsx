@@ -1,34 +1,80 @@
-import styled from 'styled-components';
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { ColumnStyled } from "./styles";
+import { useState } from "react";
 
-export const Column = styled.div<{ hideOnMobile?: boolean, color?: string }>`
-  color: ${({ color }) => color ? color : "var(--text-default)"};
-  padding: 0;
-  
-  white-space: nowrap; 
-  overflow: hidden;
-  text-overflow: ellipsis;
+// Custom
+import { Sortable } from "./styles";
 
-  .text-with-ribbon {
-    display: flex;
-    
-    span {
-      white-space: nowrap; 
-      overflow: hidden;
-      text-overflow: ellipsis;
+// Interfaces
+interface IColumnProps {
+  sortBy?: string;
+  isNumeric?: boolean;
+  tooltip?: string | React.ReactNode;
+  loading?: boolean;
+  hideOnMobile?: boolean;
+  header?: boolean;
+  children?: React.ReactNode;
+}
+
+export function Column({
+  sortBy,
+  isNumeric = false,
+  tooltip,
+  loading = false,
+  hideOnMobile = false,
+  header = false,
+  children,
+  ...props
+}: IColumnProps) {
+  const sortingIcons = {
+    asc: "up",
+    desc: "down",
+    none: "expand",
+  }
+  const sortingLabels = {
+    asc: isNumeric ? "1 a 9" : "A a Z",
+    desc: isNumeric ? "9 a 1" : "Z a A",
+    none: "-",
+  }
+  const [sorting, setSorting] = useState<"asc" | "desc" | "none">("none");
+  //const [sortKey, setSortKey] = useState<string | null>(null);
+
+  function toggleSorting() {
+    if (sorting === "asc") {
+      setSorting("desc");
+    } else if (sorting === "desc") {
+      setSorting("none");
+    } else {
+      setSorting("asc");
     }
   }
 
-  i {
-		vertical-align: top;
-		font-size: 0.875rem;
-		margin-right: 10px;
-	}
+  return (
+    <ColumnStyled color={header ? "var(--muted)" : null} hideOnMobile={hideOnMobile} className={loading ? "placeholder-glow" : ""}>
+      {/* Loading */}
+      {loading && <span className="placeholder col-md-8 col-12" />}
 
-  & > .placeholder {
-    color: var(--white-5);
-  }
+      {/* Sortable header */}
+      {header && sortBy && (
+        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]}`}</Tooltip>}>
+          <Sortable className="btn btn-link" onClick={toggleSorting}>
+            <span>{children}</span>
+            <i className={`bi bi-chevron-${sortingIcons[sorting]}`} />
+          </Sortable>
+        </OverlayTrigger>
+      )}
 
-  @media (max-width: 768px) {
-    ${({ hideOnMobile }) => hideOnMobile && "display: none;"}
-  }
-`;
+      {/* Tooltip */}
+      {tooltip && (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>{tooltip}</Tooltip>}>
+          <span>{children}</span>
+        </OverlayTrigger>
+      )}
+
+      {/* Default */}
+      {!tooltip && !sortBy && <span>{children}</span>}
+    </ColumnStyled>
+  );
+}
+
+export default Column;

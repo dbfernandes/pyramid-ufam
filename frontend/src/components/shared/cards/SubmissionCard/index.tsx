@@ -103,12 +103,17 @@ export default function SubmissionCard({
         label={""}
         onClick={(e) => handleCheck(e)}
       />
-      {isAdmin && <><div /><Column color={"var(--muted)"}>Aluno</Column></>}
-      <Column color={"var(--muted)"} hideOnMobile={true}>Descrição</Column>
-      <Column color={"var(--muted)"} hideOnMobile={true}>Grupo de atividade</Column>
-      <Column color={"var(--muted)"} hideOnMobile={true}>Tipo de atividade</Column>
-      <Column color={"var(--muted)"} hideOnMobile={true}>Horas solicitadas</Column>
-      <Column color={"var(--muted)"}>Status</Column>
+      {isAdmin &&
+        <>
+          <div />
+          <Column header={true} sortBy={"name"}>Aluno</Column>
+        </>
+      }
+      <Column header={true} hideOnMobile={true} sortBy={"description"}>Descrição</Column>
+      <Column header={true} hideOnMobile={true} sortBy={"activity-group"}>Grupo de atividade</Column>
+      <Column header={true} hideOnMobile={true} sortBy={"activity-name"}>Tipo de atividade</Column>
+      <Column header={true} hideOnMobile={true} sortBy={"workload"} isNumeric={true}>Horas solicitadas</Column>
+      <Column header={true}>Status</Column>
       <div />
     </CustomItem>
   ) : loading ? (
@@ -118,16 +123,12 @@ export default function SubmissionCard({
       {isAdmin && <>
         {/* User profile picture and name */}
         <div />
-        <Column className={"placeholder-glow"}>
-          <span className={"placeholder col-md-8 col-12"} />
-        </Column>
+        <Column loading={true} />
       </>}
 
       {/* Description */}
       {Array.from(Array(5).keys()).map((i) =>
-        <Column key={i} className={"placeholder-glow"}>
-          <span className={"placeholder col-md-8 col-12"} />
-        </Column>
+        <Column loading={true} />
       )}
 
       <div /> {/* Options */}
@@ -167,23 +168,15 @@ export default function SubmissionCard({
             }}
           />
 
-          <Column>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={<Tooltip>{submission?.user?.name}</Tooltip>}>
-              <span>{submission?.user?.name}</span>
-            </OverlayTrigger>
+          <Column tooltip={submission?.user?.name}>
+            {submission?.user?.name}
           </Column>
         </>
 
         }
 
-        <Column hideOnMobile={isAdmin}>
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip>{submission?.description}</Tooltip>}>
-            <span>{submission?.description}</span>
-          </OverlayTrigger>
+        <Column hideOnMobile={isAdmin} tooltip={submission?.description}>
+          {submission?.description}
         </Column>
 
         <Column hideOnMobile={true}>
@@ -193,15 +186,13 @@ export default function SubmissionCard({
           {submission?.activity.activityGroup.name}
         </Column>
 
-        <Column hideOnMobile={true}>
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip>{submission?.activity.name}</Tooltip>}>
-            <span>{submission?.activity.name}</span>
-          </OverlayTrigger>
+        <Column hideOnMobile={true} tooltip={submission?.activity.name}>
+          {submission?.activity.name}
         </Column>
 
-        <Column hideOnMobile={true}>{submission?.workload}h</Column>
+        <Column hideOnMobile={true}>
+          {submission?.workload}h
+        </Column>
 
         <Column>
           <SubmissionStatus status={submission?.status} />

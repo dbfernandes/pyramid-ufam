@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Dropdown } from "react-bootstrap";
-import { CustomFormCheck } from "../../cards/SubmissionCard/styles";
+import { CustomFormCheck } from "components/shared/Table";
 
 export const DropdownMenu = styled(Dropdown.Menu)`
   z-index: 10;

@@ -175,19 +175,19 @@ export default function User({
             onClick={(e) => handleCheck(e)}
           />
           <div />
-          <Column color={"var(--muted)"}>Nome</Column>
+          <Column header={true} sortBy={"name"}>Nome</Column>
           {subRoute == "alunos"
             ? <>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Matrícula</Column>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Ensino)</Column>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Pesquisa)</Column>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Horas (Extensão)</Column>
-              <Column color={"var(--muted)"}>Total</Column>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Status</Column>
+              <Column header={true} hideOnMobile={true} sortBy={"enrollment"}>Matrícula</Column>
+              <Column header={true} hideOnMobile={true} sortBy={"education"} isNumeric={true}>Horas (Ensino)</Column>
+              <Column header={true} hideOnMobile={true} sortBy={"research"} isNumeric={true}>Horas (Pesquisa)</Column>
+              <Column header={true} hideOnMobile={true} sortBy={"extension"} isNumeric={true}>Horas (Extensão)</Column>
+              <Column header={true} isNumeric={true}>Total</Column>
+              <Column header={true} hideOnMobile={true}>Status</Column>
             </>
             : <>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Email</Column>
-              <Column color={"var(--muted)"} hideOnMobile={true}>Curso(s)</Column>
+              <Column header={true} hideOnMobile={true} sortBy={"email"}>Email</Column>
+              <Column header={true} hideOnMobile={true}>Curso(s)</Column>
             </>
           }
         </CustomItem>
@@ -196,9 +196,7 @@ export default function User({
           <CustomItem student={subRoute === "alunos"}>
             <div />
             {Array.from(Array(subRoute === "alunos" ? 5 : 3).keys()).map((i) =>
-              <Column key={i} className={"placeholder-glow"}>
-                <span className={"placeholder col-md-8 col-12"} />
-              </Column>
+              <Column key={i} loading={true} />
             )}
             <div />
             <div />
@@ -237,28 +235,20 @@ export default function User({
                 }}
               />
 
-              <Column>
-                <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.name}</Tooltip>}>
-                  <span>{user?.name}</span>
-                </OverlayTrigger>
-              </Column>
+              <Column tooltip={user?.name}>{user?.name}</Column>
 
               {subRoute == "alunos"
                 ? <>
                   <Column hideOnMobile={true}>
                     <CopyToClipboard text={more.enrollment} />
                   </Column>
-
                   <Workload workloadCount={more.workloadCount} />
                   <ProgressBar current={more.totalWorkload} max={more.minWorkload} />
                 </>
                 : <>
-                  <Column hideOnMobile={true}>
-                    <OverlayTrigger placement="bottom" overlay={<Tooltip>{user?.email}</Tooltip>}>
-                      <span>{user?.email}</span>
-                    </OverlayTrigger>
+                  <Column hideOnMobile={true} tooltip={user?.email}>
+                    {user?.email}
                   </Column>
-
                   <Column hideOnMobile={true}>
                     <UserCourses user={user} />
                   </Column>

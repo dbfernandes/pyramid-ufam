@@ -107,13 +107,13 @@ export const CustomFormCheck = styled(FormCheck)`
   }
 `;
 
-
-
 // Custom collapse wrapper
 export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
   background-color: var(--white-1);
   padding: 10px 20px 15px;
   border-radius: 0 0 5px 5px;
+
+  cursor: auto;
 
   @media (max-width: 768px) {
     padding: 10px;
