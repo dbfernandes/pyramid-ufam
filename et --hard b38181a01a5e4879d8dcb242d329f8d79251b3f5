@@ -1,0 +1,83 @@
+[33mcommit 2f2ced956e391a3c90f1af653b9b865c6a3fa481[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: NicollyAlves <nicollyalvesdasilva12@gmail.com>
+Date:   Sat Sep 28 17:44:18 2024 -0400
+
+    fix: user list style
+
+[33mcommit 31ed5852ead3662f199888e496b85a1a22576bc2[m
+Author: NicollyAlves <nicollyalvesdasilva12@gmail.com>
+Date:   Fri Sep 27 12:16:33 2024 -0400
+
+    fix: SubmissioCard close when filter changes
+
+[33mcommit b38181a01a5e4879d8dcb242d329f8d79251b3f5[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Tue Sep 17 19:45:08 2024 -0400
+
+    CollapseDetails fixed
+
+[33mcommit 1cbeb2fd1f32ba7888fbe29b50ac474869377803[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Tue Sep 17 19:18:50 2024 -0400
+
+    Basic sorting integrated; nested sorting (enrollment and workload) in progress
+
+[33mcommit 0b17d3b408b1f8444ac0869337587d1fe3f8fcb9[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Tue Sep 17 15:51:55 2024 -0400
+
+    Column sorting url boilerplate finished
+
+[33mcommit bc6dbf061d57f3ddb9b3323e88eb10c832cb5227[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Tue Sep 17 15:10:37 2024 -0400
+
+    Main sorting query params structure created
+
+[33mcommit 84681246c3751e6d762ab86407688487d9f6678d[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Tue Sep 17 00:43:51 2024 -0400
+
+    Sortable columns created
+
+[33mcommit 625edb232f39f99183cdbc86454078c82d9f1956[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Mon Sep 16 18:11:24 2024 -0400
+
+    Table (UserList, SubmissionList) components unified
+
+[33mcommit 7fdf9d1a3caff18a7b3063b4591f34885ad47e2b[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Fri Sep 13 12:25:20 2024 -0400
+
+    Pagination fixed
+
+[33mcommit e8f5ee87f7d05b45d4a3b00eed67b02834a37a8f[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Fri Sep 13 12:23:54 2024 -0400
+
+    Filter toast typo fixed
+
+[33mcommit a358e93504ce1d45a556e7b27680ebec18268623[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Fri Sep 13 12:22:32 2024 -0400
+
+    Pagination fixed
+
+[33mcommit f362c40bc30704780e19ebc3ad582169300a5e46[m
+Author: Guilherme Almeida <jgoa156@gmail.com>
+Date:   Fri Sep 13 02:45:14 2024 -0400
+
+    qol: active filters redesigned; pagination redesigned on mobile
+
+[33mcommit c65d7bdafda784b083f1c6424f3ce94b7a3b181b[m
+Author: NicollyAlves <nicollyalvesdasilva12@gmail.com>
+Date:   Thu Sep 12 11:36:56 2024 -0400
+
+    change: ordem de componentes da atividade (submissionlist)
+
+[33mcommit 951a94576ffae62fdbbcea6a7d26911d81dd399b[m
+Author: NicollyAlves <nicollyalvesdasilva12@gmail.com>
+Date:   Thu Sep 12 03:14:18 2024 -0400
+
+    add: coordenador pode editar submissão aprovada
