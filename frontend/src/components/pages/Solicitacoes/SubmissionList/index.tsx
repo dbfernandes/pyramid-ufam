@@ -58,6 +58,7 @@ export default function SubmissionList({
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
+  const [pageChanged, setPageChanged] = useState(false)
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
     { title: "Pendentes", value: 1, accent: "var(--sucess-hover)", checked: statuses?.includes("1") },
     { title: "Pré-aprovadas", value: 2, accent: "var(--success-hover)", checked: statuses?.includes("2") },
@@ -86,6 +87,12 @@ export default function SubmissionList({
       setFilterChanged(false)
     }
   }, [filterOptions]);
+
+  const pageBeforeAfter = [pageChanged]
+  useEffect(() => {
+    console.log(pageBeforeAfter)
+    setPageChanged(false)
+  }, [router.query.page])
 
   // Mass actions
   const [fetchingMassUpdate, setFetchingMassUpdate] = useState<boolean>(false);
@@ -211,6 +218,8 @@ export default function SubmissionList({
           totalPages={totalPages}
           itensPerPage={itensPerPage}
           totalItens={totalItens}
+          filtersChanged={filterChanged}
+          pageChanged={pageChanged}
         />
       }
     </Wrapper>

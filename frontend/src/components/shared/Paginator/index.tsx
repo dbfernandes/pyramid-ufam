@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { range } from "utils";
 import { useRouter } from "next/router";
@@ -18,13 +18,17 @@ interface IPaginatorProps {
   totalPages: number;
   itensPerPage: number;
   totalItens: number;
+  filtersChanged: boolean;
+  pageChanged: boolean;
 }
 
-export default function Paginator({ page, totalPages, itensPerPage, totalItens }: IPaginatorProps) {
+export default function Paginator({ page, totalPages, itensPerPage, totalItens, pageChanged=false }: IPaginatorProps) {
   const isMobile = useMediaQuery({ maxWidth: 992 });
   const maxPagesMobile = 5;
   const maxPagesDesktop = 5;
   const [maxPages, setMaxPages] = useState<number>(isMobile ? maxPagesMobile : maxPagesDesktop); // Needs to be odd
+
+  const [collapsed, setCollapsed] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     setMaxPages(isMobile ? maxPagesMobile : maxPagesDesktop);
@@ -74,14 +78,14 @@ export default function Paginator({ page, totalPages, itensPerPage, totalItens }
     <Wrapper>
       <ItensCount />
       <PaginatorWrapper>
-        <PageArrowButton disabled={page == 1} onClick={() => setPage(1)}><i className="bi bi-chevron-double-left" /></PageArrowButton>
-        <PageArrowButton disabled={page == 1} onClick={() => setPage(page - 1)}><i className="bi bi-chevron-left" /></PageArrowButton>
+        <PageArrowButton disabled={page == 1} onClick={() => [setPage(1), pageChanged=!pageChanged]}><i className="bi bi-chevron-double-left" /></PageArrowButton>
+        <PageArrowButton disabled={page == 1} onClick={() => [setPage(page - 1), pageChanged=!pageChanged]}><i className="bi bi-chevron-left" /></PageArrowButton>
 
         {genereatePages(page, totalPages).map((_page) =>
           <PageItem key={_page} marked={_page == page} disabled={_page == page} onClick={() => setPage(_page)}>{_page}</PageItem>
         )}
 
-        <PageArrowButton disabled={page == totalPages} onClick={() => setPage(page + 1)}><i className="bi bi-chevron-right" /></PageArrowButton>
+        <PageArrowButton disabled={page == totalPages} onClick={() => [setPage(page + 1), pageChanged=!pageChanged]}><i className="bi bi-chevron-right" /></PageArrowButton>
         <PageArrowButton disabled={page == totalPages} onClick={() => setPage(totalPages)}><i className="bi bi-chevron-double-right" /></PageArrowButton>
       </PaginatorWrapper>
     </Wrapper>
