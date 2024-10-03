@@ -54,7 +54,7 @@ export default function SubmissionList({
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [fetching, setFetching] = useState<boolean>(false);
   const [submissionCount, setSubmissionCount] = useState<number>(submissions.length)
-
+  const [filterChanged, setFilterChanged] = useState<boolean>(false)
   // Filter options
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
@@ -76,11 +76,15 @@ export default function SubmissionList({
       router.push({
         query: { ...router.query, status },
       });
+      setFilterChanged(true)
 
       setFetchingFilter(false);
     }, 1000);
 
-    return () => clearTimeout(debounce);
+    return () => {
+      clearTimeout(debounce);
+      setFilterChanged(false)
+    }
   }, [filterOptions]);
 
   // Mass actions
@@ -192,6 +196,7 @@ export default function SubmissionList({
               setCheckedIds={setCheckedIds}
               userLogged={userLogged}
               onChange={onChange}
+              filtersChanged={filterChanged}
             />
           ))}
           {children}

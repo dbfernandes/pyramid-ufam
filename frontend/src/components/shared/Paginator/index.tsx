@@ -54,15 +54,21 @@ export default function Paginator({ page, totalPages, itensPerPage, totalItens }
 
   function ItensCount() {
     const isFinalPage = page === totalPages;
-    const endItem = isFinalPage ? totalItens % itensPerPage : page * itensPerPage;
-    const startItem = (endItem + 1) - (isFinalPage ? endItem : itensPerPage);
-
+    
+    const endItem = isFinalPage
+      ? totalItens
+      : page * itensPerPage;
+  
+    const startItem = (page - 1) * itensPerPage + 1;
+  
     return (
       <ItensCountLabel>
         Exibindo <b>{startItem}-{endItem}</b> do total de <b>{totalItens}</b>
       </ItensCountLabel>
     );
   }
+  
+  
 
   return (
     <Wrapper>

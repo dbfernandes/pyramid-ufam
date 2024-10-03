@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Collapse, Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { getFirstAndLastName } from "utils";
 
@@ -48,6 +48,7 @@ interface IUserProps {
   fetchingRestore?: boolean;
   onRestore?: Function;
   onChange?: Function;
+  filtersChanged?: boolean;
 
   checkedIds?: number[];
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
@@ -85,6 +86,7 @@ export default function User({
   fetchingRestore = false,
   onRestore = () => { },
   onChange = () => { },
+  filtersChanged = false,
 
   checkedIds = [],
   setCheckedIds = () => { },
@@ -161,6 +163,12 @@ export default function User({
   // More details
   const more = getMoreInfo(user, courseId);
   const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (filtersChanged) {
+      setCollapsed(false);
+    }
+  }, [filtersChanged]);
 
   return (
     header

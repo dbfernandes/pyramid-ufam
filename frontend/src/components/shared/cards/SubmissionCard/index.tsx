@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Collapse from 'react-bootstrap/Collapse';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
@@ -29,6 +29,7 @@ interface ISubmissionCardProps {
   setCheckedIds?: React.Dispatch<React.SetStateAction<number[]>>;
   userLogged?: IUserLogged;
   onChange?: Function;
+  filtersChanged?: boolean;
 }
 
 export default function SubmissionCard({
@@ -39,10 +40,17 @@ export default function SubmissionCard({
   setCheckedIds = () => { },
   userLogged,
   onChange = () => { },
+  filtersChanged = false,
   ...props
 }: ISubmissionCardProps) {
   const isAdmin = userLogged?.userTypeId !== 3;
   const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (filtersChanged) {
+      setCollapsed(false);
+    }
+  }, [filtersChanged]);
 
   function handleCheck(e) {
     e.stopPropagation();

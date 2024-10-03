@@ -38,6 +38,7 @@ interface IUserListProps {
 
   subRoute?: string;
   onChange?: Function;
+  filtersChanged?: boolean;
 
   children?: React.ReactNode;
 }
@@ -77,6 +78,8 @@ export default function UserList({
   }
 
   // Filter options
+  const [filterChanged, setFilterChanged] = useState<boolean>(false)
+  
   const [fetchingFilter, setFetchingFilter] = useState<boolean>(false);
   const statuses = router.query.status?.toString().split("-");
   const [filterOptions, setFilterOptions] = useState<IFilterOption[]>([
@@ -92,10 +95,14 @@ export default function UserList({
         query: { ...router.query, status },
       });
 
+      setFilterChanged(true)
       setFetchingFilter(false);
     }, 1000);
 
-    return () => clearTimeout(debounce);
+    return () => {
+      clearTimeout(debounce);
+      setFilterChanged(false)
+    }
   }, [filterOptions]);
 
   // Delete functions
@@ -319,6 +326,7 @@ export default function UserList({
               fetchingRestore={fetchingRestore}
               onRestore={() => fetchRestore(user?.id)}
               onChange={onChange}
+              filtersChanged={filterChanged}
 
               checkedIds={checkedIds}
               setCheckedIds={setCheckedIds}
