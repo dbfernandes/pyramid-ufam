@@ -33,8 +33,21 @@ export class ActivityService {
 		return activity;
 	}
 
+	sortByName(arr) {
+		function getNumber(name: string): number {
+			const numbers = name.split(" ")[0].split(".")
+			return parseInt(numbers[0]) + parseInt(numbers[1])
+		}
+
+		return arr.sort((a, b) => getNumber(a.name) - getNumber(b.name));
+	}
+
 	async findAll(): Promise<Activity[]> {
-		return await this.prisma.activity.findMany({ where: { isActive: true } });
+		const activities = await this.prisma.activity.findMany({
+			where: { isActive: true },
+		});
+
+		return this.sortByName(activities);
 	}
 
 	async findById(id: number): Promise<Activity | null> {
@@ -46,9 +59,11 @@ export class ActivityService {
 	async findByCourseActivityGroupId(
 		courseActivityGroupId: number,
 	): Promise<Activity[]> {
-		return await this.prisma.activity.findMany({
+		const activities = await this.prisma.activity.findMany({
 			where: { courseActivityGroupId, isActive: true },
 		});
+
+		return this.sortByName(activities);
 	}
 
 	async update(
