@@ -1,4 +1,3 @@
-
 import { useDispatch, useSelector } from "react-redux";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import confirm from "components/shared/ConfirmModal";
@@ -20,19 +19,21 @@ import {
 import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserTypes } from "constants/userTypes.constants";
+import { useTheme } from "../../../../../src/contexts/ThemeContext"; // Importando o hook do tema
 
 // Interfaces
 interface IUserInfoProps {
   isMobile?: boolean;
 }
 
-export default function UserInfo({ isMobile = false }: IUserInfoProps) {
+const UserInfo: React.FC<IUserInfoProps> = ({ isMobile = false }) => {
   const dispatch = useDispatch();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
+  const { isLightTheme, toggleTheme } = useTheme(); // Usando o contexto
 
-  function handleChangeCourse() {
+  const handleChangeCourse = () => {
     dispatch(defaultCourse(null));
-  }
+  };
 
   return (
     <Wrapper>
@@ -52,9 +53,13 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
 
         <p>{isMobile ? getFirstName(user.name) : user.name}</p>
 
-        {!isMobile &&
-          <UserRole>{UserTypes[user.userTypeId]}</UserRole>
-        }
+        {!isMobile && <UserRole>{UserTypes[user.userTypeId]}</UserRole>}
+
+        <i
+          className={`bi ${isLightTheme ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}
+          style={{ margin: "0 13px", cursor: "pointer" }}
+          onClick={toggleTheme}
+        />
 
         <OverlayTrigger placement="left" overlay={<Tooltip>Sair</Tooltip>}>
           <Logoff
@@ -79,7 +84,7 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
             placement="left"
             overlay={<Tooltip>Trocar de curso</Tooltip>}
           >
-            <ChangeCourse onClick={() => handleChangeCourse()}>
+            <ChangeCourse onClick={handleChangeCourse}>
               <i className="bi bi-arrow-left-right" />
             </ChangeCourse>
           </OverlayTrigger>
@@ -88,3 +93,5 @@ export default function UserInfo({ isMobile = false }: IUserInfoProps) {
     </Wrapper>
   );
 }
+
+export default UserInfo;

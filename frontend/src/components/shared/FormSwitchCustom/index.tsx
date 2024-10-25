@@ -33,6 +33,8 @@ const FormSwitchCustom = styled(FormCheck)`
       box-shadow: none;
     }
   }
+
+  
 `;
 
 export default FormSwitchCustom;

@@ -4,6 +4,7 @@ export const FormWrapper = styled.div<{ fullscreen: boolean }>`
 	width: 100%;
 	background-color: var(--white-1);
 	padding: 0 30px 30px;
+
 	border-radius: 5px;
 
 	& > form {

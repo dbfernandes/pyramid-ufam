@@ -90,7 +90,6 @@ export default function SubmissionList({
 
   const pageBeforeAfter = [pageChanged]
   useEffect(() => {
-    console.log(pageBeforeAfter)
     setPageChanged(false)
   }, [router.query.page])
 

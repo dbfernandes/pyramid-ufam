@@ -3,14 +3,23 @@ import Modal from 'react-bootstrap/Modal';
 
 export const CustomModal = styled(Modal)`
   .modal-header {
+    border-radius: 3px;
+    background-color: var(--white-1);
+    border-bottom: var(--white-1);
+
     .btn-close {
       align-self: flex-start;
     }
   }
+  	.modal-footer {
+    	border-top: var(--white-1);
+	}
 	.modal-content {
-		border-radius: 5px;
+		border-radius: 3px;
 		border: none;
+    	border-top: var(--white-1);
 		box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+		background-color: var(--white-1);
 	}
 `;
 

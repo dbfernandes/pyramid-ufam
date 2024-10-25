@@ -79,6 +79,7 @@ export const SelectStyled = styled(Select)`
       padding: 16px 8px 0;
       border-radius: 5px 5px 0 0;
       background-color: transparent;
+	  
 
       transition: 0.3s;
 
@@ -167,6 +168,7 @@ export const InputWrapper = styled.div`
 	font-size: 1rem;
 	border-radius: 5px;
 	border: 1px solid ${border.default};
+	
   border-radius: 5px;
 
   z-index: ${props => props.focused ? 1 : 0};

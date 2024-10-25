@@ -21,15 +21,18 @@ import "../public/styles/main.css";
 import SessionWatcher from "components/shared/SessionWatcher";
 import Header from "components/shared/Header";
 import Sidenav from "components/shared/Sidenav";
+import { ThemeProvider } from "contexts/ThemeContext";
 
 export default function AppWrapper(props: any) {
   return (
     <Provider store={store}>
-      <BreadcrumbContextProvider>
-        <PersistGate loading={null} persistor={persistor}>
-          <App {...props} />
-        </PersistGate>
-      </BreadcrumbContextProvider>
+        <BreadcrumbContextProvider>
+          <PersistGate loading={null} persistor={persistor}>
+            <ThemeProvider>
+              <App {...props} />
+            </ThemeProvider>
+          </PersistGate>
+        </BreadcrumbContextProvider>
     </Provider>
   );
 }

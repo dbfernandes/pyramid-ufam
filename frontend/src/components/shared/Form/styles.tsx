@@ -6,6 +6,7 @@ export const FormWrapper = styled.div<{ fullscreen: boolean }>`
 	padding: 50px;
 	border-radius: 5px;
 	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+	
 
 	& > form {
     ${({ fullscreen }) => fullscreen && "min-height: calc(100vh - 170px);"}
@@ -88,7 +89,7 @@ export const LinkWrapper = styled.div`
 	margin-top: 30px;
 	padding-top: 20px;
 
-	border-top: 1px solid var(--white-3);
+	border-top: 1px solid var(--background);
 
 	a, button {
     padding: 0;
@@ -124,5 +125,6 @@ export const CustomForm = styled.form<{ isOwnUser?: boolean }>`
   ${({ isOwnUser }) => isOwnUser === false && `
     max-width: 100%;
     padding: 0 30px 30px;
+    background-color: var(--white-1);
   `}
 `;

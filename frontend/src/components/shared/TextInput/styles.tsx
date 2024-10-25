@@ -78,7 +78,7 @@ export const Input = styled.input`
 
 	padding: 16px 8px 0;
 	border-radius: 5px;
-	border: none;
+	border: 1px solid var(--background);
 
 	color: ${text.default};
 	background-color: transparent;
@@ -95,7 +95,7 @@ export const InputWrapper = styled.div`
 	
 	font-size: 1rem;
 	border: 1px solid ${border.default};
-  border-radius: 5px;
+  	border-radius: 5px;
 
 	&::after {
 		position: absolute;

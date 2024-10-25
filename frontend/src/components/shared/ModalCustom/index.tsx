@@ -35,7 +35,7 @@ export default function ModalCustom({
       dialogClassName={styles.customModalDialog}
       contentClassName={`${sizeStyles[size]} ${styles.customModalContent}`}>
       <ModalClose onClick={close}>
-        <i className={"fas fa-times"}></i>
+        <i className={"fas fa-times btn-close"}></i>
       </ModalClose>
       {children}
     </Modal>
