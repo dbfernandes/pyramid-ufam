@@ -82,8 +82,9 @@ export const CustomFormCheck = styled(FormCheck)`
 
   margin: 0;
   padding: 15px;
-
+  
   & > input {
+    background-color: var(--white-1);
     margin: 0 !important;
     padding: 7.5px;
     z-index: 1;

@@ -10,10 +10,6 @@ export const ModalClose = styled.button`
 	outline: none;
 	border: none;
 
-	.btn-close {
-		color: #fff;
-	}
-
 	&:hover {
 		color: var(--text-default);
 	}

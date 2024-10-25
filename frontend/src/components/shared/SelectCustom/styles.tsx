@@ -126,7 +126,7 @@ export const SelectStyled = styled(Select)`
 
 		& > div {
 			padding: 10px 0;
-			background-color: var(--black-4);
+			background-color: var(--white-1);
 			box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
 
 			div[class*="option"] {
@@ -147,7 +147,7 @@ export const SelectStyled = styled(Select)`
 
 				&:hover {
 					color: var(--text-default);
-					background-color: var(--black-2);
+					background-color: var(--white-1);
 					border-color: var(--primary-color-2);
 				}
 
