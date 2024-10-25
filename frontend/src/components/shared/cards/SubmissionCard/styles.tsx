@@ -5,7 +5,7 @@ export const CustomItem = styled(Item) <{ header?: boolean, admin?: boolean }>`
   grid-template-columns: 45px ${({ admin }) => admin ? "30px" : ""} 2fr ${({ admin }) => admin ? "2fr" : ""} 1fr 1fr 1fr 1fr 30px;
 
   @media (max-width: 768px) {
-    grid-template-columns: 45px ${({ admin }) => admin ? "40px" : ""} minmax(0, 2fr) 1fr 4px;
+    grid-template-columns: 45px ${({ admin }) => admin ? "40px" : ""} minmax(0, 2fr) 1fr 30px;
   }
   @media (max-width: 575px) {
     grid-template-columns: 35px ${({ admin }) => admin ? "40px" : ""} minmax(0, 2fr) 1fr 30px;
@@ -40,6 +40,7 @@ export const FileInfo = styled(Info)`
   width: 100%;
   overflow: hidden;
 
+  
   a {
     overflow: hidden;
     word-break: break-all;
@@ -51,7 +52,7 @@ export const FileInfo = styled(Info)`
 
     color: var(--text-default);
     border-radius: 5px;
-    border: 1px solid var(--white-5);
+    border: 1px solid var(--white-1);
 
     transition: 0.3s;
 
@@ -91,3 +92,5 @@ export const FileInfo = styled(Info)`
     }
   }
 `;
+
+

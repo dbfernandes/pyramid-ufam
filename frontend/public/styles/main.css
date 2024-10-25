@@ -1,18 +1,15 @@
 /*---------------------- DARK MODE VARIABLES ----------------------*/
 :root {
-    /* Cores principais e de fundo */
     --background: #121212;
     --primary-color-background: #173C3A;
     --primary-color-2-background: #174E4E;
 
-    /* Cores de Texto */
     --white-1: #1d1d1d;
     --white-2: #242424;
     --white-3: #BEBEBE;
     --text-default: #C0C0C0;
     --muted: #888888;
 
-    /* Cores de feedback (sucesso, perigo, aviso) */
     --success: #2196F3;
     --success-hover: #1769AA;
     --danger: #F44336;
@@ -20,7 +17,6 @@
     --warning: #FFEB3B;
     --warning-hover: #FBC02D;
 
-    /* Cores para Toastify */
     --toastify-color-light: #333333;
     --toastify-color-dark: #121212;
     --toastify-color-info: var(--success);
@@ -28,11 +24,9 @@
     --toastify-color-warning: var(--warning-hover);
     --toastify-color-error: var(--danger);
 
-    /* Links */
     --primary-color: #1DE9B6;
     --primary-color-2: #00E5FF;
 
-    /* Ajuste para scrollbar */
     --scrollbar-thumb: #444444;
     --scrollbar-hover: #666666;
 
@@ -75,33 +69,6 @@
 
 	--font-family: "Inter";
 }
-
-/*---------------------- BODY & GENERAL ----------------------*/
-body {
-    background-color: var(--background);
-    color: var(--white-1);
-    font-family: var(--font-family);
-}
-
-a {
-    color: var(--primary-color);
-}
-
-a:hover {
-    color: var(--primary-color-2);
-}
-
-/* Scrollbar adjustments */
-::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--scrollbar-hover);
-}
-
-
-
 
 /*---------------------- GENERAL ----------------------*/
 html {
