@@ -10,7 +10,8 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.use(
 		cors({
-			origin: process.env.FRONTEND_URL,
+			//origin: process.env.FRONTEND_URL,
+			origin: "https://pyramid.icomp.ufam.edu.br",
 			methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
 			preflightContinue: false,
 			optionsSuccessStatus: 204,
