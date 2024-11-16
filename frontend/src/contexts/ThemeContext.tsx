@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 interface ThemeContextType {
-  isLightTheme: boolean;
+  isDarkTheme: boolean;
   toggleTheme: () => void;
 }
 
@@ -20,25 +20,25 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [isLightTheme, setIsLightTheme] = useState<boolean>(() => {
-    const storedTheme = window.localStorage.getItem('isLightTheme');
+  const [isDarkTheme, setIsDarkTheme] = useState<boolean>(() => {
+    const storedTheme = window.localStorage.getItem('isDarkTheme');
     return storedTheme ? JSON.parse(storedTheme) : false;
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isLightTheme ? 'light' : 'dark');
-  }, [isLightTheme]);
+    document.documentElement.setAttribute('data-theme', isDarkTheme ? 'Dark' : 'dark');
+  }, [isDarkTheme]);
 
   const toggleTheme = () => {
-    setIsLightTheme(prev => {
+    setIsDarkTheme(prev => {
       const newTheme = !prev;
-      window.localStorage.setItem('isLightTheme', JSON.stringify(newTheme));
+      window.localStorage.setItem('isDarkTheme', JSON.stringify(newTheme));
       return newTheme;
     });
   };
 
   return (
-    <ThemeContext.Provider value={{ isLightTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,5 +1,5 @@
 /*---------------------- DARK MODE VARIABLES ----------------------*/
-:root {
+:root[data-theme="dark"] {
     --background: #121212;
     --primary-color-background: #173C3A;
     --primary-color-2-background: #174E4E;
@@ -34,7 +34,7 @@
 }
 
 /*---------------------- LIGHT MODE VARIABLES ----------------------*/
-:root[data-theme="light"] {
+:root {
     --primary-color: #22c99f;
     --primary-color-2: #13cece;
 

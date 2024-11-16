@@ -18,7 +18,7 @@ services:
       - frontend
 
   frontend:
-    container_name: pyramid_front
+    container_name: aacc_front
     restart: always
     build:
       context: ./frontend
@@ -42,7 +42,7 @@ services:
       - backend
 
   backend:
-    container_name: pyramid_back
+    container_name: aacc_back
     restart: always
     build: ./backend
     env_file:
@@ -56,7 +56,7 @@ services:
       - db
 
   db:
-    container_name: pyramid_db
+    container_name: aacc_db
     restart: always
     image: mysql:latest
     environment:
