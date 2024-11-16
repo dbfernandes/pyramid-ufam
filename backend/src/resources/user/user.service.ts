@@ -165,7 +165,7 @@ export class UserService {
 
 		await sendEmail(
 			userCreated.email,
-			"Bem vindo ao Pyramid!",
+			"Bem vindo ao Aacc!",
 			`Olá, ${getFirstName(
 				userCreated.name,
 			)}! Você foi adicionado como ${userCreatedType} na nossa plataforma pelo ${userType} ${getFirstAndLastName(

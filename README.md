@@ -1,4 +1,4 @@
-# Pyramid - Web Academy
+# AACC - Web Academy
 
 Configure as variáveis de ambiente (.env) tanto no Frontend quanto Backend a partir dos arquivos .env.example respectivos. Após isso, para executar ambos os programas, rode:
 

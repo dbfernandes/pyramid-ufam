@@ -29,7 +29,7 @@ interface IUserInfoProps {
 const UserInfo: React.FC<IUserInfoProps> = ({ isMobile = false }) => {
   const dispatch = useDispatch();
   const user = useSelector<IRootState, IUserLogged>((state) => state.user);
-  const { isLightTheme, toggleTheme } = useTheme(); // Usando o contexto
+  const { isDarkTheme, toggleTheme } = useTheme(); // Usando o contexto
 
   const handleChangeCourse = () => {
     dispatch(defaultCourse(null));
@@ -56,7 +56,7 @@ const UserInfo: React.FC<IUserInfoProps> = ({ isMobile = false }) => {
         {!isMobile && <UserRole>{UserTypes[user.userTypeId]}</UserRole>}
 
         <i
-          className={`bi ${isLightTheme ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}
+          className={`bi ${isDarkTheme ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}
           style={{ margin: "0 13px", cursor: "pointer" }}
           onClick={toggleTheme}
         />
