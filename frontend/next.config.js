@@ -17,7 +17,7 @@ module.exports = {
 	env: {
 		img: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/img`,
 		api: `${process.env.NEXT_PUBLIC_API_URL}`,
-		title: "Aacc",
+		title: "Pyramid",
 	},
 	typescript: {
 		ignoreBuildErrors: true,
