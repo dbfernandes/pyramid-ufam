@@ -134,11 +134,11 @@ export class IsDescriptionActivityLengthValid
 @ValidatorConstraint({ name: "IsNameActivityLengthValid", async: false })
 export class IsNameActivityLengthValid implements ValidatorConstraintInterface {
 	validate(description: string) {
-		return typeof description === "string" && description.length <= 100;
+		return typeof description === "string" && description.length <= 255;
 	}
 
 	defaultMessage() {
-		return "O nome deve ter no máximo 100 caracteres";
+		return "O nome deve ter no máximo 255 caracteres";
 	}
 }
 

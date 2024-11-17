@@ -12,6 +12,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 	border: 1px solid transparent;
   word-break: break-word;
 
+
   & > div {
     display: flex;
     justify-content: space-between;
@@ -23,6 +24,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 		}
   }
 	
+  
   span {
     height: fit-content;
     padding: 2px 5px;
@@ -44,7 +46,6 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
     margin: 10px 0 0;
 
     white-space: break-spaces;
-    overflow: hidden;
     text-overflow: ellipsis;
 
     max-height: 40px;
@@ -70,6 +71,14 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
   }
 	${({ blurred }) => blurred && "filter: opacity(50%);"}
 `;
+
+export const ScrollableDescription = styled.div`
+  max-height: 60px; /* Define uma altura fixa */
+  overflow-y: auto; /* Scroll vertical */
+  padding-right: 5px; /* Espaço para o scroll não sobrepor o texto */
+  word-break: break-word; /* Quebra palavras longas para evitar cortes */
+`;
+
 
 export const Marker = styled.div`
 	position: absolute;

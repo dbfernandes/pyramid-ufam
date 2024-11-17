@@ -16,6 +16,7 @@ import {
   DropdownItem,
   Options,
   Marker,
+  ScrollableDescription,
 } from "./styles";
 import { GroupIcons } from "constants/groupIcons.constants.";
 
@@ -84,11 +85,12 @@ export default function ActivityCard({
           {activity.maxWorkload && <span>{activity.maxWorkload}h</span>}
         </div>
 
-        {activity.description?.length != 0 &&
-          activity.description
-            ?.split("\n")
-            .map((_description) => <p>{_description}</p>)}
-        {children}
+        <ScrollableDescription>
+          {activity.description?.length !== 0 &&
+            activity.description
+              ?.split("\n")
+              .map((_description, index) => <p key={index}>{_description}</p>)}
+        </ScrollableDescription>
 
         {activity.id && editable && (
           <DropdownWrapper align="end" onClick={(e) => handleDropdown(e)}>
