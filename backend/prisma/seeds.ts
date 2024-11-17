@@ -155,7 +155,6 @@ SubmissionActionTypesSeeds()
 CoursesSeeds()
 	.then(() => {
 		disconnect("Default Courses loaded");
-		ActivitiesSeeds();
 	})
 	.catch((err) => disconnect(err));
 

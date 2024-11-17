@@ -206,10 +206,10 @@ export class AuthService {
 	async sendWelcomeEmail(user: any) {
 		await sendEmail(
 			user.email,
-			"Bem vindo ao Aacc!",
+			"Bem vindo ao Pyramid!",
 			`Olá, ${getFirstName(
 				user.name,
-			)}! Você foi cadastrado com sucesso no Aacc, uma plataforma do ICOMP para gerenciar suas atividades extracurriculares.
+			)}! Você foi cadastrado com sucesso no Pyramid, uma plataforma do ICOMP para gerenciar suas atividades extracurriculares.
       Para acessar a plataforma, clique no link a seguir: ${
 				process.env.FRONTEND_URL
 			}`,
@@ -234,7 +234,7 @@ export class AuthService {
 		await sendEmail(
 			email,
 			"Alteração de senha",
-			`Você ou algum coordenador solicitou alteração de senha para a sua conta. Para alterar sua senha no Aacc, clique no link a seguir: ${`${process.env.FRONTEND_URL}/conta/senha?token=${token}`}.
+			`Você ou algum coordenador solicitou alteração de senha para a sua conta. Para alterar sua senha no Pyramid, clique no link a seguir: ${`${process.env.FRONTEND_URL}/conta/senha?token=${token}`}.
       O token expira em 1 hora.
       
       Caso não tenha sido você, desconsidere este email.

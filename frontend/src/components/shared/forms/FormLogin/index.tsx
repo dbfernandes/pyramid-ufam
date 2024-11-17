@@ -110,7 +110,7 @@ export default function FormLogin() {
         <Logo src={`${process.env.img}/logo.png`} />
 
         <Info>
-          Bem vindo ao <b>Aacc</b>! Uma plataforma para gerenciar suas
+          Bem vindo ao <b>Pyramid</b>! Uma plataforma para gerenciar suas
           atividades complementares.
         </Info>
 
