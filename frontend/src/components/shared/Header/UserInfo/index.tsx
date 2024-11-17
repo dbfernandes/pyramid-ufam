@@ -56,7 +56,7 @@ const UserInfo: React.FC<IUserInfoProps> = ({ isMobile = false }) => {
         {!isMobile && <UserRole>{UserTypes[user.userTypeId]}</UserRole>}
 
         <i
-          className={`bi ${isDarkTheme ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}
+          className={`bi ${isDarkTheme ? 'bi-sun-fill' : 'bi-moon-stars-fill'}`}
           style={{ margin: "0 13px", cursor: "pointer" }}
           onClick={toggleTheme}
         />

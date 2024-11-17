@@ -51,7 +51,7 @@ model User {
 
 model Course {
   id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(100)
+  name        String    @unique @db.VarChar(255)
   code        String    @unique @db.VarChar(10)
   periods     Int
   minWorkload Int       @default(240)
@@ -85,7 +85,7 @@ model CourseUser {
 
 model ActivityGroup {
   id        Int       @id @default(autoincrement())
-  name      String    @unique @db.VarChar(100)
+  name      String    @unique @db.VarChar(255)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
@@ -116,7 +116,7 @@ model CourseActivityGroup {
 model Activity {
   id                    Int       @id @default(autoincrement())
   courseActivityGroupId Int
-  name                  String    @db.VarChar(100)
+  name                  String    @db.VarChar(255)
   description           String?   @db.VarChar(255)
   maxWorkload           Int
   isActive              Boolean   @default(true)

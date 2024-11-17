@@ -120,7 +120,7 @@ export default function FormAddActivity({
           handleValue={setName}
           required={true}
           displayAlert={sent} 
-          maxLength={100}
+          maxLength={255}
           showCharCount={true}
         />
 
