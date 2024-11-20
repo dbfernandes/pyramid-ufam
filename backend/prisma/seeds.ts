@@ -66,7 +66,7 @@ async function CoursesSeeds() {
 		name: "Ciência da Computação",
 		code: "IE08",
 		periods: 10,
-		minWorkload: 240,
+		minWorkload: 200,
 		activityGroupsWorkloads: {
 			education: 240,
 			research: 240,
