@@ -3,6 +3,9 @@
 /node_modules
 .env
 
+# temp
+!temp/.gitignore
+
 # Logs
 logs
 *.log
