@@ -153,7 +153,7 @@ export default function ActivitySelect({
                 <CardGroup>
                   {activities?.map((_activity, index) => (
                     <ActivityCard
-                      key={index}
+                      key={_activity.id}
                       activity={_activity}
                       userLogged={userLogged}
                       editable={false}
