@@ -30,11 +30,18 @@ export default function FormLogin() {
   const [fetching, setFetching] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  const [showPassword, setShowPassword] = useState<boolean>(false); // Estado para visibilidade da senha
+
+  // Função para alternar a visibilidade da senha
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // Inverte o estado da visibilidade
+  };
+
   function handleLogin(e) {
     e.preventDefault();
     setSent(true);
 
-    if (validateEmail(email) && password.length != 0) {
+    if (validateEmail(email) && password.length !== 0) {
       fetchLogin({ email, password });
     }
   }
@@ -72,7 +79,7 @@ export default function FormLogin() {
             dispatch(defaultCourse(response.data.user.courses[0]));
 
             setTimeout(() => router.push(
-              response.data.user.userTypeId == 3
+              response.data.user.userTypeId === 3
                 ? "/minhas-solicitacoes/nova"
                 : "/solicitacoes"
             ), 250);
@@ -126,16 +133,37 @@ export default function FormLogin() {
           maxLength={255}
         />
 
-        <TextInput
-          type={"password"}
-          label={"Senha"}
-          name={"password"}
-          value={password}
-          handleValue={setPassword}
-          required={true}
-          displayAlert={sent}
-          maxLength={255}
-        />
+        {/* Campo de senha com botão de visibilidade do lado direito */}
+        <div style={{ position: "relative", width: "100%" }}>
+          <TextInput
+            type={showPassword ? "text" : "password"}
+            label={"Senha"}
+            name={"password"}
+            value={password}
+            handleValue={setPassword}
+            required={true}
+            displayAlert={sent}
+            maxLength={255}
+            style={{ paddingRight: "40px" }} // Ajuste para garantir que o campo tenha espaço para o ícone
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "10px",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--primary-color)",
+              zIndex: 1,  // Garante que o ícone fique acima do campo
+            }}
+          >
+            <i className={`bi ${showPassword ? "bi-eye-slash" : "bi bi-eye"}`} />
+          </button>
+        </div>
 
         <Button style={{ marginTop: 15 }} onClick={(e) => handleLogin(e)}>
           {fetching ? (
@@ -148,11 +176,9 @@ export default function FormLogin() {
           )}
         </Button>
 
-        <>
-          {sent && !success && error?.length != 0 && (
-            <FormAlert>{error}</FormAlert>
-          )}
-        </>
+        {sent && !success && error?.length !== 0 && (
+          <FormAlert>{error}</FormAlert>
+        )}
 
         <LinkWrapper>
           <Link href="/cadastro">

@@ -38,6 +38,14 @@ export default function FormSignUp() {
   const [showPasswordStrengthDescription, setShowPasswordStrengthDescription] = useState<boolean>(false);
   const [step, setStep] = useState<number>(0); // Controle de etapas: 0 = Email, 1 = Código, 2 = Cadastro
 
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  
+  const [showPassword, setShowPassword] = useState<boolean>(false); // Estado para visibilidade da senha
+
+  // Função para alternar a visibilidade da senha
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // Inverte o estado da visibilidade
+  };
 
   function validatePassword(value) {
     return checkPasswordStrength(value).score >= 4;
@@ -138,8 +146,16 @@ export default function FormSignUp() {
         setStep(1); // Avança para a etapa de verificação do código
       })
       .catch((error) => {
-        toast.error("O código de confirmação não foi enviado para o seu e-mail.");
-        setError("Erro ao enviar o código de verificação. Tente novamente.");
+        const errorMessage = error?.response?.data?.message || "Erro ao enviar o código de verificação.";
+        const errorStatus = error?.response?.status;
+
+        if (errorMessage.includes("Email already in use") || errorStatus === 409) {
+          toast.error("Este e-mail já foi cadastrado. Faça login ou use outro e-mail.");
+        } else {
+          toast.error("Erro ao enviar o código de verificação. Tente novamente.");
+        }
+
+        setError(errorMessage);
       })
     setFetching(false);
   }
@@ -382,9 +398,9 @@ export default function FormSignUp() {
             mask={"999.999.999-99"} 
           />
           <MultiField>
-            <div>
+            <div style={{position: "relative"}}>
               <TextInput
-                type={"password"}
+                type={showPassword ? "text" : "password"}
                 label={"Senha*"}
                 name={"password"}
                 value={password}
@@ -398,21 +414,56 @@ export default function FormSignUp() {
                 onFocus={() => setShowPasswordStrengthDescription(true)}
                 onBlur={() => setShowPasswordStrengthDescription(false)}
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: "10px",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--primary-color)"
+                }}
+              >
+                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi bi-eye"}`} />
+              </button>
               <PasswordStrength password={password} showPasswordStrengthDescription={showPasswordStrengthDescription} />
             </div>
 
-            <TextInput
-              type={"password"}
-              label={"Confirmar senha*"}
-              name={"confirmPassword"}
-              value={confirmPassword}
-              handleValue={setConfirmPassword}
-              validate={validateConfirmPassword}
-              required={true}
-              alert={"Senhas não conferem"}
-              displayAlert={sent}
-              maxLength={255}
-            />
+            <div style={{position: "relative"}}>
+              <TextInput
+                type={showPassword ? "text" : "password"}
+                label={"Confirmar senha*"}
+                name={"confirmPassword"}
+                value={confirmPassword}
+                handleValue={setConfirmPassword}
+                validate={validateConfirmPassword}
+                required={true}
+                alert={"Senhas não conferem"}
+                displayAlert={sent}
+                maxLength={255}
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: "10px",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--primary-color)"
+                }}
+              >
+                <i className={`bi ${showPassword ? "bi-eye-slash" : "bi bi-eye"}`} />
+              </button>
+              <PasswordStrength password={password} showPasswordStrengthDescription={showPasswordStrengthDescription} />
+            </div>
           </MultiField>
 
           <SectionTitle><b>4.</b> Informações de Matrícula</SectionTitle>
