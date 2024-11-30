@@ -72,4 +72,16 @@ export class AuthController {
 		await this.authService.resetPassword(token, resetPasswordDto.password);
 		return { message: "Password reset successful" };
 	}
+
+	@Post("send-verification")
+	async sendVerificationCode(@Body("email") email: string) {
+		await this.authService.sendVerificationEmail(email);
+		return { message: "Código de verificação enviado" };
+	}
+
+	@Post("verify-email")
+	async verifyEmail(@Body("email") email: string, @Body("code") code: string) {
+		await this.authService.verifyEmailCode(email, code);
+		return { message: "E-mail verificado com sucesso" };
+	}
 }

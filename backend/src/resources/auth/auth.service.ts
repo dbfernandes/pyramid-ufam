@@ -20,6 +20,8 @@ import { CourseService } from "../course/course.service";
 import { CourseUserService } from "../courseUser/courseUser.service";
 import { getFilesLocation, getFirstName, sendEmail } from "../utils";
 import { UserTypeService } from "../userType/userType.service";
+import { randomInt } from "crypto";
+import { retry } from "async";
 
 @Injectable()
 export class AuthService {
@@ -32,6 +34,7 @@ export class AuthService {
 		private courseUserService: CourseUserService,
 		private jwtService: JwtService,
 	) {}
+	private verificationCodes = new Map<string, string>();
 
 	async setAuthorizationHeader(user: any, res: Response) {
 		const userType = await this.userTypeService.findById(user.userTypeId);
@@ -107,7 +110,6 @@ export class AuthService {
 		const user = await this.validateUser(loginDto.email, loginDto.password);
 		const courses = await this.courseService.findCoursesByUser(user.id);
 
-		// Generating tokens
 		await this.setAuthorizationHeader(user, res);
 
 		return {
@@ -253,5 +255,39 @@ export class AuthService {
 			resetToken: null,
 			resetTokenExpires: null,
 		});
+	}
+
+	async sendVerificationEmail(email: string): Promise<void> {
+		const verificationCode = randomInt(100000, 999999).toString();
+		this.verificationCodes.set(email, verificationCode);
+
+		console.log(`Código gerado: ${verificationCode} para o e-mail: ${email}`);
+
+		try {
+			await sendEmail(
+				email,
+				"Confirmação de e-mail",
+				`
+				Seu código de verificação é: ${verificationCode}. 
+				Ele expira em 10 minutos.
+				`,
+			);
+			console.log("E-mail enviado com sucesso.");
+		} catch (error) {
+			console.error("Erro ao enviar e-mail:", error);
+			throw new Error("Não foi possível enviar o e-mail de verificação.");
+		}
+
+		setTimeout(() => this.verificationCodes.delete(email), 10 * 60 * 1000);
+	}
+
+	async verifyEmailCode(email: string, code: string): Promise<void> {
+		const storedCode = this.verificationCodes.get(email);
+
+		if (!storedCode || storedCode !== code) {
+			throw new BadRequestException("Código inválido ou expirado");
+		}
+
+		this.verificationCodes.delete(email);
 	}
 }
