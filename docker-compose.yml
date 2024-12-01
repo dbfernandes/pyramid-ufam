@@ -1,7 +1,9 @@
 version: '3.8'
+
 services:
   nginx:
     image: nginx:latest
+    container_name: nginx
     restart: always
     env_file:
       - .env
@@ -9,8 +11,8 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443" 
     depends_on:
       - backend
       - frontend
@@ -42,9 +44,9 @@ services:
   backend:
     container_name: pyramid_back
     restart: always
+    build: ./backend
     env_file:
       - .env
-    build: ./backend
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
@@ -61,7 +63,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
-      - "3307:${MYSQL_PORT}"
+      - "3307:3306"
     volumes:
       - db-data:/var/lib/mysql
 
