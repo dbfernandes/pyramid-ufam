@@ -19,7 +19,6 @@ export class SignUpDto {
 	@IsNotEmpty()
 	email: string;
 
-	@IsOptional()
 	@IsString()
 	@Allow()
 	@Validate(IsCPF)

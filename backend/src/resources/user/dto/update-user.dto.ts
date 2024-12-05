@@ -20,12 +20,11 @@ export class UpdateUserDto {
 	@IsEmail()
 	email?: string;
 
-	@IsOptional()
 	@IsString()
 	@Allow()
 	@Validate(IsCPF)
 	@Transform((value) => value.value.replace(/\D/g, ""))
-	cpf?: string;
+	cpf: string;
 
 	@IsOptional()
 	@IsInt()

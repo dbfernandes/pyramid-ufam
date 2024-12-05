@@ -61,6 +61,7 @@ export default function FormLogin() {
         email: data.email,
         password: data.password,
       },
+      credentials: "include"
     };
 
     await axios

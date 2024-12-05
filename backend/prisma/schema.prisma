@@ -29,7 +29,7 @@ model User {
   id                Int       @id @default(autoincrement())
   name              String    @db.VarChar(255)
   email             String    @unique @db.VarChar(255)
-  cpf               String?   @unique @db.VarChar(11)
+  cpf               String   @unique @db.VarChar(11)
   userTypeId        Int
   password          String?   @db.VarChar(255)
   profileImage      String?   @db.VarChar(255)

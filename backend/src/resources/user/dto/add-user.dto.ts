@@ -20,7 +20,6 @@ export class AddUserDto {
 	@IsEmail()
 	email: string;
 
-	@IsOptional()
 	@IsString()
 	@Allow()
 	@Validate(IsCPF)

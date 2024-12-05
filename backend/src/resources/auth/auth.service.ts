@@ -258,12 +258,10 @@ export class AuthService {
 	}
 
 	async sendVerificationEmail(email: string): Promise<void> {
-		const existingUser = await this.userService.findByEmail(email);
-		if (existingUser) {
-			throw new BadRequestException(
-				"Este e-mail já está cadastrado. Faça login ou use outro e-mail.",
-			);
+		if (await this.userService.findByEmail(email)) {
+			throw new BadRequestException("Email already in use");
 		}
+
 		const verificationCode = randomInt(100000, 999999).toString();
 		this.verificationCodes.set(email, verificationCode);
 
@@ -272,11 +270,12 @@ export class AuthService {
 				email,
 				"Confirmação de e-mail",
 				`
-				Seu código de verificação é: ${verificationCode}. 
-				Ele expira em 10 minutos.
-				`,
+			Seu código de verificação é: ${verificationCode}. 
+			Ele expira em 10 minutos.
+			`,
 			);
 		} catch (error) {
+			console.error("Erro ao enviar o e-mail de verificação", error);
 			throw new Error("Não foi possível enviar o e-mail de verificação.");
 		}
 

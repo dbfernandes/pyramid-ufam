@@ -148,12 +148,27 @@ export default function FormSignUp() {
       .catch((error) => {
         const errorMessage = error?.response?.data?.message || "Erro ao enviar o código de verificação.";
         const errorStatus = error?.response?.status;
+        console.log(error?.response?.data?.message)
 
-        if (errorMessage.includes("Email already in use") || errorStatus === 409) {
-          toast.error("Este e-mail já foi cadastrado. Faça login ou use outro e-mail.");
-        } else {
-          toast.error("Erro ao enviar o código de verificação. Tente novamente.");
-        }
+
+        const badRequestMessages = {
+          "Email already in use": "Email já cadastrado.",
+        };
+
+        const errorMessages = {
+          0: "Oops, tivemos um erro. Tente novamente.",
+          400: badRequestMessages[error?.response?.data?.message],
+          403: "Recurso não disponível",
+          500: error?.response?.data?.message,
+        };
+
+        const code = error?.response?.status ? error.response.status : 500;
+        setError(
+          code in errorMessages ? errorMessages[code] : errorMessages[0]
+        );
+
+
+        toast.error(badRequestMessages[errorMessage])
 
         setError(errorMessage);
       })
@@ -213,6 +228,7 @@ export default function FormSignUp() {
       if (cpf.trim().length > 0 && validateCpf(cpf)) data = { ...data, cpf };
 
       fetchSignUp(data);
+
     }
   }
 
@@ -266,31 +282,22 @@ export default function FormSignUp() {
           500: error?.response?.data?.message,
         };
 
-        const code = error?.response?.status ? error.response.status : 500;
-        setError(
-          code in errorMessages ? errorMessages[code] : errorMessages[0]
-        );
+        const code = error?.response?.status || 500;
 
-        toast.error("Usuário não foi cadastrado.")
+        const errorMessage =
+            code in errorMessages ? errorMessages[code] : errorMessages[0];
+    
+        setError(errorMessage);
+    
+        if (errorMessage) {
+            toast.error(errorMessage);
+        }
         setSuccess(false);
       });
 
     setFetching(false);
   }
 
-  function maskEmail(email) {
-    const [localPart, domain] = email.split("@");
-    
-    if (localPart.length <= 2) {
-      return `${localPart}@${domain}`;
-    }
-  
-    const visibleStart = localPart.slice(0, 3);
-    const visibleEnd = localPart.slice(-3);
-    const maskedMiddle = "*".repeat(localPart.length - 5); 
-    
-    return `${visibleStart}${maskedMiddle}${visibleEnd}@${domain}`;
-  }
   
   return (
     <Form>
@@ -340,7 +347,7 @@ export default function FormSignUp() {
       {/* Etapa 1: Verificar código */}
       {step === 1 && (
         <>
-          <SectionTitle><b>2.</b> Verifique seu e-mail {maskEmail(email)}</SectionTitle>
+          <SectionTitle><b>2.</b> Verifique seu e-mail {email}</SectionTitle>
           <TextInput
             label={"Código de verificação*"}
             name={"verificationCode"}
@@ -388,10 +395,11 @@ export default function FormSignUp() {
             maxLength={255} 
           />
           <TextInput 
-            label={"CPF"} 
+            label={"CPF*"} 
             name={"cpf"} 
             value={cpf} 
             handleValue={setCpf} 
+            required={true}
             validate={validateCpf} 
             alert={"CPF Inválido"}
             displayAlert={sent} 
@@ -462,7 +470,6 @@ export default function FormSignUp() {
               >
                 <i className={`bi ${showPassword ? "bi-eye-slash" : "bi bi-eye"}`} />
               </button>
-              <PasswordStrength password={password} showPasswordStrengthDescription={showPasswordStrengthDescription} />
             </div>
           </MultiField>
 
@@ -521,12 +528,6 @@ export default function FormSignUp() {
               </>
             )}
           </Button>
-          
-          <>
-            {sent && !success && error?.length != 0 && (
-              <FormAlert>{error}</FormAlert>
-            )}
-          </>
           
           <LinkWrapper>
             <Link href="/entrar">

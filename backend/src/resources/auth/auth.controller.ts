@@ -14,10 +14,14 @@ import { AuthService } from "./auth.service";
 import { ResetPasswordDto } from "./dto";
 import { LoginDto, SignUpDto } from "./dto";
 import { Response } from "express";
+import { UserService } from "../user/user.service";
 
 @Controller("auth")
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(
+		private authService: AuthService,
+		private readonly userService: UserService,
+	) {}
 
 	@Post("login")
 	@UsePipes(
@@ -74,6 +78,9 @@ export class AuthController {
 	}
 
 	@Post("send-verification")
+	@UsePipes(
+		new ValidationPipe({ transform: true, skipMissingProperties: false }),
+	)
 	async sendVerificationCode(@Body("email") email: string) {
 		await this.authService.sendVerificationEmail(email);
 		return { message: "Código de verificação enviado" };

@@ -193,6 +193,7 @@ export default function FormAddUser() {
         setDefaultState();
       })
       .catch((error) => {
+        const errorMessage = error?.response?.data?.message || "Erro ao enviar o código de verificação.";
         const badRequestMessages = {
           "Email already in use": "Email já cadastrado.",
           "CPF already in use": "CPF já cadastrado.",
@@ -211,6 +212,10 @@ export default function FormAddUser() {
         setError(
           code in errorMessages ? errorMessages[code] : errorMessages[0]
         );
+
+
+        toast.error(badRequestMessages[errorMessage])
+
 
         setSuccess(false);
       });
@@ -258,11 +263,12 @@ export default function FormAddUser() {
             />
 
             <TextInput
-              label={"CPF"}
+              label={"CPF*"}
               name={"cpf"}
               value={cpf}
               handleValue={setCpf}
               validate={validateCpf}
+              required={true}
               alert={"CPF Inválido"}
               displayAlert={sent}
               mask={"999.999.999-99"}
@@ -356,12 +362,6 @@ export default function FormAddUser() {
                 </>
               )}
             </Button>
-
-            <>
-              {sent && !success && error?.length != 0 && (
-                <FormAlert>{error}</FormAlert>
-              )}
-            </>
           </FormSection>
         }
       </CustomForm>

@@ -114,10 +114,16 @@ export default function FormUpdateAccount({ user, onChange = () => { }, handleCl
           500: error?.response?.data?.message,
         };
 
-        const code = error?.response?.status ? error.response.status : 500;
-        setError(
-          code in errorMessages ? errorMessages[code] : errorMessages[0]
-        );
+        const code = error?.response?.status || 500;
+
+        const errorMessage =
+            code in errorMessages ? errorMessages[code] : errorMessages[0];
+    
+        setError(errorMessage);
+    
+        if (errorMessage) {
+          toast.error(errorMessage);
+      }
 
         setSuccess(false);
       });
@@ -243,11 +249,12 @@ export default function FormUpdateAccount({ user, onChange = () => { }, handleCl
         />
 
         <TextInput
-          label={"CPF"}
+          label={"CPF*"}
           name={"cpf"}
           value={cpf}
           handleValue={setCpf}
           validate={validateCpf}
+          required={true}
           alert={"CPF Inválido"}
           displayAlert={sent}
           mask={"999.999.999-99"}
@@ -263,12 +270,6 @@ export default function FormUpdateAccount({ user, onChange = () => { }, handleCl
             </>
           )}
         </Button>
-
-        <>
-          {sent && !success && error?.length != 0 && (
-            <FormAlert>{error}</FormAlert>
-          )}
-        </>
       </div>
     </CustomForm>
   );

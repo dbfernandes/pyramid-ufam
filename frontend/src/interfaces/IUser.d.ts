@@ -10,7 +10,7 @@ export default interface IUser {
 	id: number;
 	name: string;
 	email: string;
-	cpf?: string;
+	cpf: string;
 	enrollment?: string;
 	courses: ICourse[];
 

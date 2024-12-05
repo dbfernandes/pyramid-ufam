@@ -4,7 +4,7 @@ export default interface IUserLogged {
 	id: number;
 	name: string;
 	email: string;
-	cpf?: string;
+	cpf: string;
 	userTypeId: number;
 	profileImage: string;
 
