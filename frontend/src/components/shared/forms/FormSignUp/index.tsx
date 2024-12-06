@@ -148,7 +148,6 @@ export default function FormSignUp() {
       .catch((error) => {
         const errorMessage = error?.response?.data?.message || "Erro ao enviar o código de verificação.";
         const errorStatus = error?.response?.status;
-        console.log(error?.response?.data?.message)
 
 
         const badRequestMessages = {

@@ -6,6 +6,7 @@ import {
 	IsInt,
 	IsNotEmpty,
 	Allow,
+	IsOptional,
 } from "class-validator";
 import { IsCPF } from "../../../../src/common/validators.validator";
 
@@ -19,10 +20,11 @@ export class CreateUserDto {
 	email: string;
 
 	@IsString()
+	@IsOptional()
 	@Allow()
 	@Validate(IsCPF)
 	@Transform((value) => value.value.replace(/\D/g, ""))
-	cpf: string;
+	cpf?: string | null;
 
 	@IsInt()
 	@IsNotEmpty()

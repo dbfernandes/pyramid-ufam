@@ -80,6 +80,11 @@ export function Column({
         }
       }
 
+      if (sortBy === "total" && !foundInQuery) {
+        setSorting("none");
+        setOrdinal(0);
+      }
+
       return map;
     }
 
@@ -128,8 +133,6 @@ export function Column({
         sort: sortArray.join(","),
         order: orderArray.join(","),
       };
-
-      console.log(query);
 
       router.push({ query });
     }
