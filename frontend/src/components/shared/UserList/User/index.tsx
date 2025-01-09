@@ -183,7 +183,7 @@ export default function User({
             onClick={(e) => handleCheck(e)}
           />
           <div />
-          <Column header={true} sortBy={"name"}>Nome</Column>
+          <Column header={true}>Nome</Column>
           {subRoute == "alunos"
             ? <>
               <Column header={true} hideOnMobile={true}/* sortBy={"enrollment"}*/>Matrícula</Column>
@@ -194,7 +194,7 @@ export default function User({
               <Column header={true} hideOnMobile={true}>Status</Column>
             </>
             : <>
-              <Column header={true} hideOnMobile={true} sortBy={"email"}>Email</Column>
+              <Column header={true} hideOnMobile={true}>Email</Column>
               <Column header={true} hideOnMobile={true}>Curso(s)</Column>
             </>
           }

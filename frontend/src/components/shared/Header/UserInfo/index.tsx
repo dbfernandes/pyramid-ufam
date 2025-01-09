@@ -20,6 +20,7 @@ import { IRootState } from "redux/store";
 import IUserLogged from "interfaces/IUserLogged";
 import { UserTypes } from "constants/userTypes.constants";
 import { useTheme } from "../../../../../src/contexts/ThemeContext"; // Importando o hook do tema
+import Link from "next/link";
 
 // Interfaces
 interface IUserInfoProps {
@@ -39,20 +40,25 @@ const UserInfo: React.FC<IUserInfoProps> = ({ isMobile = false }) => {
     <Wrapper>
       <UserName>
         <UserPic>
-          <img
-            src={user?.profileImage && user?.profileImage.length > 0
-              ? user?.profileImage
-              : `${process.env.img}/user.png`
-            }
-            alt={user?.name}
-            onError={({ currentTarget }) => {
-              currentTarget.src = `${process.env.img}/user.png`;
-            }}
-          />
+          <Link href={`/conta`} passHref>
+            <img
+              src={user?.profileImage && user?.profileImage.length > 0
+                ? user?.profileImage
+                : `${process.env.img}/user.png`
+              }
+              alt={user?.name}
+              onError={({ currentTarget }) => {
+                currentTarget.src = `${process.env.img}/user.png`;
+              }}
+            />
+          </Link>
         </UserPic>
 
-        <p>{isMobile ? getFirstName(user.name) : user.name}</p>
-
+        <p>
+          <Link href={`/conta`} passHref>
+            <a style={{ color: 'inherit' }}>{isMobile ? getFirstName(user.name) : user.name}</a>
+          </Link>
+        </p>
         {!isMobile && <UserRole>{UserTypes[user.userTypeId]}</UserRole>}
 
         <i

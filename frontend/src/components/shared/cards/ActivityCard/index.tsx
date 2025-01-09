@@ -2,7 +2,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 // Shared
-import { H4 } from "components/shared/Titles";
+import { H3, H4 } from "components/shared/Titles";
 import toggleModalForm from "components/shared/ModalForm"
 import FormAddActivity from "components/shared/forms/FormAddActivity";
 
@@ -81,7 +81,7 @@ export default function ActivityCard({
     return (
       <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
         <div style={editable ? { width: "calc(100% - 22px)" } : {}}>
-          <H4>{activity.name in GroupIcons && <i className={`bi bi-${GroupIcons[activity.name]}`} />}{activity.name}</H4>
+          <H4 className="activity-name">{activity.name in GroupIcons && <i className={`bi bi-${GroupIcons[activity.name]}`} />}{activity.name}</H4>
           {activity.maxWorkload && <span>{activity.maxWorkload}h</span>}
         </div>
 

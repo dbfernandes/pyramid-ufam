@@ -22,4 +22,13 @@ export const AddActivityButton = styled.button`
 		color: var(--primary-color-2);
 		border-color: rgba(0, 0, 0, 0.2);
 	}
+
+
+	.grip-icon {
+  cursor: move;
+  font-size: 1.5em;
+  margin-right: 10px;
+  color: var(--primary-color); /* Alterar a cor */
+}
+
 `;

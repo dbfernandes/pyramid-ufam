@@ -58,6 +58,24 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       });
   }
 
+  const onDragStart = (e, index) => {
+    e.dataTransfer.setData("draggedIndex", index);
+  };
+
+  const onDrop = (e, index) => {
+    const draggedIndex = e.dataTransfer.getData("draggedIndex");
+    const newActivities = [...activities];
+    const draggedItem = newActivities[draggedIndex];
+    newActivities.splice(draggedIndex, 1);
+    newActivities.splice(index, 0, draggedItem);
+
+    onChange(newActivities); // Atualiza a lista após o arraste
+  };
+
+  const onDragOver = (e) => {
+    e.preventDefault(); // Permite o drop
+  };
+
   function AddActivityButton() {
     return (
       <AddResourceButton onClick={() =>

@@ -24,6 +24,14 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 		}
   }
 	
+  .activity-name {
+  	max-height: 5em;
+  	overflow: auto;
+  	text-overflow: ellipsis;
+  	display: -webkit-box;
+  	-webkit-line-clamp: 4;
+  	-webkit-box-orient: vertical;
+  }
   
   span {
     height: fit-content;

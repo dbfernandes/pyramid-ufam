@@ -44,6 +44,10 @@ export default function TextArea({
   const [empty, setEmpty] = useState<boolean>(true);
   const [valid, setValid] = useState<boolean>(false);
 
+  useEffect(() => {
+    setCharCount(value.length);
+  }, [value]);
+
   function handleAndValidate(e) {
     setVerified(true);
 

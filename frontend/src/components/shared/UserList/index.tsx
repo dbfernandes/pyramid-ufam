@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios, { AxiosRequestConfig } from "axios";
@@ -284,6 +284,14 @@ export default function UserList({
     );
   }
 
+  const sortedUsers = useMemo(() => {
+    return [...users].sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [users]);
+
   return (
     <DefaultWrapper>
       <HeaderWrapper>
@@ -313,7 +321,7 @@ export default function UserList({
       {users?.length > 0 ?
         (<ListStyled>
           <User header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} subRoute={subRoute} />
-          {users.map((user, index) =>
+          {sortedUsers.map((user, index) =>
             <User
               key={index}
               user={user}
