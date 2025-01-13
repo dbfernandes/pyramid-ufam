@@ -97,10 +97,10 @@ export default function Activities({ activities, title, groupSlug, onChange = ()
       <HeaderWrapper>
         <H3>Atividades de {title.toLowerCase()}</H3>
 
-        {!isMobile && <AddActivityButton />}
+        {!isMobile && userLogged.userTypeId == 1 && <AddActivityButton />}
       </HeaderWrapper>
 
-      {isMobile && <AddActivityButton />}
+      {isMobile && userLogged.userTypeId == 1 && <AddActivityButton />}
 
       {activities?.length > 0 ?
         (<CardGroup>

@@ -82,7 +82,7 @@ export default function ActivityCard({
       <Wrapper marked={marked} blurred={blurred} onMouseLeave={() => setConfirmDeletion(false)}>
         <div style={editable ? { width: "calc(100% - 22px)" } : {}}>
           <H4 className="activity-name">{activity.name in GroupIcons && <i className={`bi bi-${GroupIcons[activity.name]}`} />}{activity.name}</H4>
-          {activity.maxWorkload && <span>{activity.maxWorkload}h</span>}
+          {activity.maxWorkload && <span className={userLogged.userTypeId === 3 ? "max-workload-right" : ""} >{activity.maxWorkload}h</span>}
         </div>
 
         <ScrollableDescription>
@@ -92,7 +92,7 @@ export default function ActivityCard({
               .map((_description, index) => <p key={index}>{_description}</p>)}
         </ScrollableDescription>
 
-        {activity.id && editable && (
+        {userLogged.userTypeId != 3 && activity.id && editable && (
           <DropdownWrapper align="end" onClick={(e) => handleDropdown(e)}>
             <Options variant="secondary">
               <i className="bi bi-three-dots-vertical" />

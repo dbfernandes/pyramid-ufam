@@ -171,7 +171,7 @@ export default function Sidenav({ isMobile = false, sidenavOpen = true, setSiden
           route: "/atividades/extensao",
         },
       ],
-      permissions: [1],
+      permissions: [1, 3],
     },
   ];
 

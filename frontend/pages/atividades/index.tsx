@@ -34,7 +34,7 @@ export default function Atividades() {
 
   // Verifying user
   useEffect(() => {
-    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2]);
+    restrictPageForLoggedUsers(user, router, setLoaded, [1, 2, 3]);
   }, [user]);
 
   return (
