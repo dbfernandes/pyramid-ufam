@@ -321,7 +321,7 @@ export default function UserList({
       {users?.length > 0 ?
         (<ListStyled>
           <User header={true} checkedIds={checkedIds} setCheckedIds={setCheckedIds} subRoute={subRoute} />
-          {sortedUsers.map((user, index) =>
+          {users.map((user, index) =>
             <User
               key={index}
               user={user}

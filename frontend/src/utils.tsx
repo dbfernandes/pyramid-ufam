@@ -97,10 +97,6 @@ export function restrictPageForLoggedUsers(user: IUserLogged, router: NextRouter
   } else {
     setTimeout(() => setLoaded(true), 250);
   }
-  console.log("User:", user);
-console.log("UserTypeId:", user?.userTypeId);
-console.log("Roles permitidos:", roles[2]);
-console.log("Roles length:", roles.length);
 }
 
 export function restrictPageForUnloggedUsers(user: IUserLogged, router: NextRouter, setLoaded: Function) {

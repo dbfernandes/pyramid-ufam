@@ -183,7 +183,7 @@ export default function User({
             onClick={(e) => handleCheck(e)}
           />
           <div />
-          <Column header={true}>Nome</Column>
+          <Column header={true} sortBy="name">Nome</Column>
           {subRoute == "alunos"
             ? <>
               <Column header={true} hideOnMobile={true}/* sortBy={"enrollment"}*/>Matrícula</Column>

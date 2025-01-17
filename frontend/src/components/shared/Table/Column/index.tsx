@@ -5,7 +5,6 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 // Custom
 import { ColumnStyled, Sortable } from "./styles";
 
-// Interfaces
 interface IColumnProps {
   sortBy?: string;
   isNumeric?: boolean;
@@ -39,20 +38,13 @@ export function Column({
     },
     none: {
       icon: "expand",
-      label: "-",
+      label: "Não Selecionado",
     },
-  }
+  };
 
   type ISortTypes = "asc" | "desc" | "none";
-  const [sorting, setSorting] = useState<ISortTypes>("none");
-  const [ordinal, setOrdinal] = useState<number>(0); // Feedback to show in what position the column is being sorted
-
-  /*
-    Example: if the user is sorting by 3 columns, the first one will be the main one,
-    the second one will be the secondary one, and the third one will be the tertiary one.
-
-    The order is determined by the order the user clicked on the columns.
-  */
+  const [sorting, setSorting] = useState<ISortTypes>(() => (sortBy === "name" ? "asc" : "none"));
+  const [ordinal, setOrdinal] = useState<number>(0);
 
   function mapSorting() {
     const { sort, order } = router.query;
@@ -80,7 +72,7 @@ export function Column({
         }
       }
 
-      if (sortBy === "total" && !foundInQuery) {
+      if (!foundInQuery) {
         setSorting("none");
         setOrdinal(0);
       }
@@ -98,24 +90,37 @@ export function Column({
 
   const sortingMap = useMemo(() => mapSorting(), [router]);
 
-  function sort() {
-    function toggleSorting() {
-      let next: ISortTypes;
-      if (sorting === "asc") {
-        next = "desc";
-      } else if (sorting === "desc") {
-        next = "none";
-      } else {
-        next = "asc";
-      }
+  function toggleSorting() {
+    let next: ISortTypes;
 
-      setSorting(next);
-      return next;
+    if (sortBy === "name") {
+      // Ciclo: asc -> desc -> none -> asc
+      if (sorting === "asc") {
+        next = "desc";  // Primeiro clique: asc -> desc
+      } else if (sorting === "desc") {
+        next = "none";  // Segundo clique: desc -> none
+      } else {
+        next = "asc";   // Terceiro clique: none -> asc
+      }
+    } else {
+      // Ciclo padrão: none -> asc -> desc -> asc
+      if (sorting === "none") {
+        next = "asc";   // Para outras colunas, primeiro clique vai para asc
+      } else if (sorting === "asc") {
+        next = "desc";  // Segundo clique: asc -> desc
+      } else {
+        next = "asc";   // Terceiro clique: desc -> asc
+      }
     }
 
+    setSorting(next);
+    return next;
+  }
+
+  function sort() {
     if (sortBy) {
       const newOrder = toggleSorting();
-      const map = JSON.parse(JSON.stringify(sortingMap)); // Shallow copy
+      const map = JSON.parse(JSON.stringify(sortingMap));
 
       if (newOrder === "none") {
         delete map[sortBy];
@@ -138,32 +143,57 @@ export function Column({
     }
   }
 
+  useEffect(() => {
+    const { sort, order } = router.query;
+
+    if (!sort && !order && sortBy === "name") {
+      const query = {
+        ...router.query,
+        sort: "name",
+        order: "asc",
+      };
+      router.replace({ query });
+      setSorting("asc");
+      setOrdinal(1);
+    }
+  }, [router, sortBy]);
+
   return (
-    <ColumnStyled color={header ? "var(--muted)" : null} hideOnMobile={hideOnMobile} className={loading ? "placeholder-glow" : ""}>
-      {/* Loading */}
+    <ColumnStyled
+      color={header ? "var(--muted)" : null}
+      hideOnMobile={hideOnMobile}
+      className={loading ? "placeholder-glow" : ""}
+    >
       {loading && <span className="placeholder col-md-8 col-12" />}
 
-      {/* Sortable header */}
       {header && sortBy && (
-        <OverlayTrigger placement="top" overlay={<Tooltip>{`Ordenar ${ordinal > 0 ? `(${ordinal}°)` : ""} por ${children?.toLocaleString().toLocaleLowerCase()}: ${sortingLabels[sorting]?.label}`}</Tooltip>}>
+        <OverlayTrigger
+          placement="top"
+          overlay={
+            <Tooltip>
+              {`Ordenar ${
+                ordinal > 0 ? `(${ordinal}°)` : ""
+              } por ${children?.toLocaleString().toLocaleLowerCase()}: ${
+                sortingLabels[sorting]?.label
+              }`}
+            </Tooltip>
+          }
+        >
           <Sortable className="btn btn-link" onClick={() => sort()}>
             <i className={`bi bi-chevron-${sortingLabels[sorting]?.icon}`}>
               {ordinal > 0 && <span>{ordinal}</span>}
             </i>
-
             <span>{children}</span>
           </Sortable>
         </OverlayTrigger>
       )}
 
-      {/* Tooltip */}
       {tooltip && (
         <OverlayTrigger placement="bottom" overlay={<Tooltip>{tooltip}</Tooltip>}>
           <span>{children}</span>
         </OverlayTrigger>
       )}
 
-      {/* Default */}
       {!tooltip && !sortBy && <span>{children}</span>}
     </ColumnStyled>
   );
