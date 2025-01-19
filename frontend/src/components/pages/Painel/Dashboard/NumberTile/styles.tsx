@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { TileWrapper, CallToAction } from "../Tile/styles";
 
 export const IconWrapper = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 37px;
+  height: 37px;
   
   display: flex;
   align-items: center;
@@ -20,6 +20,8 @@ export const IconWrapper = styled.div`
     height: 100%;
     border-radius: 50%;
     opacity: 0.1;
+    box-shadow: 0 0 1px 1px var(--box-shadow);
+
   }
 
   & > i, .spinner {
@@ -27,6 +29,8 @@ export const IconWrapper = styled.div`
     font-size: 1.25rem;
     opacity: 1;
   }
+  
+
 `;
 
 export const Title = styled.h6`

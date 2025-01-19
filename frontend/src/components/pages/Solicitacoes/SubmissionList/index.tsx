@@ -181,11 +181,6 @@ export default function SubmissionList({
           />
           <SearchBar placeholder="Pesquisar por nome, atividade, horas solicitadas e descrição" />
         </div>
-
-        <ActiveFilters
-          options={filterOptions}
-          setOptions={setFilterOptions}
-        />
       </Filter>
 
       {isMobile && (checkedIds.length > 0 && <MassActionsButtonGroup />)}

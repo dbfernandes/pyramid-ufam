@@ -8,7 +8,8 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 	position: relative;
 	padding: 15px;
 	border-radius: 5px;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 3px 2px var(--box-shadow);
+
 	border: 1px solid transparent;
   word-break: break-word;
 
@@ -47,7 +48,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 
 	&:hover {
 		color: var(--primary-color-2);
-    border-color: rgba(0, 0, 0, 0.2);
+    	border-color: var(--muted);
 	}
 
 	${({ marked }) => marked && `

@@ -3,10 +3,10 @@ import styled from "styled-components";
 const size = 40;
 
 export const Wrapper = styled.div`
-  width: 50%;
+  width: 100%;
 
-  @media (max-width: 1200px) { width: 80%;}
-  @media (max-width: 992px) { width: 65%; }
+  @media (max-width: 1200px) { width: 100%;}
+  @media (max-width: 992px) { width: 100%; }
   @media (max-width: 768px) { width: 100%; }
 `;
 

@@ -58,7 +58,7 @@ export const CollapseCustom = styled(Collapse)`
 `;
 
 export const CollapseButton = styled(MoreOptionsButton) <{ color: string }>`
-  height: 40px;
+  height: 37px;
   width: fit-content;
   position: relative;
 

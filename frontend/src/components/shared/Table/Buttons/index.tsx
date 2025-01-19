@@ -45,6 +45,8 @@ export const ButtonGroupBottom = styled.div`
 export const AcceptButton = styled(Button)`
   width: fit-content;
   padding: 8px 26px;
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
 
   @media (max-width: 768px) {
     width: 100%;
@@ -54,6 +56,8 @@ export const AcceptButton = styled(Button)`
 export const EditButton = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
 
   @media (max-width: 768px) {
     width: 100%;
@@ -64,6 +68,8 @@ export const InfoButton = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
   color: var(--success);
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
 
   &:hover {
     color: var(--success-hover);
@@ -79,6 +85,8 @@ export const DangerButtonAlt = styled(ButtonAlt)`
   width: fit-content;
   padding: 8px 26px;
   color: var(--danger);
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
 
   &:hover {
     color: var(--danger-hover);

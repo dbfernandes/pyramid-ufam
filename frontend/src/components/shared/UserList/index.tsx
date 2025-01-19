@@ -309,11 +309,6 @@ export default function UserList({
           />
           <SearchBar placeholder="Pesquisar usuários" />
         </div>
-
-        <ActiveFilters
-          options={filterOptions}
-          setOptions={setFilterOptions}
-        />
       </Filter>
 
       {isMobile && <ButtonGroupTop>{checkedIds?.length > 0 ? <MassActionsButtonGroup /> : <AddUserButton />}</ButtonGroupTop>}

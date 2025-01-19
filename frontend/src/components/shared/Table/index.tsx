@@ -4,14 +4,14 @@ import { FormCheck } from "react-bootstrap";
 // ItemWrapper with horizontal scroll and padding
 export const ItemWrapper = styled.div`
   margin-bottom: 15px;
-  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 1px 1px var(--box-shadow);
   border: 1px solid transparent;
   border-radius: 5px;
 
   transition: 0.3s;
 
   &:hover {
-		border-color: rgba(0, 0, 0, 0.2);
+		border-color: var(--muted);
     cursor: pointer;
 	}
 `;
@@ -138,6 +138,8 @@ export const CollapseDetailsStyled = styled.div<{ admin: boolean }>`
 export const Info = styled.div`
   padding: 20px;
   box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 2px 1px var(--box-shadow);
+
   border-radius: 5px;
 
   & > h6 {

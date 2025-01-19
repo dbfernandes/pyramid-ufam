@@ -8,9 +8,11 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 	position: relative;
 	padding: 15px;
 	border-radius: 5px;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  	box-shadow: 0 0 1px 1px var(--box-shadow);
+
+
 	border: 1px solid transparent;
-  word-break: break-word;
+ 	word-break: break-word;
 
 
   & > div {
@@ -56,7 +58,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
     white-space: break-spaces;
     text-overflow: ellipsis;
 
-    max-height: 40px;
+    max-height: 37px;
 
     @media (max-width: 992px) {
       /* https://www.npmjs.com/package/react-lines-ellipsis */  
@@ -68,7 +70,9 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
 
 	&:hover {
 		color: var(--primary-color-2);
-    border-color: rgba(0, 0, 0, 0.2);
+    	border-color: rgba(0, 0, 0, 0.2);
+		border-color: var(--muted);
+
 	}
 
 	${({ marked }) => marked && `

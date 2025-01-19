@@ -151,11 +151,6 @@ export default function MySubmissionList({
           />
           <SearchBar placeholder="Pesquisar submissões" />
         </div>
-
-        <ActiveFilters
-          options={filterOptions}
-          setOptions={setFilterOptions}
-        />
       </Filter>
 
       {isMobile && (checkedIds?.length > 0 && <MassActionsButtonGroup />)}

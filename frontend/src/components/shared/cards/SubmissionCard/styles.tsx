@@ -40,6 +40,8 @@ export const FileInfo = styled(Info)`
   width: 100%;
   overflow: hidden;
 
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
   
   a {
     overflow: hidden;

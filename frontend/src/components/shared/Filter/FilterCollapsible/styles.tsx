@@ -37,40 +37,33 @@ export const DropdownItem = styled(Dropdown.Item) <{ accent?: string }>`
   }
 `;
 
-export const FilterButton = styled(Dropdown.Toggle)`
-  height: ${size}px;
+export const FiltersContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 0 15px;
-  font-size: 1.125rem;
-  background-color: var(--white-2);
-  color: var(--text-default) !important;
-  border: 1px solid transparent;
-  outline: none !important;
-  transition: 0.3s;
+  gap: 0.5rem;
+`;
 
-  &:hover, &:focus, &.active, &.show {
-    box-shadow: none !important;
-    background-color: var(--white-2);
-    border-color: rgba(0,0,0,0.2);
+export const FilterButton = styled.button<{ active: boolean; accent: string }>`
+  flex: 1;
+  max-width: 150px;
+  border: 1px solid ${({ active, accent }) =>  "var(--primary-color)"};
+  border-radius: 25px;
+  background-color: ${({ active, accent }) => (active ? "var(--primary-color)" : "transparent")};
+  color: ${({ active }) => (active ? "var(--white-1)" : "var(--default-text)")};
+  border: 1px solid ${({ active }) => (active ? "trasnparent" : "var(--primary-color)")};
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  align-items: center;
+  transition: all 0.3s;
+  height: 37px;
 
-    &:first-child {
-      background-color: var(--white-2);
-      border-color: rgba(0,0,0,0.2);
-    }
-  }
-  &:focus, &[aria-expanded=true] {
-    animation: none;
-  }
+  &:hover {
+    background-color: ${({ accent }) => "var(--primary-color)"};
+		background: var(--primary-color-2-background);
 
-  & > .spinner {
-    margin-right: 2px;
-  }
-
-  @media (max-width: 575px) {
-    & > .spinner {
-      margin-right: 0;
-    }
+    color: var(--primary-color-2);
   }
 `;

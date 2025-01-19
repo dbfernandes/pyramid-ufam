@@ -15,7 +15,7 @@ export const CourseListComponent = styled.div`
 
 export const AddCourseButton = styled.button`
   width: 100%;
-  height: 40px;
+  height: 37px;
   margin-bottom: 15px;
 
 	position: relative;

@@ -13,8 +13,10 @@ export const TileWrapper = styled.div`
 
   border-radius: 5px;
   background-color: var(--white-1);
-  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  
+  box-shadow: 0 0 1px 1px var(--box-shadow);
   border: 1px solid transparent;
+  
 
   & > div > p {
     color: var(--muted);
@@ -39,4 +41,6 @@ export const TileWrapper = styled.div`
 export const CallToAction = styled(ButtonAlt)`
   padding: 8px 26px;
 	margin-top: 25px;
+  box-shadow: 0 0 2px 1px var(--box-shadow);
+
 `;

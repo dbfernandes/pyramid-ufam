@@ -42,7 +42,7 @@ export const Wrapper = styled.div<{ marked: boolean, blurred: boolean }>`
     overflow: hidden;
     text-overflow: ellipsis;
 
-    max-height: 40px;
+    max-height: 37px;
 
     @media (max-width: 992px) {
       /* https://www.npmjs.com/package/react-lines-ellipsis */  

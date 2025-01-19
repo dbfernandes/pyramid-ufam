@@ -24,7 +24,7 @@ export const AddCourseButton = styled.button`
 	position: relative;
 	padding: 20px;
 	border-radius: 5px;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 4px 2px var(--box-shadow);
 
 	display: flex;
 	justify-content: center;

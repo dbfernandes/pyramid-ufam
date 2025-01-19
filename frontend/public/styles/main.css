@@ -1,10 +1,10 @@
 /*---------------------- DARK MODE VARIABLES ----------------------*/
 :root[data-theme="dark"] {
-    --background: #121212;
+    --background: #0a0a0a;
     --primary-color-background: #173C3A;
     --primary-color-2-background: #174E4E;
 
-    --white-1: #1d1d1d;
+    --white-1: #0f0f0f;
     --white-2: #242424;
     --white-3: #BEBEBE;
     --text-default: #C0C0C0;
@@ -31,6 +31,8 @@
     --scrollbar-hover: #666666;
 
 	--font-family: "Inter";
+
+	--box-shadow: #242424;
 }
 
 /*---------------------- LIGHT MODE VARIABLES ----------------------*/
@@ -68,6 +70,9 @@
     --toastify-color-error: var(--danger);
 
 	--font-family: "Inter";
+
+	--box-shadow: rgb(0, 0, 0, 0.2);
+
 }
 
 /*---------------------- GENERAL ----------------------*/
