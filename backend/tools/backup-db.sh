@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Definindo o caminho dos arquivos .env
-ENV_FILE=".env"
+ENV_FILE="/home/pyramid/pyramid-ufam/backend/.env"
+BACKUP_FILE="/home/pyramid/pyramid-ufam/backend/temp/backup_${MYSQL_DATABASE}_$(date +%u).sql"
 
 # Verifica se o arquivo .env existe
 if [[ ! -f "$ENV_FILE" ]]; then
@@ -26,6 +27,8 @@ fi
 
 # Define o nome do arquivo de backup
 BACKUP_FILE="./temp/backup_${MYSQL_DATABASE}_$(date +%u).sql" # 1 = Segunda-feira, 7 = Domingo
+# Define o nome do arquivo de backup com caminho absoluto
+BACKUP_FILE="/home/pyramid/pyramid-ufam/backend/temp/backup_pyramid_db_$(date +%u).sql"
 
 # Executa o mysqldump para gerar o backup
 mysqldump -h "$MYSQL_HOST_HOST" -P "$MYSQL_HOST_PORT" -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" > "$BACKUP_FILE"

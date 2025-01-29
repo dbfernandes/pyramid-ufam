@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Carrega as variáveis de ambiente do arquivo .env correspondente
-source ./.env
+source /home/pyramid/pyramid-ufam/backend/.env
 
 
 # Define variáveis
 DAY_OF_WEEK=$(date +%u)  # 1 = Segunda-feira, 7 = Domingo
-BACKUP_PATH=./temp
+BACKUP_PATH=/home/pyramid/pyramid-ufam/backend/temp
 LAST_SUNDAY_FILE="$BACKUP_PATH/last_sunday_ref"
 
 # Função para criar ou atualizar o arquivo de referência do último backup completo
