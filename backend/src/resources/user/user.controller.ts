@@ -139,7 +139,7 @@ export class UserController {
 		@UploadedFile(
 			new ParseFilePipeBuilder()
 				.addFileTypeValidator({
-					fileType: "pdf",
+					fileType: /pdf$/,
 				})
 				.addMaxSizeValidator({
 					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
@@ -179,7 +179,7 @@ export class UserController {
 		@UploadedFile(
 			new ParseFilePipeBuilder()
 				.addFileTypeValidator({
-					fileType: ".(png|jpeg|jpg)",
+					fileType: /image\/(png|jpeg|jpg)/,
 				})
 				.addMaxSizeValidator({
 					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
