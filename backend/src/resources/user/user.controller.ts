@@ -1,35 +1,38 @@
 import {
-	Controller,
-	Get,
-	Post,
 	Body,
-	Patch,
-	Param,
+	Controller,
 	Delete,
-	UseGuards,
+	Get,
+	Headers,
+	HttpStatus,
+	MaxFileSizeValidator,
+	Param,
+	ParseFilePipe,
+	ParseFilePipeBuilder,
+	Patch,
+	Post,
+	Put,
 	Query,
-	UseInterceptors,
+	UnprocessableEntityException,
 	UploadedFile,
+	UseGuards,
+	UseInterceptors,
 	UsePipes,
 	ValidationPipe,
-	Put,
-	Headers,
-	ParseFilePipeBuilder,
-	HttpStatus,
 } from "@nestjs/common";
-import { UserService } from "./user.service";
-import { SubmissionService } from "../submission/submission.service";
-import { AddUserDto, UpdateUserDto, EnrollDto } from "./dto";
-import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
-import { CreateSubmissionDto } from "../submission/dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
-import { RolesGuard } from "../../../src/guards/roles.guard";
-import { Roles } from "../../../src/decorators/roles.decorator";
 import { UserTypes } from "../../../src/common/enums.enum";
+import { Roles } from "../../../src/decorators/roles.decorator";
 import { ExclusiveRolesGuard } from "../../../src/guards/exclusive-roles.guard";
+import { IsOwnerGuard } from "../../../src/guards/is-owner.guard";
+import { JwtAuthGuard } from "../../../src/guards/jwt-auth.guard";
+import { RolesGuard } from "../../../src/guards/roles.guard";
 import { AuthService } from "../auth/auth.service";
+import { CreateSubmissionDto } from "../submission/dto";
+import { SubmissionService } from "../submission/submission.service";
+import { AddUserDto, EnrollDto, UpdateUserDto } from "./dto";
+import { UserService } from "./user.service";
 
 @Controller("users")
 export class UserController {
@@ -137,19 +140,30 @@ export class UserController {
 		@Param("id") id: string,
 		@Body() createSubmissionDto: CreateSubmissionDto,
 		@UploadedFile(
-			new ParseFilePipeBuilder()
-				.addFileTypeValidator({
-					fileType: /pdf$/,
-				})
-				.addMaxSizeValidator({
-					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
-				})
-				.build({
-					errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-				}),
+			new ParseFilePipe({
+				validators: [
+					// Validador de tamanho máximo
+					new MaxFileSizeValidator({
+						maxSize:
+							parseInt(process.env.MAX_FILE_SIZE_MB || "10") * 1024 * 1024,
+						message: (size) =>
+							`Arquivo muito grande. O tamanho máximo é de ${process.env.MAX_FILE_SIZE_MB}MB. O arquivo enviado tem ${(size / 1024 / 1024).toFixed(2)}MB.`,
+					}),
+				],
+				errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+			}),
 		)
 		file: Express.Multer.File,
 	) {
+		const allowedMimeType = "application/pdf";
+		if (file.mimetype !== allowedMimeType) {
+			// Lança uma exceção se o tipo não for o esperado.
+			// O NestJS a converterá em uma resposta HTTP 422.
+			throw new UnprocessableEntityException(
+				`O tipo de arquivo é inválido. Apenas arquivos PDF são aceitos.`,
+			);
+		}
+
 		return await this.submissionService.submit(
 			+id,
 			createSubmissionDto,
@@ -178,9 +192,6 @@ export class UserController {
 		@Param("id") id: string,
 		@UploadedFile(
 			new ParseFilePipeBuilder()
-				.addFileTypeValidator({
-					fileType: /image\/(png|jpeg|jpg)/,
-				})
 				.addMaxSizeValidator({
 					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
@@ -190,6 +201,15 @@ export class UserController {
 		)
 		file: Express.Multer.File,
 	) {
+		// --- VERIFICAÇÃO MANUAL DO TIPO DE ARQUIVO ---
+		const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
+
+		if (!allowedMimeTypes.includes(file.mimetype)) {
+			// Lança uma exceção se o tipo de imagem não for o esperado
+			throw new UnprocessableEntityException(
+				"O tipo de arquivo é inválido. Apenas imagens PNG, JPEG ou JPG são aceitas.",
+			);
+		}
 		return await this.userService.updateProfileImage(+id, file.filename);
 	}
 

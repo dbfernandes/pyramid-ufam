@@ -15,6 +15,7 @@ import {
 	ParseFilePipeBuilder,
 	Res,
 	Headers,
+	UnprocessableEntityException,
 } from "@nestjs/common";
 import { SubmissionService } from "./submission.service";
 import { UpdateSubmissionDto } from "./dto";
@@ -64,9 +65,6 @@ export class SubmissionController {
 		@Body() updateSubmissionDto: UpdateSubmissionDto,
 		@UploadedFile(
 			new ParseFilePipeBuilder()
-				.addFileTypeValidator({
-					fileType: /pdf$/,
-				})
 				.addMaxSizeValidator({
 					maxSize: parseInt(process.env.MAX_FILE_SIZE_MB) * 1024 * 1024,
 				})
@@ -77,6 +75,14 @@ export class SubmissionController {
 		file: Express.Multer.File,
 		@Headers("Authorization") token: string,
 	) {
+		const allowedMimeType = "application/pdf";
+		if (file.mimetype !== allowedMimeType) {
+			// Lança uma exceção se o tipo não for o esperado.
+			// O NestJS a converterá em uma resposta HTTP 422.
+			throw new UnprocessableEntityException(
+				`O tipo de arquivo é inválido. Apenas arquivos PDF são aceitos.`,
+			);
+		}
 		return await this.submissionService.update(
 			+id,
 			updateSubmissionDto,
